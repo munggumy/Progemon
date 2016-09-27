@@ -1,8 +1,20 @@
-package logic;
+package logic.character;
 
 import java.util.ArrayList;
 
+import logic.terrain.FightTerrain;
+
 public class Pokemon {
+	
+	private static enum MoveType{
+		FLY, SWIM, WALK;
+		
+		public boolean check(FightTerrain ft){
+			switch (ft.getType()){
+			// TODO complete switch-case
+			}
+		}
+	}
 	
 	private double attack, defend, moveRange, speed, hp, nextTurnTime;
 	private int x, y;
