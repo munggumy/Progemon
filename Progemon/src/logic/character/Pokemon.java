@@ -27,6 +27,7 @@ public class Pokemon implements Comparable<Pokemon> {
 
 	private double attack, defend, moveRange, speed, hp, nextTurnTime;
 	private int x, y;
+	private Player owner;
 	private MoveType moveType;
 	private ArrayList<ActiveSkill> activeSkills = new ArrayList<ActiveSkill>();
 	private ArrayList<passiveSkill> passiveSkills = new ArrayList<PassiveSkill>();
