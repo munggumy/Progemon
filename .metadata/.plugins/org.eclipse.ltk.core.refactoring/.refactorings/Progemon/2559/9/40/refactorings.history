@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename compilation unit &apos;logic.Character.java&apos; to &apos;Pokemon.java&apos;&#x0D;&#x0A;- Original project: &apos;Progemon&apos;&#x0D;&#x0A;- Original element: &apos;logic.Character.java&apos;&#x0D;&#x0A;- Renamed element: &apos;logic.Pokemon.java&apos;" description="Rename compilation unit &apos;Character.java&apos;" flags="2" id="org.eclipse.jdt.ui.rename.compilationunit" input="/src&lt;logic{Character.java" name="Pokemon.java" references="false" stamp="1474975772259" version="1.0"/>
+</session>

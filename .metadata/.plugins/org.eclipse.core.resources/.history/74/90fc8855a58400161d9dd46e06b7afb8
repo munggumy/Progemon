@@ -1,0 +1,13 @@
+package logic;
+
+import java.util.ArrayList;
+
+public class Character {
+	
+	private double attack, defend, moveRange, speed, hp, nextTurnTime;
+	private int x, y;
+	private MoveType moveType;
+	ArrayList<ActiveSkill> activeSkills = new ArrayList<ActiveSkill>();
+	ArrayList<passiveSkill> passiveSkills = new ArrayList<PassiveSkill>();
+
+}
