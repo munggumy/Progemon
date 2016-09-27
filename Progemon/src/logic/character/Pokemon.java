@@ -8,10 +8,11 @@ import logic.terrain.FightTerrain;
 
 public class Pokemon implements Comparable<Pokemon> {
 
-	private double attack, defend, moveRange, speed, hp, nextTurnTime;
+	private double attackStat, defenceStat, moveRange, speed, hp, nextTurnTime;
 	private int x, y , id;
 	private Player owner;
 	private MoveType moveType;
+	private ElementType primaryElement, secondaryElement;
 	private ArrayList<ActiveSkill> activeSkills = new ArrayList<ActiveSkill>();
 	private ArrayList<PassiveSkill> passiveSkills = new ArrayList<PassiveSkill>();
 	
@@ -30,6 +31,10 @@ public class Pokemon implements Comparable<Pokemon> {
 				return true;
 			}
 		}
+	}
+	
+	public static enum ElementType {
+		FIRE, GRASS, WATER, POISON, FLYING, BUG;
 	}
 
 	public static Comparator<Pokemon> getSpeedComparator(){
@@ -60,38 +65,28 @@ public class Pokemon implements Comparable<Pokemon> {
 		}
 	}
 	
-	public Pokemon(double attack, double defend, double moveRange, double speed, double hp, int x, int y,
+	// Constructor
+	
+	public Pokemon(double attackStat, double defenceStat, double moveRange, double speed, double hp, int x, int y,
 			MoveType moveType) {
-		this.attack = attack;
-		this.defend = defend;
+		this.attackStat = attackStat;
+		this.defenceStat = defenceStat;
 		this.moveRange = moveRange;
 		this.speed = speed;
 		this.hp = hp;
 		this.x = x;
 		this.y = y;
-		nextTurnTime = 1 / speed;
+		calculateNextTurnTime();
 		this.moveType = moveType;
 	}
-
-	public double getHp() {
-		return hp;
-	}
-
-	public void setHp(double hp) {
-		if (hp < 0) {
-			hp = 0;
-		} else {
-			this.hp = hp;
-		}
-	}
-
+	
 	public void move(int x, int y) {
 		this.x = x;
 		this.y = y;
 	}
 
 	public void attack(Pokemon p, int selectedSkill) {
-		p.setHp(p.getHp() - activeSkills.get(selectedSkill).getPower() * attack);
+		p.setHp(p.getHp() - activeSkills.get(selectedSkill).getPower() * attackStat);
 	}
 
 	/** Compares nextTurnTime. Used for sort in turn */
@@ -105,13 +100,31 @@ public class Pokemon implements Comparable<Pokemon> {
 			return 0;
 		}
 	}
+	
+	public void calculateNextTurnTime(){
+		nextTurnTime = 1 / this.speed;
+	}
+
+	// Getters and Setters
+	
+	public double getHp() {
+		return hp;
+	}
+
+	public void setHp(double hp) {
+		if (hp < 0) {
+			hp = 0;
+		} else {
+			this.hp = hp;
+		}
+	}
 
 	public final double getAttack() {
-		return attack;
+		return attackStat;
 	}
 
 	public final double getDefend() {
-		return defend;
+		return defenceStat;
 	}
 
 	public final double getMoveRange() {
@@ -152,6 +165,10 @@ public class Pokemon implements Comparable<Pokemon> {
 
 	public final ArrayList<PassiveSkill> getPassiveSkills() {
 		return passiveSkills;
+	}
+
+	public final int getId() {
+		return id;
 	}
 
 }
