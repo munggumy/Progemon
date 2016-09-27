@@ -2,14 +2,15 @@ package logic.terrain;
 
 import java.util.ArrayList;
 
+
 /** FightTerrain */
 @SuppressWarnings("unused")
 public class FightTerrain {
 	private int x, y;
 	private boolean isShadowed;
-	private Type type;
-
-	private enum Type {
+	private TerrainType type;
+	
+	public static enum TerrainType {
 		GRASS, ROCK, WATER, TREE;
 	}
 
@@ -36,7 +37,7 @@ public class FightTerrain {
 		return isShadowed;
 	}
 
-	public final Type getType() {
+	public final TerrainType getType() {
 		return type;
 	}
 

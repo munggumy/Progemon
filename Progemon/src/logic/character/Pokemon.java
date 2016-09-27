@@ -2,6 +2,7 @@ package logic.character;
 
 import java.util.ArrayList;
 
+import logic.terrain.FightMap;
 import logic.terrain.FightTerrain;
 
 public class Pokemon {
@@ -11,7 +12,12 @@ public class Pokemon {
 		
 		public boolean check(FightTerrain ft){
 			switch (ft.getType()){
-			// TODO complete switch-case
+			case WATER:
+				return this.equals(SWIM) || this.equals(FLY);
+			case ROCK: case TREE:
+				return this.equals(FLY);
+			case GRASS: default:
+				return true;
 			}
 		}
 	}
@@ -22,7 +28,7 @@ public class Pokemon {
 	private ArrayList<ActiveSkill> activeSkills = new ArrayList<ActiveSkill>();
 	private ArrayList<passiveSkill> passiveSkills = new ArrayList<PassiveSkill>();
 	
-	public Pokemon(double attack, double defend, double moveRange, double speed, double hp, int x, int y, MoveType movetype) {
+	public Pokemon(double attack, double defend, double moveRange, double speed, double hp, int x, int y, MoveType moveType) {
 		// TODO Auto-generated constructor stub
 		this.attack = attack;
 		this.defend = defend;
@@ -32,6 +38,7 @@ public class Pokemon {
 		this.x = x;
 		this.y = y;
 		nextTurnTime = 1/speed;
+		this.moveType = moveType;
 	}
 	
 	public double getHp() {
