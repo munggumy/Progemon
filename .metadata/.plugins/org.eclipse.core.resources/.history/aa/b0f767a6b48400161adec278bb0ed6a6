@@ -1,0 +1,7 @@
+package logic.skill;
+
+public abstract class ActiveSkill {
+	
+	
+
+}

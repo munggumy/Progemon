@@ -1,0 +1,16 @@
+package logic.skill;
+
+import logic.character.Pokemon;
+
+public class EnemyActiveSkill extends ActiveSkill {
+	
+	public AllyActiveSkill(int power) {
+		// TODO Auto-generated constructor stub
+		super(power);
+	}
+	
+	public void use(Pokemon p) {
+		p.setHp(p.getHp() - power);
+	}
+
+}

@@ -1,0 +1,5 @@
+package logic.skill;
+
+public class ActiveSkill {
+
+}

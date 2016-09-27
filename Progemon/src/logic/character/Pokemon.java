@@ -7,7 +7,7 @@ import logic.terrain.FightTerrain;
 
 public class Pokemon {
 	
-	private static enum MoveType{
+	public static enum MoveType{
 		FLY, SWIM, WALK;
 		
 		public boolean check(FightTerrain ft){
@@ -22,23 +22,31 @@ public class Pokemon {
 		}
 	}
 	
+	private String name;
 	private double attack, defend, moveRange, speed, hp, nextTurnTime;
 	private int x, y;
 	private MoveType moveType;
 	private ArrayList<ActiveSkill> activeSkills = new ArrayList<ActiveSkill>();
 	private ArrayList<passiveSkill> passiveSkills = new ArrayList<PassiveSkill>();
 	
-	public Pokemon(double attack, double defend, double moveRange, double speed, double hp, int x, int y, MoveType moveType) {
+	public Pokemon(String name, double attack, double defend, double moveRange, double speed, double hp, MoveType moveType) {
 		// TODO Auto-generated constructor stub
+		this.name = name;
 		this.attack = attack;
 		this.defend = defend;
 		this.moveRange = moveRange;
 		this.speed = speed;
 		this.hp = hp;
-		this.x = x;
-		this.y = y;
 		nextTurnTime = 1/speed;
 		this.moveType = moveType;
+	}
+	
+	public int getX() {
+		return x;
+	}
+	
+	public int getY() {
+		return y;
 	}
 	
 	public double getHp() {
@@ -52,6 +60,10 @@ public class Pokemon {
 		else{
 			this.hp = hp;
 		}
+	}
+	
+	public MoveType getMoveType() {
+		return moveType;
 	}
 	
 	public void move(int x, int y){

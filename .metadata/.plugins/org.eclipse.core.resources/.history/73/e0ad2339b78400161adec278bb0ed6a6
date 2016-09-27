@@ -1,0 +1,14 @@
+package logic.skill;
+
+public abstract class ActiveSkill {
+	
+	protected int power;
+	
+	public ActiveSkill(int power) {
+		// TODO Auto-generated constructor stub
+		this.power = power;
+	}
+	
+	public abstract void use(Pokemon p);
+
+}

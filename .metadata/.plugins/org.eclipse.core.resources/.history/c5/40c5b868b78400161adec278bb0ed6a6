@@ -1,0 +1,18 @@
+package logic.skill;
+
+import logic.character.Pokemon;
+
+public class ActiveSkill {
+	
+	protected int power;
+	
+	public ActiveSkill(int power) {
+		// TODO Auto-generated constructor stub
+		this.power = power;
+	}
+	
+	public void use(Pokemon p){
+		p.setHp(p.getHp() - power);
+	}
+
+}
