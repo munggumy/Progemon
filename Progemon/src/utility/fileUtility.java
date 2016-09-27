@@ -15,7 +15,7 @@ public class fileUtility {
 	static FileWriter writer;
 	static Scanner scanner;
 	
-	/** Usage id  */
+	/** Usage id attack defence  */
 	public static void loadPokemon(String filePath){
 		try {
 			reader = new FileReader(filePath);
@@ -45,7 +45,7 @@ public class fileUtility {
 					temp_id = scanner.nextInt();
 					if (scanner.hasNextLine()) {
 						temp_name = scanner.nextLine().replaceAll(" ", "");
-						utility.Pokedex.addPokemon(temp_id, temp_name);
+						utility.Pokedex.addPokemonToPokedex(temp_id, temp_name);
 					} 
 				}
 				

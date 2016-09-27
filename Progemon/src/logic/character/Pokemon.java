@@ -9,13 +9,13 @@ import logic.terrain.FightTerrain;
 public class Pokemon implements Comparable<Pokemon> {
 
 	private double attack, defend, moveRange, speed, hp, nextTurnTime;
-	private int x, y;
+	private int x, y , id;
 	private Player owner;
 	private MoveType moveType;
 	private ArrayList<ActiveSkill> activeSkills = new ArrayList<ActiveSkill>();
-	private ArrayList<passiveSkill> passiveSkills = new ArrayList<PassiveSkill>();
+	private ArrayList<PassiveSkill> passiveSkills = new ArrayList<PassiveSkill>();
 	
-	private static enum MoveType implements FightTerrainFilter {
+	public static enum MoveType implements FightTerrainFilter {
 		FLY, SWIM, WALK;
 
 		public boolean check(FightTerrain ft) {
@@ -36,7 +36,7 @@ public class Pokemon implements Comparable<Pokemon> {
 		return new SpeedComparator();
 	}
 	
-	private class SpeedComparator implements Comparator<Pokemon>{
+	private static class SpeedComparator implements Comparator<Pokemon>{
 		@Override
 		public int compare(Pokemon o1, Pokemon o2) {
 			if (Double.compare(o1.nextTurnTime, o2.nextTurnTime) > 0) {
@@ -53,7 +53,7 @@ public class Pokemon implements Comparable<Pokemon> {
 		return new IDComparator();
 	}
 	
-	private class IDComparator implements Comparator<Pokemon>{
+	private static class IDComparator implements Comparator<Pokemon>{
 		@Override
 		public int compare(Pokemon o1, Pokemon o2) {
 			return o1.id - o2.id;
@@ -91,7 +91,7 @@ public class Pokemon implements Comparable<Pokemon> {
 	}
 
 	public void attack(Pokemon p, int selectedSkill) {
-		p.setHp(p.getHp() - activeSkills.get(selectedSkill).getPower * attack);
+		p.setHp(p.getHp() - activeSkills.get(selectedSkill).getPower() * attack);
 	}
 
 	/** Compares nextTurnTime. Used for sort in turn */
@@ -104,6 +104,54 @@ public class Pokemon implements Comparable<Pokemon> {
 		} else {
 			return 0;
 		}
+	}
+
+	public final double getAttack() {
+		return attack;
+	}
+
+	public final double getDefend() {
+		return defend;
+	}
+
+	public final double getMoveRange() {
+		return moveRange;
+	}
+
+	public final double getSpeed() {
+		return speed;
+	}
+
+	public final double getNextTurnTime() {
+		return nextTurnTime;
+	}
+
+	public final int getX() {
+		return x;
+	}
+
+	public final int getY() {
+		return y;
+	}
+
+	public final int getID() {
+		return id;
+	}
+
+	public final Player getOwner() {
+		return owner;
+	}
+
+	public final MoveType getMoveType() {
+		return moveType;
+	}
+
+	public final ArrayList<ActiveSkill> getActiveSkills() {
+		return activeSkills;
+	}
+
+	public final ArrayList<PassiveSkill> getPassiveSkills() {
+		return passiveSkills;
 	}
 
 }
