@@ -2,12 +2,13 @@ package logic.character;
 
 import java.util.ArrayList;
 
+import logic.FightTerrainFilter;
 import logic.terrain.FightMap;
 import logic.terrain.FightTerrain;
 
 public class Pokemon {
 	
-	private static enum MoveType{
+	private static enum MoveType implements FightTerrainFilter{
 		FLY, SWIM, WALK;
 		
 		public boolean check(FightTerrain ft){
