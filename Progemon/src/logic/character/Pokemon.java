@@ -194,4 +194,12 @@ public class Pokemon implements Comparable<Pokemon> {
 		return id;
 	}
 
+	public final void setX(int x) {
+		this.x = x;
+	}
+
+	public final void setY(int y) {
+		this.y = y;
+	}
+	
 }
