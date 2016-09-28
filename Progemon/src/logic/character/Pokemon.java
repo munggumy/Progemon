@@ -8,8 +8,8 @@ import logic.terrain.FightTerrain;
 
 public class Pokemon implements Comparable<Pokemon> {
 
-	private double attackStat, defenceStat, moveRange, speed, hp, nextTurnTime;
-	private int x, y , id;
+	private double attackStat, defenceStat, speed, hp, nextTurnTime;
+	private int x, y, moveRange , id;
 	private Player owner;
 	private MoveType moveType;
 	private ElementType primaryElement, secondaryElement;
@@ -31,6 +31,7 @@ public class Pokemon implements Comparable<Pokemon> {
 				return true;
 			}
 		}
+		
 	}
 	
 	public static enum ElementType {
@@ -67,7 +68,7 @@ public class Pokemon implements Comparable<Pokemon> {
 	
 	// Constructor
 	
-	public Pokemon(double attackStat, double defenceStat, double moveRange, double speed, double hp, int x, int y,
+	public Pokemon(int id, double attackStat, double defenceStat, int moveRange, double speed, double hp, int x, int y,
 			MoveType moveType) {
 		this.attackStat = attackStat;
 		this.defenceStat = defenceStat;
@@ -76,8 +77,19 @@ public class Pokemon implements Comparable<Pokemon> {
 		this.hp = hp;
 		this.x = x;
 		this.y = y;
-		calculateNextTurnTime();
 		this.moveType = moveType;
+		calculateNextTurnTime();
+	}
+	
+	public Pokemon(String[] args){
+		this.id = Integer.parseInt(args[0]);
+		this.attackStat = Double.parseDouble(args[1]);
+		this.defenceStat = Double.parseDouble(args[2]);
+		this.moveRange = Integer.parseInt(args[3]);
+		this.speed = Double.parseDouble(args[4]);
+		this.hp = Double.parseDouble(args[5]);
+		this.moveType = toMoveType(args[6]);
+		calculateNextTurnTime();
 	}
 	
 	public void move(int x, int y) {
@@ -103,6 +115,15 @@ public class Pokemon implements Comparable<Pokemon> {
 	
 	public void calculateNextTurnTime(){
 		nextTurnTime = 1 / this.speed;
+	}
+	
+	public static MoveType toMoveType(String moveTypeString){
+		for (MoveType mt : MoveType.values()){
+			if(mt.toString().equalsIgnoreCase(moveTypeString)){
+				return mt;
+			}
+		}
+		return null;
 	}
 
 	// Getters and Setters

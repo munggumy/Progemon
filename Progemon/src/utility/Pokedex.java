@@ -14,42 +14,50 @@ public class Pokedex {
 	public static final HashMap<Integer, String> getPokedex() {
 		return pokedex;
 	}
-	
-	public static final String getPokemonName(int id){
-		return pokedex.get(id);
+
+	/** Returns null if pokemon not in Pokedex. */
+	public static final String getPokemonName(int id) {
+		if (pokedex.containsKey(id)) {
+			return pokedex.get(id);
+		} else {
+			return null;
+		}
 	}
-	
-	public static final void addPokemonToPokedex(int id, String name){
+
+	/** Returns -1 if pokemon not in Pokedex. */
+	public static final int getPokemonID(String name) {
+		for (Map.Entry<Integer, String> entry : pokedex.entrySet()) {
+			if (entry.getValue().equals(name)) {
+				return entry.getKey();
+			}
+		}
+		return -1;
+	}
+
+	public static final void addPokemonToPokedex(int id, String name) {
 		pokedex.put(id, name);
 	}
-	
-	public static final void addPokemonToList(Pokemon pokemon){
+
+	public static final void addPokemonToList(Pokemon pokemon) {
 		allPokemons.add(pokemon);
 		Collections.sort(allPokemons, Pokemon.getIDComparator());
 	}
-	
-	public static final ArrayList<Pokemon> getAllPokemons(){
+
+	public static final ArrayList<Pokemon> getAllPokemons() {
 		return allPokemons;
 	}
-	
-	public static final Pokemon getPokemon(int pokemon_id){
+
+	public static final Pokemon getPokemon(int pokemon_id) {
 		for (Pokemon pokemon : allPokemons) {
-			if (pokemon.getID() == pokemon_id){
+			if (pokemon.getID() == pokemon_id) {
 				return pokemon;
 			}
 		}
 		return null;
 	}
-	
-	public static final Pokemon getPokemon(String pokemon_name){
-		for (Map.Entry<Integer, String> pair : pokedex.entrySet()) {
-			if(pair.getValue().equals(pokemon_name)){
-				return getPokemon(pair.getKey());
-			}
-		}
-		return null;
+
+	public static final Pokemon getPokemon(String pokemon_name) {
+		return getPokemon(getPokemonID(pokemon_name));
 	}
-	
-	
 
 }

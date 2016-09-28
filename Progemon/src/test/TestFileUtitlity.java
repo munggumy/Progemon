@@ -10,6 +10,7 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+import logic.character.Pokemon;
 import logic.terrain.FightMap;
 import logic.terrain.FightTerrain;
 import utility.Pokedex;
@@ -84,6 +85,28 @@ public class TestFileUtitlity {
 				FightTerrain.TerrainType.WATER, FightTerrain.TerrainType.GRASS, FightTerrain.TerrainType.GRASS };
 
 		assertArrayEquals("First Line", testSecondLine, fightMap[1]);
+	}
+	
+	@Test public void testLoadPokemonList(){
+		try {
+			fileUtility.loadPokemon();
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail("Can't Load Pokemon");
+		}
+		
+		assertEquals("all Pokemons = 3", 3, Pokedex.getAllPokemons().size());
+		
+		String[] args = "001 1.01 0.95 3 10 15 WALK".split(" ");
+		Pokemon testFirstPokemon = new Pokemon(args);
+		Pokemon firstPokemon = Pokedex.getAllPokemons().get(0);
+		assertTrue("First Pokemon Stats",Double.compare(testFirstPokemon.getAttack(), firstPokemon.getAttack()) == 0);
+		assertTrue("First Pokemon Stats",Double.compare(testFirstPokemon.getDefend(), firstPokemon.getDefend()) == 0);
+		assertTrue("First Pokemon Stats",Double.compare(testFirstPokemon.getMoveRange(), firstPokemon.getMoveRange()) == 0);
+		assertTrue("First Pokemon Stats",Double.compare(testFirstPokemon.getSpeed(), firstPokemon.getSpeed()) == 0);
+		assertTrue("First Pokemon Stats",Double.compare(testFirstPokemon.getHp(), firstPokemon.getHp()) == 0);
+		
+		
 	}
 
 }
