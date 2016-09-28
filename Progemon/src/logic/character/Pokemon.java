@@ -26,7 +26,7 @@ public class Pokemon implements Comparable<Pokemon> {
 			case ROCK:
 			case TREE:
 				return this.equals(FLY);
-			case GRASS:
+			case GRASS: case GROUND:
 			default:
 				return true;
 			}
