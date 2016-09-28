@@ -10,10 +10,10 @@ public class StringUtility {
 				sb.append(toTitleCase(substring));
 				sb.append(" ");
 			}
-			out = sb.substring(0, sb.length() - 2);
+			out = sb.substring(0, sb.length() - 1);
 		} else {
 			sb.append(Character.toUpperCase(inputString.charAt(0)));
-			sb.append(inputString.substring(1, inputString.length() - 1).toLowerCase());
+			sb.append(inputString.substring(1, inputString.length()).toLowerCase());
 			out = sb.toString();
 		}
 		return out;
