@@ -2,6 +2,9 @@ package logic.terrain;
 
 import java.util.ArrayList;
 
+import graphic.FightTerrainComponent;
+import graphic.Screen;
+
 /** FightTerrain */
 @SuppressWarnings("unused")
 public class FightTerrain {
@@ -27,8 +30,15 @@ public class FightTerrain {
 		}
 		
 		public String getImageName(){
-			return this.toString() + ".png";
+			return "load\\img\\" + this.toString() + ".png";
 		}
+	}
+	
+	public FightTerrain(int x, int y, TerrainType type) {
+		// TODO Auto-generated constructor stub
+		this.x = x;
+		this.y = y;
+		this.type = type;
 	}
 
 	private ArrayList<FightTerrain> toArrayList() {
@@ -65,6 +75,10 @@ public class FightTerrain {
 			}
 		}
 		return null;
+	}
+	
+	public void draw(){
+		Screen.getScreen().add(new FightTerrainComponent(this));
 	}
 
 }

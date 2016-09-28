@@ -1,0 +1,17 @@
+package utility;
+
+import javax.swing.JFrame;
+
+public class Screen {
+	
+	private static final int SCREEN_WIDTH = 800, SCREEN_HEIGHT = 600;
+	private static JFrame screen = new JFrame("Progemon");
+	
+	public Screen() {
+		// TODO Auto-generated constructor stub
+		Screen.screen.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+		Screen.screen.setVisible(true);
+		Screen.screen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+
+}
