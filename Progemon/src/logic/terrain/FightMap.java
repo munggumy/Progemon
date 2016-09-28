@@ -26,6 +26,10 @@ public class FightMap {
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
 	}
+	
+	public FightMap(FightTerrain[][] ft){
+		map = ft;
+	}
 
 	public FightTerrain[][] getMap() {
 		return map;
@@ -91,6 +95,14 @@ public class FightMap {
 			return true;
 		} else {
 			return false;
+		}
+	}
+	
+	public void draw(){
+		for (FightTerrain[] fightTerrains : map) {
+			for (FightTerrain fightTerrain : fightTerrains) {
+				fightTerrain.draw();
+			}
 		}
 	}
 }
