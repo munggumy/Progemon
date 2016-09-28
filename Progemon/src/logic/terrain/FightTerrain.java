@@ -2,16 +2,29 @@ package logic.terrain;
 
 import java.util.ArrayList;
 
-
 /** FightTerrain */
 @SuppressWarnings("unused")
 public class FightTerrain {
 	private int x, y;
 	private boolean isShadowed;
 	private TerrainType type;
-	
+
 	public static enum TerrainType {
 		GRASS, ROCK, WATER, TREE;
+
+		private int moveCost;
+
+		private TerrainType(int moveCost) {
+			this.moveCost = moveCost;
+		}
+
+		private TerrainType() {
+			this(1);
+		}
+
+		public int getMoveCost() {
+			return this.moveCost;
+		}
 	}
 
 	private ArrayList<FightTerrain> toArrayList() {
@@ -39,6 +52,15 @@ public class FightTerrain {
 
 	public final TerrainType getType() {
 		return type;
+	}
+	
+	public static TerrainType toFightTerrainType(String fightTerrainString){
+		for(TerrainType tt : TerrainType.values()){
+			if(fightTerrainString.equalsIgnoreCase(tt.toString())){
+				return tt;
+			}
+		}
+		return null;
 	}
 
 }

@@ -6,35 +6,51 @@ import logic.character.Pokemon;
 
 public class FightMap {
 	
-	public static final int SIZE_X = 8;
-	public static final int SIZE_Y = 6;
-	private static FightTerrain[][] map = new FightTerrain[6][8];
-	private static ArrayList<Pokemon> pokemonsOnMap = new ArrayList<Pokemon>();
+	public static final int MAX_SIZE_X = 20;
+	public static final int MAX_SIZE_Y = 20;
+	private int sizeX, sizeY;
+	private FightTerrain[][] map;
+	private ArrayList<Pokemon> pokemonsOnMap = new ArrayList<Pokemon>();
+	
+	public FightMap(int sizeX, int sizeY){
+		if(sizeX < 0){
+			sizeX = 0;
+		} else if (sizeX > MAX_SIZE_X){
+			sizeX = MAX_SIZE_X;
+		}
+		if (sizeY < 0){
+			sizeY = 0;
+		} else if (sizeY > MAX_SIZE_Y){
+			sizeY = MAX_SIZE_Y;
+		}
+		this.sizeX = sizeX;
+		this.sizeY = sizeY;
+	}
 
-	public static final FightTerrain[][] getMap() {
+	public FightTerrain[][] getMap() {
 		return map;
 	}
 
-	public static final void setMap(FightTerrain[][] map) {
-		FightMap.map = map;
+	public void setMap(FightTerrain[][] map) {
+		this.map = map;
 	}
 	
-	public ArrayList<FightTerrain> findMovableBlockAround(int range, FightTerrain ft, ArrayList<FightTerrain> fts, Pokemon p){
-		if(range >= 0 && p.getMoveType().check(ft)){
+	public ArrayList<FightTerrain> findMovableBlockAround(int range, FightTerrain ft, ArrayList<FightTerrain> fts, Pokemon pokemon){
+		if(range >= 0 && pokemon.getMoveType().check(ft)){
 			int x = ft.getX();
 			int y = ft.getY();
 			fts.add(map[x][y]);
-			if(x < SIZE_X){
-				findMovableBlockAround(range - 1, map[x + 1][y], fts, p);
+			if(x < this.sizeX){
+				findMovableBlockAround(range - 1, map[x + 1][y], fts, pokemon);
 			}
 			if(x > 0){
-				findMovableBlockAround(range - 1, map[x - 1][y], fts, p);
+				findMovableBlockAround(range - 1, map[x - 1][y], fts, pokemon);
 			}
-			if(y < SIZE_Y){
-				findMovableBlockAround(range - 1, map[x][y + 1], fts, p);
+			if(y < this.sizeY){
+				findMovableBlockAround(range - 1, map[x][y + 1], fts, pokemon);
 			}
 			if(y < 0){
-				findMovableBlockAround(range - 1, map[x][y - 1], fts, p);
+				findMovableBlockAround(range - 1, map[x][y - 1], fts, pokemon);
 			}
 		}
 		return fts;
@@ -45,13 +61,13 @@ public class FightMap {
 			int x = ft.getX();
 			int y = ft.getY();
 			fts.add(map[x][y]);
-			if(x < SIZE_X){
+			if(x < this.sizeX){
 				findAttackableBlockAround(range - 1, map[x + 1][y], fts);
 			}
 			if(x > 0){
 				findAttackableBlockAround(range - 1, map[x - 1][y], fts);
 			}
-			if(y < SIZE_Y){
+			if(y < this.sizeY){
 				findAttackableBlockAround(range - 1, map[x][y + 1], fts);
 			}
 			if(y < 0){
@@ -68,5 +84,13 @@ public class FightMap {
 			}
 		}
 		return null;
+	}
+	
+	public boolean outOfMap(int x, int y){
+		if(x < 0 || x >= this.sizeX || y < 0 || y >= this.sizeY){
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
