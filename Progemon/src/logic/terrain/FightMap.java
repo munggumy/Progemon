@@ -8,7 +8,7 @@ public class FightMap {
 	
 	public static final int SIZE_X = 8;
 	public static final int SIZE_Y = 6;
-	private static FightTerrain[][] map = new FightTerrain[6][8];
+	private static FightTerrain[][] map = new FightTerrain[SIZE_Y][SIZE_X];
 	private static ArrayList<Pokemon> pokemonsOnMap = new ArrayList<Pokemon>();
 
 	public static final FightTerrain[][] getMap() {
@@ -19,22 +19,22 @@ public class FightMap {
 		FightMap.map = map;
 	}
 	
-	public ArrayList<FightTerrain> findMovableBlockAround(int range, FightTerrain ft, ArrayList<FightTerrain> fts, Pokemon p){
-		if(range >= 0 && p.getMoveType().check(ft)){
+	public ArrayList<FightTerrain> findMovableBlockAround(int range, FightTerrain ft, ArrayList<FightTerrain> fts, Pokemon pokemon){
+		if(range >= 0 && pokemon.getMoveType().check(ft)){
 			int x = ft.getX();
 			int y = ft.getY();
 			fts.add(map[x][y]);
 			if(x < SIZE_X){
-				findMovableBlockAround(range - 1, map[x + 1][y], fts, p);
+				findMovableBlockAround(range - 1, map[x + 1][y], fts, pokemon);
 			}
 			if(x > 0){
-				findMovableBlockAround(range - 1, map[x - 1][y], fts, p);
+				findMovableBlockAround(range - 1, map[x - 1][y], fts, pokemon);
 			}
 			if(y < SIZE_Y){
-				findMovableBlockAround(range - 1, map[x][y + 1], fts, p);
+				findMovableBlockAround(range - 1, map[x][y + 1], fts, pokemon);
 			}
 			if(y < 0){
-				findMovableBlockAround(range - 1, map[x][y - 1], fts, p);
+				findMovableBlockAround(range - 1, map[x][y - 1], fts, pokemon);
 			}
 		}
 		return fts;
@@ -68,5 +68,13 @@ public class FightMap {
 			}
 		}
 		return null;
+	}
+	
+	public static boolean outOfMap(int x, int y){
+		if(x < 0 || x >= SIZE_X || y < 0 || y >= SIZE_Y){
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
