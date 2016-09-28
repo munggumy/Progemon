@@ -8,7 +8,7 @@ import logic.terrain.FightTerrain;
 
 public class Pokemon implements Comparable<Pokemon> {
 
-	private double attackStat, defenceStat, speed, hp, nextTurnTime;
+	private double attackStat, defenceStat, speed, hp, nextTurnTime, currentTurnTime;
 	private int x, y, moveRange , id;
 	private Player owner;
 	private MoveType moveType;
@@ -78,6 +78,7 @@ public class Pokemon implements Comparable<Pokemon> {
 		this.x = x;
 		this.y = y;
 		this.moveType = moveType;
+		currentTurnTime = 0;
 		calculateNextTurnTime();
 	}
 	
@@ -89,6 +90,7 @@ public class Pokemon implements Comparable<Pokemon> {
 		this.speed = Double.parseDouble(args[4]);
 		this.hp = Double.parseDouble(args[5]);
 		this.moveType = toMoveType(args[6]);
+		currentTurnTime = 0;
 		calculateNextTurnTime();
 	}
 	
