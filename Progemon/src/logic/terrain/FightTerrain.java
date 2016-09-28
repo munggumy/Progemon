@@ -10,7 +10,7 @@ public class FightTerrain {
 	private TerrainType type;
 
 	public static enum TerrainType {
-		GRASS, ROCK, WATER, TREE;
+		GRASS, ROCK, WATER, TREE, GROUND;
 
 		private int moveCost;
 
@@ -24,6 +24,10 @@ public class FightTerrain {
 
 		public int getMoveCost() {
 			return this.moveCost;
+		}
+		
+		public String getImageName(){
+			return this.toString() + ".png";
 		}
 	}
 
