@@ -16,6 +16,16 @@ public class Player {
 		this(name);
 		pokemons.add(starter_pokemon);
 	}
+
+	public final String getName() {
+		return name;
+	}
+
+	public final ArrayList<Pokemon> getPokemons() {
+		return pokemons;
+	}
+	
+	
 	
 
 }
