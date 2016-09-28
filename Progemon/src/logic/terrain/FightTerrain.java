@@ -53,5 +53,14 @@ public class FightTerrain {
 	public final TerrainType getType() {
 		return type;
 	}
+	
+	public static TerrainType toFightTerrainType(String fightTerrainString){
+		for(TerrainType tt : TerrainType.values()){
+			if(fightTerrainString.equalsIgnoreCase(tt.toString())){
+				return tt;
+			}
+		}
+		return null;
+	}
 
 }
