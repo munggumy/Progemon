@@ -23,8 +23,11 @@ public class fileUtility {
 	private static FileWriter writer;
 	private static Scanner scanner;
 
-	/** Usage name attack defense moveRange speed hp moveType 
-	 * @throws IOException */
+	/**
+	 * Usage name attack defense moveRange speed hp moveType
+	 * 
+	 * @throws IOException
+	 */
 	public static void loadPokemon(String filePath) throws IOException {
 		try {
 			reader = new FileReader(filePath);
@@ -47,15 +50,15 @@ public class fileUtility {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} finally {
-			if(reader != null){
+			if (reader != null) {
 				reader.close();
 			}
-			if(scanner != null){
+			if (scanner != null) {
 				scanner.close();
 			}
 		}
 	}
-	
+
 	public static void loadPokemon() throws IOException {
 		loadPokemon(DEFAULT_LOAD_POKEMON);
 	}
@@ -112,16 +115,16 @@ public class fileUtility {
 	}
 
 	// Load Fight Map
-
-	public static FightTerrain.TerrainType[][] loadFightMap(String filePath) throws IOException {
-		ArrayList<FightTerrain.TerrainType[]> temp_map = new ArrayList<FightTerrain.TerrainType[]>();
+	/** Fightmap fm = new Fightmap(loadFightMap()); */
+	public static FightTerrain[][] loadFightMap(String filePath) throws IOException {
+		ArrayList<FightTerrain[]> temp_map = new ArrayList<FightTerrain[]>();
 		try {
 			reader = new FileReader(filePath);
 			scanner = new Scanner(reader);
 			int widthInBlocks = scanner.nextInt();
 			int heightInBlocks = scanner.nextInt();
-			for (int line = 0; line < heightInBlocks; line++) {
-				temp_map.add(loadFightMapLine(widthInBlocks));
+			for (int y = 0; y < heightInBlocks; y++) {
+				temp_map.add(loadFightMapLine(widthInBlocks, y));
 			}
 
 		} catch (FileNotFoundException e) {
@@ -143,31 +146,30 @@ public class fileUtility {
 
 	}
 
-	public static FightTerrain.TerrainType[][] loadFightMap() throws IOException {
+	public static FightTerrain[][] loadFightMap() throws IOException {
 		return loadFightMap(DEFAULT_LOAD_FIGHT_MAP);
 	}
 
-	// Load FIght Map Private Methods
+	// Load Fight Map Private Methods
 
-	private static FightTerrain.TerrainType[] loadFightMapLine(int width) {
-		ArrayList<FightTerrain.TerrainType> temp_map_line = new ArrayList<FightTerrain.TerrainType>();
-		for (int i = 0; i < width; i++) {
-			temp_map_line.add(FightTerrain.toFightTerrainType(scanner.next()));
+	private static FightTerrain[] loadFightMapLine(int width, int y) {
+		ArrayList<FightTerrain> temp_map_line = new ArrayList<FightTerrain>();
+		for (int x = 0; x < width; x++) {
+			temp_map_line.add(new FightTerrain(x, y, FightTerrain.toFightTerrainType(scanner.next())));
 		}
 		return toFightTerrainArray(temp_map_line);
 	}
 
-	private static FightTerrain.TerrainType[] toFightTerrainArray(List<FightTerrain.TerrainType> fightTerrains) {
-		TerrainType[] out = new FightTerrain.TerrainType[fightTerrains.size()];
+	private static FightTerrain[] toFightTerrainArray(List<FightTerrain> fightTerrains) {
+		FightTerrain[] out = new FightTerrain[fightTerrains.size()];
 		for (int i = 0; i < out.length; i++) {
 			out[i] = fightTerrains.get(i);
 		}
 		return out;
 	}
 
-	private static FightTerrain.TerrainType[][] toFightTerrain2DArray(
-			List<FightTerrain.TerrainType[]> fightTerrains2D) {
-		TerrainType[][] out = new FightTerrain.TerrainType[fightTerrains2D.size()][fightTerrains2D.get(0).length];
+	private static FightTerrain[][] toFightTerrain2DArray(List<FightTerrain[]> fightTerrains2D) {
+		FightTerrain[][] out = new FightTerrain[fightTerrains2D.size()][fightTerrains2D.get(0).length];
 		for (int i = 0; i < out.length; i++) {
 			out[i] = fightTerrains2D.get(i);
 		}
