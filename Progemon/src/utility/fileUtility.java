@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import logic.character.ActiveSkill;
 import logic.character.Pokemon;
 import logic.terrain.FightTerrain;
-import logic.terrain.FightTerrain.TerrainType;
 
 public class fileUtility {
 
@@ -19,8 +21,8 @@ public class fileUtility {
 	private static final String DEFAULT_LOAD_POKEMON = DEFAULT_PATH + "/pokemon_list.txt";
 	private static final String DEFAULT_LOAD_POKEDEX = DEFAULT_PATH + "/pokedex.txt";
 	private static final String DEFAULT_LOAD_FIGHT_MAP = DEFAULT_PATH + "/fight_map.txt";
+	private static final String DEFAULT_ACTIVE_SKILLS = DEFAULT_PATH + "/active_skills.txt";
 	private static FileReader reader;
-	private static FileWriter writer;
 	private static Scanner scanner;
 
 	/**
@@ -86,17 +88,18 @@ public class fileUtility {
 		try {
 			reader = new FileReader(filePath);
 			scanner = new Scanner(reader);
+			Pattern pattern = Pattern.compile("(\\d+)\\s([\\w\\s]+)");
+			Matcher matcher;
 			int temp_id;
 			String temp_name;
 			while (scanner.hasNextLine()) {
-				if (scanner.hasNextInt()) {
-					temp_id = scanner.nextInt();
-					if (scanner.hasNext()) {
-						temp_name = scanner.next();
-						utility.Pokedex.addPokemonToPokedex(temp_id, temp_name);
-					}
+				String line = scanner.nextLine();
+				matcher = pattern.matcher(line);
+				if (matcher.find()) {
+					temp_id = Integer.parseInt(matcher.group(1));
+					temp_name = matcher.group(2);
+					utility.Pokedex.addPokemonToPokedex(temp_id, temp_name);
 				}
-
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -174,6 +177,40 @@ public class fileUtility {
 			out[i] = fightTerrains2D.get(i);
 		}
 		return out;
+	}
+
+	// Load Active Skills
+
+	public static void loadActiveSkills(String filepath) throws IOException {
+		try {
+			reader = new FileReader(filepath);
+			scanner = new Scanner(reader);
+			Pattern pattern = Pattern.compile("([\\w\\s]+)\\s(\\d+)");
+			Matcher matcher;
+			String skillName;
+			int skillPower;
+			while (scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				matcher = pattern.matcher(line);
+				matcher.matches();
+				skillName = matcher.group(1);
+				skillPower = Integer.parseInt(matcher.group(2));
+				ActiveSkill.getActiveSkill(skillName, skillPower);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+			if (scanner != null) {
+				scanner.close();
+			}
+		}
+	}
+
+	public static void loadActiveSkills() throws IOException {
+		loadActiveSkills(DEFAULT_ACTIVE_SKILLS);
 	}
 
 }
