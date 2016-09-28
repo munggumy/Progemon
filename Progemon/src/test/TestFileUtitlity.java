@@ -3,15 +3,19 @@
  */
 package test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import logic.character.ActiveSkill;
 import logic.character.Pokemon;
-import logic.terrain.FightMap;
 import logic.terrain.FightTerrain;
 import utility.Pokedex;
 import utility.fileUtility;
@@ -60,7 +64,7 @@ public class TestFileUtitlity {
 
 	@Test
 	public void testLoadFightMap() {
-		FightTerrain.TerrainType[][] fightMap = null;
+		FightTerrain[][] fightMap = null;
 		try {
 			fightMap = fileUtility.loadFightMap();
 		} catch (IOException e) {
@@ -73,40 +77,57 @@ public class TestFileUtitlity {
 		assertEquals("Height = 6", 6, fightMap.length);
 
 		// GRASS GRASS GRASS GRASS GRASS GRASS GRASS GRASS
-		FightTerrain.TerrainType[] testFirstLine = { FightTerrain.TerrainType.GRASS, FightTerrain.TerrainType.GRASS,
-				FightTerrain.TerrainType.GRASS, FightTerrain.TerrainType.GRASS, FightTerrain.TerrainType.GRASS,
-				FightTerrain.TerrainType.GRASS, FightTerrain.TerrainType.GRASS, FightTerrain.TerrainType.GRASS };
+		assertTrue("Top Left Terrain", new FightTerrain(0, 0, FightTerrain.TerrainType.GRASS).equals(fightMap[0][0]));
 
-		assertArrayEquals("First Line", testFirstLine, fightMap[0]);
+		for (int i = 1; i <= 7; i++) {
+			assertTrue("First Row, Column : " + i,
+					new FightTerrain(i, 0, FightTerrain.TerrainType.GRASS).equals(fightMap[0][i]));
+		}
 
 		// GRASS ROCK ROCK TREE WATER WATER GRASS GRASS
-		FightTerrain.TerrainType[] testSecondLine = { FightTerrain.TerrainType.GRASS, FightTerrain.TerrainType.ROCK,
-				FightTerrain.TerrainType.ROCK, FightTerrain.TerrainType.TREE, FightTerrain.TerrainType.WATER,
-				FightTerrain.TerrainType.WATER, FightTerrain.TerrainType.GRASS, FightTerrain.TerrainType.GRASS };
+		assertTrue("Second Row First Column",
+				new FightTerrain(0, 1, FightTerrain.TerrainType.GRASS).equals(fightMap[1][0]));
 
-		assertArrayEquals("First Line", testSecondLine, fightMap[1]);
 	}
-	
-	@Test public void testLoadPokemonList(){
+
+	@Test
+	public void testLoadPokemonList() {
 		try {
 			fileUtility.loadPokemon();
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail("Can't Load Pokemon");
 		}
-		
+
 		assertEquals("all Pokemons = 3", 3, Pokedex.getAllPokemons().size());
-		
+
 		String[] args = "001 1.01 0.95 3 10 15 WALK".split(" ");
 		Pokemon testFirstPokemon = new Pokemon(args);
 		Pokemon firstPokemon = Pokedex.getAllPokemons().get(0);
-		assertTrue("First Pokemon Stats",Double.compare(testFirstPokemon.getAttack(), firstPokemon.getAttack()) == 0);
-		assertTrue("First Pokemon Stats",Double.compare(testFirstPokemon.getDefend(), firstPokemon.getDefend()) == 0);
-		assertTrue("First Pokemon Stats",Double.compare(testFirstPokemon.getMoveRange(), firstPokemon.getMoveRange()) == 0);
-		assertTrue("First Pokemon Stats",Double.compare(testFirstPokemon.getSpeed(), firstPokemon.getSpeed()) == 0);
-		assertTrue("First Pokemon Stats",Double.compare(testFirstPokemon.getHp(), firstPokemon.getHp()) == 0);
-		
-		
+		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getAttack(), firstPokemon.getAttack()) == 0);
+		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getDefend(), firstPokemon.getDefend()) == 0);
+		assertTrue("First Pokemon Stats",
+				Double.compare(testFirstPokemon.getMoveRange(), firstPokemon.getMoveRange()) == 0);
+		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getSpeed(), firstPokemon.getSpeed()) == 0);
+		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getHp(), firstPokemon.getHp()) == 0);
+
+	}
+
+	@Test
+	public void testLoadActiveSkills() {
+		try {
+			fileUtility.loadActiveSkills();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		ArrayList<ActiveSkill> aSkills = ActiveSkill.getAllActiveSkills();
+
+		assertEquals("First Move : Mega Punch", "Mega Punch", aSkills.get(0).getName());
+		assertTrue("First Move : Mega Punch", Double.compare(80, aSkills.get(0).getPower()) == 0);
+		assertEquals("Second Move : Razor Wind", "Razor Wind", aSkills.get(1).getName());
+		assertTrue("Second Move : Razor Wind", Double.compare(80, aSkills.get(1).getPower()) == 0);
 	}
 
 }
