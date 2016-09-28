@@ -25,6 +25,10 @@ public class FightTerrain {
 		public int getMoveCost() {
 			return this.moveCost;
 		}
+		
+		public String getImageName(){
+			return this.toString() + ".png";
+		}
 	}
 
 	private ArrayList<FightTerrain> toArrayList() {
