@@ -2,6 +2,7 @@ package logic.character;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("unused")
 public class Player {
 	private String name;
 	private ArrayList<Pokemon> pokemons;
