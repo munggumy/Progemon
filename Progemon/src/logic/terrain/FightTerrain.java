@@ -1,9 +1,12 @@
 package logic.terrain;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
-import graphic.FightTerrainComponent;
-import graphic.Screen;
+import javax.imageio.ImageIO;
 
 /** FightTerrain */
 @SuppressWarnings("unused")
@@ -77,8 +80,16 @@ public class FightTerrain {
 		return null;
 	}
 	
-	public void draw(){
-		Screen.getScreen().add(new FightTerrainComponent(this));
+	public void draw(Graphics2D g2){
+		BufferedImage img = null;
+		try {
+			//img = ImageIO.read(new File(fightTerrain.getType().getImageName()));
+			img = ImageIO.read(new File("D:\\ik\\CP_CU\\ProgMeth\\Project\\Progemon\\Progemon\\load\\img\\TREE.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		g2.drawImage(img, null, x * 40, y * 40);
 	}
 
 	@Override
