@@ -37,11 +37,12 @@ public class Main {
 		a.move(8, 8);
 		b.move(7, 7);
 		
+		// add
 		ScreenComponent.addObject(fightMap);
 		ScreenComponent.addObject(a);
 		ScreenComponent.addObject(b);
 		
-		
+		//update
 		Frame.getGraphicComponent().repaint();
 		
 		while(true){
@@ -57,6 +58,8 @@ public class Main {
 				a.move(RandomUtility.randomInt(7), RandomUtility.randomInt(5));
 				b.move(RandomUtility.randomInt(7), RandomUtility.randomInt(5));
 			}
+			
+			//updates
 			Frame.getGraphicComponent().repaint();
 		}
 	}

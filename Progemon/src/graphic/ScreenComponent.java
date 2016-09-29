@@ -4,13 +4,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JComponent;
 
 public class ScreenComponent extends JComponent {
 	
-	private static ArrayList<IRenderable> objectOnScreen = new ArrayList<IRenderable>();
+	private static CopyOnWriteArrayList<IRenderable> objectOnScreen = new CopyOnWriteArrayList<IRenderable>();
 	protected static Graphics2D g2;
 	
 	public ScreenComponent() {
@@ -30,12 +30,17 @@ public class ScreenComponent extends JComponent {
 		}
 	}
 	
-	public static ArrayList<IRenderable> getObjectOnScreen() {
+	public static CopyOnWriteArrayList<IRenderable> getObjectOnScreen() {
 		return objectOnScreen;
 	}
 	
 	public static void addObject(IRenderable object) {
 		objectOnScreen.add(object);
 	}
+	
+	public static void removeObject(IRenderable object){
+		objectOnScreen.remove(object);
+	}
+	
 
 }
