@@ -3,11 +3,13 @@ package logic.character;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+import graphic.DrawingUtility;
+import graphic.IRenderable;
 import logic.FightTerrainFilter;
 import logic.terrain.FightTerrain;
 import utility.Pokedex;
 
-public class Pokemon implements Comparable<Pokemon>, Cloneable {
+public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 
 	private double attackStat, defenceStat, speed, hp, nextTurnTime;
 	private int x, y, moveRange, id;
@@ -143,6 +145,18 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 		}
 		return null;
 	}
+	
+	@Override
+	public void draw() {
+		// TODO Auto-generated method stub
+		DrawingUtility.drawPokemon(this);
+	}
+	
+	@Override
+	public void getDepth() {
+		// TODO Auto-generated method stub
+		
+	}
 
 	// Getters and Setters
 
@@ -224,5 +238,9 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 	
 	public void setOwner(Player owner){
 		this.owner = owner;
+	}
+	
+	public String getImageName(){
+		return "load\\img\\pokemon\\" + getName() + ".png";
 	}
 }
