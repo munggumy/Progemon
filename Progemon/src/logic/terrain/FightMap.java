@@ -1,5 +1,6 @@
 package logic.terrain;
 
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -112,12 +113,14 @@ public class FightMap {
 		}
 	}
 
-	public void draw() {
-		for (FightTerrain[] fightTerrains : map) {
+	public static void draw(Graphics2D g2) {
+		System.out.println("reach");
+		g2.fillRect(100, 100, 100, 100);
+		/*for (FightTerrain[] fightTerrains : map) {
 			for (FightTerrain fightTerrain : fightTerrains) {
-				fightTerrain.draw();
+				fightTerrain.draw(g2);
 			}
-		}
+		}*/
 	}
 
 	public final int getSizeX() {
