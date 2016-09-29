@@ -2,10 +2,20 @@ package logic.character;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("unused")
-public class Player {
+import logic.terrain.FightMap;
+
+public abstract class Player {
 	private String name;
 	private ArrayList<Pokemon> pokemons;
+	
+	public boolean isLose(){
+		for (Pokemon pokemon : pokemons) {
+			if(!pokemon.isDead()){
+				return false;
+			}
+		}
+		return true;
+	}
 	
 	public Player(String name){
 		this.name = name;
@@ -25,7 +35,6 @@ public class Player {
 		return pokemons;
 	}
 	
-	
-	
+	public abstract void runTurn(Pokemon pokemon, FightMap fightMap);
 
 }

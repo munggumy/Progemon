@@ -5,6 +5,7 @@ import java.util.Comparator;
 
 import logic.FightTerrainFilter;
 import logic.terrain.FightTerrain;
+import utility.Pokedex;
 
 public class Pokemon implements Comparable<Pokemon> {
 
@@ -135,11 +136,15 @@ public class Pokemon implements Comparable<Pokemon> {
 	}
 
 	public void setHp(double hp) {
-		if (hp < 0) {
+		if (Double.compare(hp, 0) < 0) {
 			hp = 0;
 		} else {
 			this.hp = hp;
 		}
+	}
+	
+	public boolean isDead(){
+		return Double.compare(hp, 0) <= 0;
 	}
 
 	public final double getAttack() {
@@ -150,7 +155,7 @@ public class Pokemon implements Comparable<Pokemon> {
 		return defenceStat;
 	}
 
-	public final double getMoveRange() {
+	public final int getMoveRange() {
 		return moveRange;
 	}
 
@@ -202,4 +207,7 @@ public class Pokemon implements Comparable<Pokemon> {
 		this.y = y;
 	}
 	
+	public String getName(){
+		return Pokedex.getPokemonName(id);
+	}
 }
