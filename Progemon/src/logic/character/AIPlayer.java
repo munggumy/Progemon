@@ -23,7 +23,7 @@ public class AIPlayer extends Player {
 		int y = pokemon.getY();
 
 		// move
-		pokemon.findBlocksAround(pokemon.getMoveRange(), new MoveFilter());
+		pokemon.find(pokemon.getMoveRange(), new MoveFilter());
 		PathNode nextPath = RandomUtility.randomElement(pokemon.getPaths());
 		pokemon.move(nextPath.getThisNode().getX(), nextPath.getThisNode().getY());
 		System.out.println("Pokemon " + pokemon.getName() + " moved from (" + x + ", " + y + ") to (" + pokemon.getX()

@@ -3,22 +3,17 @@ package graphic;
 import java.awt.Dimension;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 public class Frame {
 	
 	private static JFrame frame;
-	private JPanel panel;
-	private static GraphicComponent graphicComponent;
+	private static ScreenComponent graphicComponent;
 	
 	public Frame() {
 		// TODO Auto-generated constructor stub
 		frame = new JFrame("Progemon");
-		panel = new JPanel();
-		graphicComponent = new GraphicComponent();
-		graphicComponent.setPreferredSize(new Dimension(800, 600));
-		panel.add(graphicComponent);
-		frame.setContentPane(panel);
+		graphicComponent = new ScreenComponent();
+		frame.getContentPane().add(graphicComponent);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		frame.pack();
@@ -28,7 +23,7 @@ public class Frame {
 		return frame;
 	}
 	
-	public static GraphicComponent getGraphicComponent() {
+	public static ScreenComponent getGraphicComponent() {
 		return graphicComponent;
 	}
 

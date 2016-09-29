@@ -3,6 +3,8 @@ package logic.character;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+import graphic.DrawingUtility;
+import graphic.IRenderable;
 import logic.filters.Filter;
 import logic.terrain.FightMap;
 import logic.terrain.FightTerrain;
@@ -11,7 +13,7 @@ import utility.Pokedex;
 import utility.RandomUtility;
 import utility.StringUtility;
 
-public class Pokemon implements Comparable<Pokemon>, Cloneable {
+public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 
 	private double attackStat, defenceStat, speed, currentHP, nextTurnTime, fullHP;
 	private int x, y, moveRange, attackRange, id;
@@ -20,13 +22,29 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 	private ElementType primaryElement, secondaryElement;
 	private ArrayList<ActiveSkill> activeSkills = new ArrayList<ActiveSkill>();
 	private ArrayList<PassiveSkill> passiveSkills = new ArrayList<PassiveSkill>();
+
 	/** Used in findBlocksAround() */
 	private FightMap currentFightMap = null;
 	private FightTerrain currentFightTerrain = null;
 	private int level = 1;
 
-	public enum MoveType {
+	public static enum MoveType{
 		FLY, SWIM, WALK;
+
+		public boolean check(FightTerrain ft) {
+			switch (ft.getType()) {
+			case WATER:
+				return this.equals(SWIM) || this.equals(FLY);
+			case ROCK:
+			case TREE:
+				return this.equals(FLY);
+			case GRASS:
+			case GROUND:
+			default:
+				return true;
+			}
+		}
+
 	}
 
 	public static enum ElementType {
@@ -60,19 +78,19 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 			return o1.id - o2.id;
 		}
 	}
-
+	
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		return (Pokemon) super.clone();
+		return (Pokemon)super.clone();
 	}
 
 	// Constructor
 
 	public Pokemon(int id, double attackStat, double defenceStat, double speed, double hp, int moveRange,
-			int attackRange, MoveType moveType, Player owner) {
+			int attackRange, MoveType moveType, Player owner){
 		this(id, attackStat, defenceStat, speed, hp, moveRange, attackRange, moveType);
 		this.owner = owner;
-
+		
 	}
 
 	public Pokemon(int id, double attackStat, double defenceStat, double speed, double hp, int moveRange,
@@ -81,7 +99,6 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 		this.id = id;
 		this.attackStat = attackStat;
 		this.defenceStat = defenceStat;
-		this.attackRange = attackRange;
 		this.moveRange = moveRange;
 		this.speed = speed;
 		this.currentHP = hp;
@@ -90,7 +107,6 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 		calculateNextTurnTime();
 	}
 
-	/** Used in loadPokemon() */
 	public Pokemon(String[] args) {
 		this.id = Integer.parseInt(args[0]);
 		this.attackStat = Double.parseDouble(args[1]);
@@ -154,7 +170,7 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 	 */
 	public void findBlocksAround(int range, Filter filter) {
 		this.paths.clear();
-		findBlocksAroundRecursive(range, new PathNode(this.getCurrentFightTerrain()),
+		findBlocksAroundRecursive(range, new PathNode(this.getCurrent()),
 				currentFightMap.getFightTerrainAt(x, y), currentFightMap, filter);
 	}
 
@@ -267,6 +283,18 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 		}
 		return null;
 	}
+	
+	@Override
+	public void draw() {
+		// TODO Auto-generated method stub
+		DrawingUtility.drawPokemon(this);
+	}
+	
+	@Override
+	public void getDepth() {
+		// TODO Auto-generated method stub
+		
+	}
 
 	// Getters and Setters
 
@@ -322,10 +350,6 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 		return moveType;
 	}
 
-	public final FightTerrain getCurrentFightTerrain() {
-		return currentFightTerrain;
-	}
-
 	public final ArrayList<ActiveSkill> getActiveSkills() {
 		return activeSkills;
 	}
@@ -337,10 +361,11 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 	public String getName() {
 		return Pokedex.getPokemonName(id);
 	}
-
-	public void setOwner(Player owner) {
+	
+	public void setOwner(Player owner){
 		this.owner = owner;
 	}
+
 
 	public final double getAttackStat() {
 		return attackStat;
@@ -380,6 +405,7 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 
 	public void setAttackRange(int attackRange) {
 		this.attackRange = attackRange;
+
 	}
 
 	public final int getLevel() {

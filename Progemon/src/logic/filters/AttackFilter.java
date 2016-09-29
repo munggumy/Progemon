@@ -1,3 +1,4 @@
+
 package logic.filters;
 
 import logic.character.Pokemon;
@@ -26,3 +27,4 @@ public class AttackFilter extends Filter {
 	
 
 }
+
