@@ -1,0 +1,58 @@
+package main;
+
+import java.io.IOException;
+
+import graphic.DrawingUtility;
+import graphic.Frame;
+import logic.character.Pokemon;
+import logic.terrain.FightMap;
+import utility.FileUtility;
+import utility.Pokedex;
+import utility.RandomUtility;
+
+import java.lang.Thread;
+
+public class Main {
+	
+	public static void main(String[] args) {
+		
+		new Frame();
+		
+		int tick = 0;
+		
+		FightMap fightMap = null;
+		try {
+			fightMap = new FightMap(FileUtility.loadFightMap());
+			FileUtility.loadPokedex();
+			FileUtility.loadPokemons();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Pokemon a = Pokedex.getPokemon("Charlizard");
+		Pokemon b = Pokedex.getPokemon("Ivysaur");
+		
+		DrawingUtility.addObject(fightMap);
+		DrawingUtility.addObject(a);
+		DrawingUtility.addObject(b);
+		
+		while(true){
+			tick++;
+			/*try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}*/
+			if(tick == 1000){
+				tick = 0;
+				a.move(RandomUtility.randomInt(7), RandomUtility.randomInt(5));
+				b.move(RandomUtility.randomInt(7), RandomUtility.randomInt(5));
+			}
+			Frame.getGraphicComponent().update(Frame.getGraphicComponent().getGraphics());
+			//Frame.getFrame().getContentPane().repaint();
+		}
+	}
+
+}

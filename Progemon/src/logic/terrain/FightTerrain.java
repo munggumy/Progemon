@@ -36,7 +36,7 @@ public class FightTerrain implements IRenderable {
 		}
 		
 		public String getImageName(){
-			return "load\\img\\" + this.toString() + ".png";
+			return "load\\img\\terrain\\" + this.toString() + ".png";
 		}
 	}
 	
