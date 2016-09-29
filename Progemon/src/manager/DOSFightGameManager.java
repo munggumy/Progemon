@@ -9,7 +9,7 @@ import logic.terrain.FightMap;
 import utility.FileUtility;
 import utility.RandomUtility;
 
-public class FightGameManager {
+public class DOSFightGameManager {
 	// null
 
 	private static ArrayList<Player> players;
@@ -18,9 +18,9 @@ public class FightGameManager {
 	private static Pokemon currentPokemon = null;
 	private static Player winnerPlayer = null;
 
-	public FightGameManager(ArrayList<Player> players) {
-		FightGameManager.players = new ArrayList<Player>(players);
-		FightGameManager.currentPlayers = new ArrayList<Player>(players);
+	public DOSFightGameManager(ArrayList<Player> players) {
+		DOSFightGameManager.players = new ArrayList<Player>(players);
+		DOSFightGameManager.currentPlayers = new ArrayList<Player>(players);
 
 		startFight();
 		runFight();

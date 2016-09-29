@@ -15,6 +15,7 @@ import utility.StringUtility;
 
 public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 
+	private static final String DEFAULT_IMAGE_FILE_LOCATION = "load\\img\\pokemon";
 	private double attackStat, defenceStat, speed, currentHP, nextTurnTime, fullHP;
 	private int x, y, moveRange, attackRange, id;
 	private Player owner;
@@ -22,6 +23,7 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 	private ElementType primaryElement, secondaryElement;
 	private ArrayList<ActiveSkill> activeSkills = new ArrayList<ActiveSkill>();
 	private ArrayList<PassiveSkill> passiveSkills = new ArrayList<PassiveSkill>();
+	private String imageFileName;
 
 	/** Used in findBlocksAround() */
 	private FightMap currentFightMap = null;
@@ -105,6 +107,7 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 		this.moveType = moveType;
 		nextTurnTime = 0;
 		calculateNextTurnTime();
+		setImageFileLocation();
 	}
 
 	public Pokemon(String[] args) {
@@ -119,6 +122,7 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 		this.moveType = toMoveType(args[7]);
 		nextTurnTime = 0;
 		calculateNextTurnTime();
+		setImageFileLocation();
 	}
 
 	// move and attack
@@ -170,7 +174,7 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 	 */
 	public void findBlocksAround(int range, Filter filter) {
 		this.paths.clear();
-		findBlocksAroundRecursive(range, new PathNode(this.getCurrent()),
+		findBlocksAroundRecursive(range, new PathNode(this.getCurrentFightTerrain()),
 				currentFightMap.getFightTerrainAt(x, y), currentFightMap, filter);
 	}
 
@@ -341,7 +345,7 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 	public final int getID() {
 		return id;
 	}
-
+	
 	public final Player getOwner() {
 		return owner;
 	}
@@ -420,4 +424,19 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 		return fullHP;
 	}
 
+	public final FightTerrain getCurrentFightTerrain() {
+		return currentFightTerrain;
+	}
+
+	public void setImageFileLocation(String imageFileName){
+		this.imageFileName = imageFileName;
+	}
+	
+	public void setImageFileLocation(){
+		setImageFileLocation(DEFAULT_IMAGE_FILE_LOCATION + "\\" + this.getName() + ".png");
+	}
+	
+	public String getImageName(){
+		return imageFileName;
+	}
 }

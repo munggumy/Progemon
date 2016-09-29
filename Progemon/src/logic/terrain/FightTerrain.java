@@ -34,15 +34,9 @@ public class FightTerrain implements IRenderable {
 		public int getMoveCost() {
 			return this.moveCost;
 		}
-<<<<<<< HEAD
-
-		public String getImageName() {
-			return "load\\img\\" + this.toString() + ".png";
-=======
 		
 		public String getImageName(){
 			return "load\\img\\terrain\\" + this.toString() + ".png";
->>>>>>> branch 'master' of https://github.com/kkalavantavanich/Progemon.git
 		}
 	}
 

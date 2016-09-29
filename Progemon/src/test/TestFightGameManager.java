@@ -10,7 +10,7 @@ import logic.character.ActiveSkill;
 import logic.character.Player;
 import logic.character.Pokemon;
 import logic.terrain.FightMap;
-import manager.FightGameManager;
+import manager.DOSFightGameManager;
 import utility.FileUtility;
 import utility.Pokedex;
 
@@ -51,7 +51,7 @@ public class TestFightGameManager {
 	@Test
 	public void testConstructor() {
 		@SuppressWarnings("unused")
-		FightGameManager gm = new FightGameManager(players);
+		DOSFightGameManager gm = new DOSFightGameManager(players);
 //		assertEquals(p1, FightGameManager.getPlayers().get(0));
 //		assertEquals(p2, FightGameManager.getPlayers().get(1));
 //		assertTrue(FightGameManager.getWinner() == null);
