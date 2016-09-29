@@ -93,7 +93,7 @@ public class TestFileUtitlity {
 	@Test
 	public void testLoadPokemonList() {
 		try {
-			fileUtility.loadPokemon();
+			fileUtility.loadPokemons();
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail("Can't Load Pokemon");

@@ -1,4 +1,4 @@
-ackage utility;
+package utility;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -61,7 +61,7 @@ public class fileUtility {
 		}
 	}
 
-	public static void loadPokemon() throws IOException {
+	public static void loadPokemons() throws IOException {
 		loadPokemon(DEFAULT_LOAD_POKEMON);
 	}
 
