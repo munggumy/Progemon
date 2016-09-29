@@ -6,9 +6,8 @@ import java.util.ArrayList;
 import logic.character.Player;
 import logic.character.Pokemon;
 import logic.terrain.FightMap;
-import logic.terrain.FightTerrain;
-import utility.RandomUtility;
 import utility.FileUtility;
+import utility.RandomUtility;
 
 public class FightGameManager {
 	// null
@@ -17,7 +16,7 @@ public class FightGameManager {
 	private static ArrayList<Player> currentPlayers;
 	private static FightMap field = null;
 	private static Pokemon currentPokemon = null;
-	private static Player winner = null;
+	private static Player winnerPlayer = null;
 	
 	public FightGameManager(ArrayList<Player> players){
 		FightGameManager.players = players;
@@ -88,13 +87,13 @@ public class FightGameManager {
 		}
 		
 		if(currentPlayers.size() == 1){
-			winner = currentPlayers.get(0);
+			winnerPlayer = currentPlayers.get(0);
 		}
 		if (currentPlayers.size() == 0){
 			//Draws
-			winner = null;
+			winnerPlayer = null;
 		}
-		return winner != null;
+		return winnerPlayer != null;
 		
 	}
 
@@ -115,7 +114,7 @@ public class FightGameManager {
 	}
 
 	public static final Player getWinner() {
-		return winner;
+		return winnerPlayer;
 	}
 
 }

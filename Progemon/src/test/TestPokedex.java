@@ -15,10 +15,11 @@ import utility.Pokedex;
 public class TestPokedex {
 
 	private HashMap<Integer, String> pokedex;
-	private Pokemon pikachu = new Pokemon(23, 1.01, 1.01, 3, 8.9, 15.6, MoveType.WALK);
-	private Pokemon pikachu2 = new Pokemon(23, 1.10, 1.07, 3, 8.87, 14.9, MoveType.WALK);
-	private Pokemon weedle = new Pokemon(7, 0.79, 0.91, 4, 10.9, 8.6, MoveType.WALK);
-	private Pokemon pidgeot = new Pokemon(14, 1.59, 1.30, 5, 16.0, 19.1, MoveType.FLY);
+	//Usage name/ID attack defense speed hp moveRange attackRange moveType
+	private Pokemon pikachu = new Pokemon(23, 1.01, 1.01, 3, 8.9, 3,3, MoveType.WALK);
+	private Pokemon pikachu2 = new Pokemon(23, 1.10, 1.07, 3, 8.87, 2,4, MoveType.WALK);
+	private Pokemon weedle = new Pokemon(7, 0.79, 0.91, 4, 10.9, 3,6, MoveType.WALK);
+	private Pokemon pidgeot = new Pokemon(14, 1.59, 1.30, 5, 16.0, 1,4, MoveType.FLY);
 
 	@Before
 	public void setUp() throws Exception {
