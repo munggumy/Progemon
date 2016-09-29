@@ -1,7 +1,9 @@
 package logic.character;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import utility.StringUtility;
 
@@ -34,8 +36,8 @@ public class ActiveSkill {
 	}
 
 	// Array Getter
-	public static ArrayList<ActiveSkill> getAllActiveSkills() {
-		return allActiveSkills;
+	public static List<ActiveSkill> getAllActiveSkills() {
+		return Collections.unmodifiableList(allActiveSkills);
 	}
 
 	// getters and setters

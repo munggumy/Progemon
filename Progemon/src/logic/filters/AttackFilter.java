@@ -1,3 +1,4 @@
+
 package logic.filters;
 
 import logic.character.Pokemon;
@@ -17,5 +18,13 @@ public class AttackFilter extends Filter {
 		// TODO Auto-generated method stub
 		return true;
 	}
+	
+	@Override
+	public boolean check(Pokemon pokemon, FightMap fightMap, FightTerrain fightTerrain) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+	
 
 }
+

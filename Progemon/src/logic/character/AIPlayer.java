@@ -3,11 +3,11 @@ package logic.character;
 import logic.filters.AttackFilter;
 import logic.filters.MoveFilter;
 import logic.terrain.FightMap;
-import logic.terrain.FightTerrain;
+import logic.terrain.PathNode;
 import utility.RandomUtility;
 import utility.Savable;
 
-public class AIPlayer extends Player implements Savable {
+public class AIPlayer extends Player {
 
 	public AIPlayer(String name, Pokemon starter_pokemon) {
 		super(name, starter_pokemon);
@@ -24,23 +24,22 @@ public class AIPlayer extends Player implements Savable {
 
 		// move
 		pokemon.findBlocksAround(pokemon.getMoveRange(), new MoveFilter());
-		FightTerrain nextBlock = RandomUtility.randomElement(pokemon.getBlocks());
-		pokemon.move(nextBlock.getX(), nextBlock.getY());
+		PathNode nextPath = RandomUtility.randomElement(pokemon.getPaths());
+		pokemon.move(nextPath.getThisNode().getX(), nextPath.getThisNode().getY());
 		System.out.println("Pokemon " + pokemon.getName() + " moved from (" + x + ", " + y + ") to (" + pokemon.getX()
 				+ ", " + pokemon.getY() + ").");
 
 		// attack
 		pokemon.findBlocksAround(pokemon.getAttackRange(), new AttackFilter());
 		for (Pokemon other : fightMap.getPokemonsOnMap()) {
-			
-			if (!other.getOwner().equals(this) && pokemon.getBlocks().contains(other.getCurrentFightTerrain())) {
+
+			if (other.getOwner() != this
+					&& pokemon.getAvaliableFightTerrains().contains(other.getCurrentFightTerrain())) {
 				// If other is enemy and in attack range.
 				// pokemon.attack(other, selectedSkill);
-				pokemon.attack(other, 1);
-				
+				pokemon.attack(other, RandomUtility.randomInt(pokemon.getActiveSkills().size() - 1));
+				break;
 			}
-			
-		}
+		} // end of attack
 	}
-
 }

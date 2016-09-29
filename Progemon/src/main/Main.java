@@ -32,12 +32,15 @@ public class Main {
 		
 		Pokemon a = Pokedex.getPokemon("Charlizard");
 		Pokemon b = Pokedex.getPokemon("Ivysaur");
+		a.setCurrentFightMap(fightMap);
+		b.setCurrentFightMap(fightMap);
+		a.move(8, 8);
+		b.move(7, 7);
 		
 		ScreenComponent.addObject(fightMap);
 		ScreenComponent.addObject(a);
 		ScreenComponent.addObject(b);
-		a.move(8, 8);
-		b.move(7, 7);
+		
 		
 		Frame.getGraphicComponent().repaint();
 		

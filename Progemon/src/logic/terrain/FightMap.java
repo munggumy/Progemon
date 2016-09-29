@@ -77,7 +77,7 @@ public class FightMap implements IRenderable {
 	public void draw() {
 		DrawingUtility.drawFightMap(this);
 	}
-	
+
 	@Override
 	public void getDepth() {
 		// TODO Auto-generated method stub
@@ -97,13 +97,12 @@ public class FightMap implements IRenderable {
 
 	/** Use this to add Pokemon to map. */
 	public boolean addPokemonToMap(int x, int y, Pokemon pokemon) {
-		Filter canBePlacedFitler = new MoveFilter();
-		if (!outOfMap(x, y) && pokemon != null && canBePlacedFitler.check(pokemon, map[y][x])
+		Filter canBePlacedFilter = new MoveFilter();
+		if (!outOfMap(x, y) && pokemon != null && canBePlacedFilter.check(pokemon, this, map[y][x])
 				&& this.getPokemonAt(x, y) == null) {
 			// Can be Added!
-			pokemon.setX(x);
-			pokemon.setY(y);
 			pokemon.setCurrentFightMap(this);
+			pokemon.move(x, y);
 			pokemonsOnMap.add(pokemon);
 			return true;
 		} else {
@@ -114,8 +113,7 @@ public class FightMap implements IRenderable {
 	/** Use this to remove Pokemon from map */
 	public boolean removePokemonFromMap(Pokemon pokemon) {
 		if (pokemonsOnMap.contains(pokemon)) {
-			pokemon.setX(new Integer(null));
-			pokemon.setY(new Integer(null));
+			pokemon.move(-1, -1);
 			pokemon.setCurrentFightMap(null);
 			pokemonsOnMap.remove(pokemon);
 			return true;
