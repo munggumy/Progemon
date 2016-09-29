@@ -3,11 +3,13 @@ package logic.terrain;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import graphic.DrawingUtility;
 import graphic.IRenderable;
 import logic.character.Pokemon;
-import utility.RandomUtility;
+import logic.filters.Filter;
+import logic.filters.MoveFilter;
 
 public class FightMap implements IRenderable {
 
@@ -55,49 +57,6 @@ public class FightMap implements IRenderable {
 		return map[y][x];
 	}
 
-	public ArrayList<FightTerrain> findMovableBlockAround(int range, FightTerrain ft, ArrayList<FightTerrain> fts,
-			Pokemon pokemon) {
-		if (range >= 0 && pokemon.getMoveType().check(ft)) {
-			int x = ft.getX();
-			int y = ft.getY();
-			fts.add(map[y][x]);
-			if (x < this.sizeX - 1) {
-				findMovableBlockAround(range - 1, map[y][x + 1], fts, pokemon);
-			}
-			if (x > 0) {
-				findMovableBlockAround(range - 1, map[y][x - 1], fts, pokemon);
-			}
-			if (y < this.sizeY - 1) {
-				findMovableBlockAround(range - 1, map[y + 1][x], fts, pokemon);
-			}
-			if (y < 0) {
-				findMovableBlockAround(range - 1, map[y - 1][x], fts, pokemon);
-			}
-		}
-		return fts;
-	}
-
-	public ArrayList<FightTerrain> findAttackableBlockAround(int range, FightTerrain ft, ArrayList<FightTerrain> fts) {
-		if (range >= 0) {
-			int x = ft.getX();
-			int y = ft.getY();
-			fts.add(map[y][x]);
-			if (x < this.sizeX - 1) {
-				findAttackableBlockAround(range - 1, map[y][x + 1], fts);
-			}
-			if (x > 0) {
-				findAttackableBlockAround(range - 1, map[y][x - 1], fts);
-			}
-			if (y < this.sizeY - 1) {
-				findAttackableBlockAround(range - 1, map[y + 1][x], fts);
-			}
-			if (y < 0) {
-				findAttackableBlockAround(range - 1, map[y - 1][x], fts);
-			}
-		}
-		return fts;
-	}
-
 	public Pokemon getPokemonAt(int x, int y) {
 		for (Pokemon pokemon : pokemonsOnMap) {
 			if (pokemon.getX() == x && pokemon.getY() == y) {
@@ -122,7 +81,6 @@ public class FightMap implements IRenderable {
 	@Override
 	public void getDepth() {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public final int getSizeX() {
@@ -133,17 +91,33 @@ public class FightMap implements IRenderable {
 		return sizeY;
 	}
 
-	public final ArrayList<Pokemon> getPokemonsOnMap() {
-		return pokemonsOnMap;
+	public final List<Pokemon> getPokemonsOnMap() {
+		return Collections.unmodifiableList(pokemonsOnMap);
 	}
 
+	/** Use this to add Pokemon to map. */
 	public boolean addPokemonToMap(int x, int y, Pokemon pokemon) {
-		if (!outOfMap(x, y) && pokemon != null && pokemon.getMoveType().check(map[y][x])
+		Filter canBePlacedFitler = new MoveFilter();
+		if (!outOfMap(x, y) && pokemon != null && canBePlacedFitler.check(pokemon, map[y][x])
 				&& this.getPokemonAt(x, y) == null) {
 			// Can be Added!
 			pokemon.setX(x);
 			pokemon.setY(y);
+			pokemon.setCurrentFightMap(this);
 			pokemonsOnMap.add(pokemon);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/** Use this to remove Pokemon from map */
+	public boolean removePokemonFromMap(Pokemon pokemon) {
+		if (pokemonsOnMap.contains(pokemon)) {
+			pokemon.setX(new Integer(null));
+			pokemon.setY(new Integer(null));
+			pokemon.setCurrentFightMap(null);
+			pokemonsOnMap.remove(pokemon);
 			return true;
 		} else {
 			return false;

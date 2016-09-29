@@ -101,11 +101,11 @@ public class TestFileUtitlity {
 
 		assertEquals("all Pokemons = 9", 9, Pokedex.getAllPokemons().size());
 
-		String[] args = "001 1.01 0.95 3 10 15 WALK".split(" ");
+		String[] args = "001 1.01 0.95 10 15 3 1 WALK".split(" ");
 		Pokemon testFirstPokemon = new Pokemon(args);
 		Pokemon firstPokemon = Pokedex.getAllPokemons().get(0);
-		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getAttack(), firstPokemon.getAttack()) == 0);
-		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getDefend(), firstPokemon.getDefend()) == 0);
+		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getAttackStat(), firstPokemon.getAttackStat()) == 0);
+		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getDefenceStat(), firstPokemon.getDefenceStat()) == 0);
 		assertTrue("First Pokemon Stats",
 				Double.compare(testFirstPokemon.getMoveRange(), firstPokemon.getMoveRange()) == 0);
 		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getSpeed(), firstPokemon.getSpeed()) == 0);

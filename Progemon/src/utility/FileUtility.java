@@ -26,7 +26,7 @@ public class FileUtility {
 	private static Scanner scanner;
 
 	/**
-	 * Usage name attack defense moveRange speed hp moveType
+	 * Usage name/ID attack defense speed hp moveRange attackRange moveType
 	 * 
 	 * @throws IOException
 	 */
@@ -35,22 +35,22 @@ public class FileUtility {
 			reader = new FileReader(filePath);
 			scanner = new Scanner(reader);
 			Pattern pattern = Pattern.compile(
-					"(\\d+|\\w+)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\w+)");
+					"(\\d+|\\w+)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d+)\\s(\\d+)\\s(\\w+)");
 			Matcher matcher = null;
 			while (scanner.hasNextLine()) {
 				matcher = pattern.matcher(scanner.nextLine());
 				if (matcher.find()) {
 					String[] args = { matcher.group(1), matcher.group(2), matcher.group(4), matcher.group(6),
-							matcher.group(7), matcher.group(9), matcher.group(11) };
+							matcher.group(8), matcher.group(10), matcher.group(11), matcher.group(12) };
 					if (matcher.group(1).matches("\\d+")) {
 						loadPokemonByID(args);
 					} else if (matcher.group(1).matches("\\w+")) {
 						loadPokemonByName(args);
 					} else {
-						System.err.println("FilUtility.loadPokemon() : Unknown Format");
+						System.err.println("FileUtility.loadPokemon() : Unknown Format");
 					}
 				} else {
-					System.err.println("FileUtility.loadPokemon() : Needs 7 Parameters per pokemon!");
+					System.err.println("FileUtility.loadPokemon() : Needs 8 Parameters per pokemon!");
 				}
 				// args = line.split(" ");
 				// if (args.length != 7) {

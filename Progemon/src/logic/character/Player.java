@@ -44,6 +44,10 @@ public abstract class Player {
 	public final ArrayList<Pokemon> getPokemons() {
 		return pokemons;
 	}
+	
+	public void addPokemon(Pokemon pokemon){
+		pokemons.add(pokemon);
+	}
 
 	public abstract void runTurn(Pokemon pokemon, FightMap fightMap);
 
