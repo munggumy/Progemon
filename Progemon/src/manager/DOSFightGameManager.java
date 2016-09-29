@@ -21,6 +21,11 @@ public class DOSFightGameManager {
 	public DOSFightGameManager(ArrayList<Player> players) {
 		DOSFightGameManager.players = new ArrayList<Player>(players);
 		DOSFightGameManager.currentPlayers = new ArrayList<Player>(players);
+		try {
+			field = new FightMap(FileUtility.loadFightMap());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		startFight();
 		runFight();
@@ -30,11 +35,7 @@ public class DOSFightGameManager {
 	/** This method is called before fight starts. */
 	public static void startFight(/** map name */
 	) {
-		try {
-			field = new FightMap(FileUtility.loadFightMap());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		
 		spawnPokemons();
 		field.sortPokemons();
 		System.out.println(" ======= Game Initialized without errors ======= ");

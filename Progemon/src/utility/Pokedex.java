@@ -45,7 +45,7 @@ public class Pokedex {
 	public static final void addPokemonToList(Pokemon pokemon) {
 		for (Pokemon p : allPokemons) {
 			if (p.getID() == pokemon.getID()){
-				System.err.println("Duplicate Pokemon");
+				System.err.println("Pokedex : Duplicate Pokemon");
 				return;
 			}
 		}
