@@ -46,7 +46,14 @@ public abstract class Player {
 	}
 	
 	public void addPokemon(Pokemon pokemon){
-		pokemons.add(pokemon);
+		Pokemon temp = null;
+		try {
+			temp = (Pokemon) pokemon.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		temp.setOwner(this);
+		pokemons.add(temp);
 	}
 
 	public abstract void runTurn(Pokemon pokemon, FightMap fightMap);
