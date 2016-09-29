@@ -1,6 +1,8 @@
 package utility;
 
 public class StringUtility {
+	
+	private static final int DEFAULT_HP_BAR_LENGTH = 24;
 
 	public static String toTitleCase(String inputString) {
 		StringBuilder sb = new StringBuilder("");
@@ -17,5 +19,23 @@ public class StringUtility {
 			out = sb.toString();
 		}
 		return out;
+	}
+	
+	public static String hpBar(double percent, int length){
+		StringBuilder out = new StringBuilder("[");
+		int shaded = (int) (percent * ((double) length));
+		for(short i = 0; i < shaded; i++){
+			out.append("=");
+		}
+		int unshaded = length - shaded;
+		for(short i = 0; i < unshaded; i++){
+			out.append(" ");
+		}
+		out.append("]");
+		return out.toString();
+	}
+	
+	public static String hpBar(double percent){
+		return hpBar(percent, DEFAULT_HP_BAR_LENGTH);
 	}
 }
