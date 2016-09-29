@@ -6,11 +6,14 @@ import java.util.Comparator;
 import logic.filters.Filter;
 import logic.terrain.FightMap;
 import logic.terrain.FightTerrain;
+import logic.terrain.PathNode;
 import utility.Pokedex;
+import utility.RandomUtility;
+import utility.StringUtility;
 
 public class Pokemon implements Comparable<Pokemon>, Cloneable {
 
-	private double attackStat, defenceStat, speed, hp, nextTurnTime;
+	private double attackStat, defenceStat, speed, currentHP, nextTurnTime, fullHP;
 	private int x, y, moveRange, attackRange, id;
 	private Player owner;
 	private MoveType moveType;
@@ -18,9 +21,9 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 	private ArrayList<ActiveSkill> activeSkills = new ArrayList<ActiveSkill>();
 	private ArrayList<PassiveSkill> passiveSkills = new ArrayList<PassiveSkill>();
 	/** Used in findBlocksAround() */
-	private ArrayList<FightTerrain> blocks = new ArrayList<FightTerrain>();
 	private FightMap currentFightMap = null;
 	private FightTerrain currentFightTerrain = null;
+	private int level = 1;
 
 	public enum MoveType {
 		FLY, SWIM, WALK;
@@ -74,13 +77,14 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 
 	public Pokemon(int id, double attackStat, double defenceStat, double speed, double hp, int moveRange,
 			int attackRange, MoveType moveType) {
+		fullHP = hp;
 		this.id = id;
 		this.attackStat = attackStat;
 		this.defenceStat = defenceStat;
 		this.attackRange = attackRange;
 		this.moveRange = moveRange;
 		this.speed = speed;
-		this.hp = hp;
+		this.currentHP = hp;
 		this.moveType = moveType;
 		nextTurnTime = 0;
 		calculateNextTurnTime();
@@ -92,7 +96,8 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 		this.attackStat = Double.parseDouble(args[1]);
 		this.defenceStat = Double.parseDouble(args[2]);
 		this.speed = Double.parseDouble(args[3]);
-		this.hp = Double.parseDouble(args[4]);
+		this.currentHP = Double.parseDouble(args[4]);
+		fullHP = currentHP;
 		this.moveRange = Integer.parseInt(args[5]);
 		this.attackRange = Integer.parseInt(args[6]);
 		this.moveType = toMoveType(args[7]);
@@ -100,10 +105,17 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 		calculateNextTurnTime();
 	}
 
+	// move and attack
 	public void move(int x, int y) {
-		this.x = x;
-		this.y = y;
-		this.currentFightTerrain = currentFightMap.getFightTerrainAt(x, y);
+		if (!currentFightMap.outOfMap(x, y)) {
+			this.x = x;
+			this.y = y;
+			this.currentFightTerrain = currentFightMap.getFightTerrainAt(x, y);
+		} else{
+			this.x = -1;
+			this.y = -1;
+			this.currentFightTerrain = null;
+		}
 	}
 
 	public void move(FightTerrain fightTerrain) {
@@ -113,9 +125,15 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 	}
 
 	public void attack(Pokemon p, int selectedSkill) {
-		p.setHp(p.getHp() - activeSkills.get(selectedSkill).getPower() * attackStat);
+		double damage = ((((0.4 * level + 2) * activeSkills.get(selectedSkill).getPower() * attackStat / defenceStat)
+				* 0.2) + 2) * RandomUtility.randomPercent(85, 100);
+		p.changeHP(-damage);
+		// p.setHp(p.getHp() - activeSkills.get(selectedSkill).getPower() *
+		// attackStat );
 		System.out.println(this.getName() + " attacked " + p.getName() + " with "
-				+ activeSkills.get(selectedSkill).getName() + " !");
+				+ activeSkills.get(selectedSkill).getName() + "!");
+		System.out.printf("%s's HP = %.2f  " + StringUtility.hpBar(p.getCurrentHP() / p.getFullHP()) + "\n",
+				p.getName(), p.getCurrentHP());
 	}
 
 	/** Compares nextTurnTime. Used for sort in turn */
@@ -135,33 +153,55 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 	 * method.
 	 */
 	public void findBlocksAround(int range, Filter filter) {
-		this.blocks.clear();
-		findBlocksAroundRecursive(range, currentFightMap.getFightTerrainAt(x, y), currentFightMap, filter);
+		this.paths.clear();
+		findBlocksAroundRecursive(range, new PathNode(this.getCurrentFightTerrain()),
+				currentFightMap.getFightTerrainAt(x, y), currentFightMap, filter);
 	}
 
+	private ArrayList<PathNode> paths = new ArrayList<PathNode>();
+
 	/** Called by findBlocksAround() method. */
-	private void findBlocksAroundRecursive(int range, FightTerrain fightTerrain, FightMap map, Filter filter) {
+	private void findBlocksAroundRecursive(int range, PathNode pathNode, FightTerrain fightTerrain, FightMap map,
+			Filter filter) {
 		if (filter.check(this, fightTerrain)) {
-			this.blocks.add(fightTerrain);
+			paths.add(pathNode); // adds current pathNode
 			if (range > 0) {
 				// If range > 0, find blocks around it.
 				int x = fightTerrain.getX();
 				int y = fightTerrain.getY();
+				FightTerrain nextFightTerrain;
 				if (x < map.getSizeX() - 1) {
-					findBlocksAroundRecursive(range - 1, map.getMap()[y][x + 1], map, filter);
+					nextFightTerrain = map.getMap()[y][x + 1];
+					findBlocksAroundRecursive(range - 1, new PathNode(nextFightTerrain, pathNode), nextFightTerrain,
+							map, filter);
 				}
 				if (x > 0) {
-					findBlocksAroundRecursive(range - 1, map.getMap()[y][x - 1], map, filter);
+					nextFightTerrain = map.getMap()[y][x - 1];
+					findBlocksAroundRecursive(range - 1, new PathNode(nextFightTerrain, pathNode), nextFightTerrain,
+							map, filter);
 				}
 				if (y < map.getSizeY() - 1) {
-					findBlocksAroundRecursive(range - 1, map.getMap()[y + 1][x], map, filter);
+					nextFightTerrain = map.getMap()[y + 1][x];
+					findBlocksAroundRecursive(range - 1, new PathNode(nextFightTerrain, pathNode), nextFightTerrain,
+							map, filter);
 				}
-				if (y < 0) {
-					findBlocksAroundRecursive(range - 1, map.getMap()[y - 1][x], map, filter);
+				if (y > 0) {
+					nextFightTerrain = map.getMap()[y - 1][x];
+					findBlocksAroundRecursive(range - 1, new PathNode(nextFightTerrain, pathNode), nextFightTerrain,
+							map, filter);
 				}
 			}
+
 		}
 
+	}
+
+	public ArrayList<FightTerrain> getAvaliableFightTerrains() {
+		ArrayList<FightTerrain> out = new ArrayList<FightTerrain>();
+		for (PathNode pn : paths) {
+			out.add(pn.getThisNode());
+		}
+		return out;
 	}
 
 	public void addActiveSkill(ActiveSkill newActiveSkill) {
@@ -231,19 +271,23 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 	// Getters and Setters
 
 	public double getHp() {
-		return hp;
+		return currentHP;
 	}
 
 	public void setHp(double hp) {
 		if (Double.compare(hp, 0) < 0) {
-			this.hp = 0;
+			this.currentHP = 0;
 		} else {
-			this.hp = hp;
+			this.currentHP = hp;
 		}
 	}
 
+	public void changeHP(double change) {
+		currentHP = currentHP + change < 0 ? 0 : currentHP + change;
+	}
+
 	public boolean isDead() {
-		return Double.compare(hp, 0) <= 0;
+		return Double.compare(currentHP, 0) <= 0;
 	}
 
 	public final int getMoveRange() {
@@ -290,14 +334,6 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 		return passiveSkills;
 	}
 
-	public final void setX(int x) {
-		this.x = x;
-	}
-
-	public final void setY(int y) {
-		this.y = y;
-	}
-
 	public String getName() {
 		return Pokedex.getPokemonName(id);
 	}
@@ -314,6 +350,10 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 		return defenceStat;
 	}
 
+	public final ArrayList<PathNode> getPaths() {
+		return paths;
+	}
+
 	public final int getId() {
 		return id;
 	}
@@ -324,10 +364,6 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 
 	public final ElementType getSecondaryElement() {
 		return secondaryElement;
-	}
-
-	public final ArrayList<FightTerrain> getBlocks() {
-		return blocks;
 	}
 
 	public final FightMap getCurrentFightMap() {
@@ -345,4 +381,17 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable {
 	public void setAttackRange(int attackRange) {
 		this.attackRange = attackRange;
 	}
+
+	public final int getLevel() {
+		return level;
+	}
+
+	public final double getCurrentHP() {
+		return currentHP;
+	}
+
+	public final double getFullHP() {
+		return fullHP;
+	}
+
 }
