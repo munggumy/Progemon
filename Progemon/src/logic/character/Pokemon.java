@@ -7,16 +7,17 @@ import logic.FightTerrainFilter;
 import logic.terrain.FightTerrain;
 import utility.Pokedex;
 
-public class Pokemon implements Comparable<Pokemon> {
+public class Pokemon implements Comparable<Pokemon>, Cloneable {
 
-	private double attackStat, defenceStat, speed, hp, nextTurnTime, currentTurnTime;
-	private int x, y, moveRange , id;
+	private double attackStat, defenceStat, speed, hp, nextTurnTime;
+	private int x, y, moveRange, id;
 	private Player owner;
 	private MoveType moveType;
 	private ElementType primaryElement, secondaryElement;
 	private ArrayList<ActiveSkill> activeSkills = new ArrayList<ActiveSkill>();
 	private ArrayList<PassiveSkill> passiveSkills = new ArrayList<PassiveSkill>();
 	
+
 	public static enum MoveType implements FightTerrainFilter {
 		FLY, SWIM, WALK;
 
@@ -27,23 +28,24 @@ public class Pokemon implements Comparable<Pokemon> {
 			case ROCK:
 			case TREE:
 				return this.equals(FLY);
-			case GRASS: case GROUND:
+			case GRASS:
+			case GROUND:
 			default:
 				return true;
 			}
 		}
-		
+
 	}
-	
+
 	public static enum ElementType {
 		FIRE, GRASS, WATER, POISON, FLYING, BUG;
 	}
 
-	public static Comparator<Pokemon> getSpeedComparator(){
+	public static Comparator<Pokemon> getSpeedComparator() {
 		return new SpeedComparator();
 	}
-	
-	private static class SpeedComparator implements Comparator<Pokemon>{
+
+	private static class SpeedComparator implements Comparator<Pokemon> {
 		@Override
 		public int compare(Pokemon o1, Pokemon o2) {
 			if (Double.compare(o1.nextTurnTime, o2.nextTurnTime) > 0) {
@@ -55,22 +57,35 @@ public class Pokemon implements Comparable<Pokemon> {
 			}
 		}
 	}
-	
-	public static Comparator<Pokemon> getIDComparator(){
+
+	public static Comparator<Pokemon> getIDComparator() {
 		return new IDComparator();
 	}
-	
-	private static class IDComparator implements Comparator<Pokemon>{
+
+	private static class IDComparator implements Comparator<Pokemon> {
 		@Override
 		public int compare(Pokemon o1, Pokemon o2) {
 			return o1.id - o2.id;
 		}
 	}
 	
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return (Pokemon)super.clone();
+	}
+
 	// Constructor
-	
-	public Pokemon(int id, double attackStat, double defenceStat, int moveRange, double speed, double hp, int x, int y,
+
+	public Pokemon(int id, double attackStat, double defenceStat, int moveRange, double speed, double hp,
+			MoveType moveType, Player owner){
+		this(id, attackStat, defenceStat, moveRange, speed, hp, moveType);
+		this.owner = owner;
+		
+	}
+
+	public Pokemon(int id, double attackStat, double defenceStat, int moveRange, double speed, double hp,
 			MoveType moveType) {
+		this.id = id;
 		this.attackStat = attackStat;
 		this.defenceStat = defenceStat;
 		this.moveRange = moveRange;
@@ -79,11 +94,11 @@ public class Pokemon implements Comparable<Pokemon> {
 		this.x = x;
 		this.y = y;
 		this.moveType = moveType;
-		currentTurnTime = 0;
+		nextTurnTime = 0;
 		calculateNextTurnTime();
 	}
-	
-	public Pokemon(String[] args){
+
+	public Pokemon(String[] args) {
 		this.id = Integer.parseInt(args[0]);
 		this.attackStat = Double.parseDouble(args[1]);
 		this.defenceStat = Double.parseDouble(args[2]);
@@ -91,10 +106,10 @@ public class Pokemon implements Comparable<Pokemon> {
 		this.speed = Double.parseDouble(args[4]);
 		this.hp = Double.parseDouble(args[5]);
 		this.moveType = toMoveType(args[6]);
-		currentTurnTime = 0;
+		nextTurnTime = 0;
 		calculateNextTurnTime();
 	}
-	
+
 	public void move(int x, int y) {
 		this.x = x;
 		this.y = y;
@@ -115,14 +130,14 @@ public class Pokemon implements Comparable<Pokemon> {
 			return 0;
 		}
 	}
-	
-	public void calculateNextTurnTime(){
-		nextTurnTime = 1 / this.speed;
+
+	public void calculateNextTurnTime() {
+		nextTurnTime += (1 / this.speed);
 	}
-	
-	public static MoveType toMoveType(String moveTypeString){
-		for (MoveType mt : MoveType.values()){
-			if(mt.toString().equalsIgnoreCase(moveTypeString)){
+
+	public static MoveType toMoveType(String moveTypeString) {
+		for (MoveType mt : MoveType.values()) {
+			if (mt.toString().equalsIgnoreCase(moveTypeString)) {
 				return mt;
 			}
 		}
@@ -130,7 +145,7 @@ public class Pokemon implements Comparable<Pokemon> {
 	}
 
 	// Getters and Setters
-	
+
 	public double getHp() {
 		return hp;
 	}
@@ -142,8 +157,8 @@ public class Pokemon implements Comparable<Pokemon> {
 			this.hp = hp;
 		}
 	}
-	
-	public boolean isDead(){
+
+	public boolean isDead() {
 		return Double.compare(hp, 0) <= 0;
 	}
 
@@ -195,10 +210,6 @@ public class Pokemon implements Comparable<Pokemon> {
 		return passiveSkills;
 	}
 
-	public final int getId() {
-		return id;
-	}
-
 	public final void setX(int x) {
 		this.x = x;
 	}
@@ -206,8 +217,12 @@ public class Pokemon implements Comparable<Pokemon> {
 	public final void setY(int y) {
 		this.y = y;
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return Pokedex.getPokemonName(id);
+	}
+	
+	public void setOwner(Player owner){
+		this.owner = owner;
 	}
 }

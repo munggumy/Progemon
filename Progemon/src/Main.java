@@ -2,7 +2,7 @@ import graphic.Screen;
 import logic.terrain.FightMap;
 import logic.terrain.FightTerrain;
 import logic.terrain.FightTerrain.TerrainType;
-import utility.fileUtility;
+import utility.FileUtility;
 
 public class Main {
 	

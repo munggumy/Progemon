@@ -15,7 +15,7 @@ import logic.character.ActiveSkill;
 import logic.character.Pokemon;
 import logic.terrain.FightTerrain;
 
-public class fileUtility {
+public class FileUtility {
 
 	private static final String DEFAULT_PATH = "load";
 	private static final String DEFAULT_LOAD_POKEMON = DEFAULT_PATH + "/pokemon_list.txt";
@@ -34,20 +34,34 @@ public class fileUtility {
 		try {
 			reader = new FileReader(filePath);
 			scanner = new Scanner(reader);
-			String line;
-			String[] args;
+			Pattern pattern = Pattern.compile(
+					"(\\d+|\\w+)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\w+)");
+			Matcher matcher = null;
 			while (scanner.hasNextLine()) {
-				line = scanner.nextLine();
-				args = line.split(" ");
-				if (args.length != 7) {
-					System.out.println("Needs 7 parameters per pokemon!");
-					break;
-				}
-				if (args[0].matches("\\d+")) {
-					loadPokemonByID(args);
+				matcher = pattern.matcher(scanner.nextLine());
+				if (matcher.find()) {
+					String[] args = { matcher.group(1), matcher.group(2), matcher.group(4), matcher.group(6),
+							matcher.group(7), matcher.group(9), matcher.group(11) };
+					if (matcher.group(1).matches("\\d+")) {
+						loadPokemonByID(args);
+					} else if (matcher.group(1).matches("\\w+")) {
+						loadPokemonByName(args);
+					} else {
+						System.err.println("FilUtility.loadPokemon() : Unknown Format");
+					}
 				} else {
-					loadPokemonByName(args);
+					System.err.println("FileUtility.loadPokemon() : Needs 7 Parameters per pokemon!");
 				}
+				// args = line.split(" ");
+				// if (args.length != 7) {
+				// System.out.println("Needs 7 parameters per pokemon!");
+				// break;
+				// }
+				// if (args[0].matches("\\d+")) {
+				// loadPokemonByID(args);
+				// } else {
+				// loadPokemonByName(args);
+				// }
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

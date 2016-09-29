@@ -18,7 +18,7 @@ import logic.character.ActiveSkill;
 import logic.character.Pokemon;
 import logic.terrain.FightTerrain;
 import utility.Pokedex;
-import utility.fileUtility;
+import utility.FileUtility;
 
 /**
  * @author Kris
@@ -37,7 +37,7 @@ public class TestFileUtitlity {
 	@Test
 	public void testLoadPokedex() {
 		try {
-			fileUtility.loadPokedex();
+			FileUtility.loadPokedex();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -66,7 +66,7 @@ public class TestFileUtitlity {
 	public void testLoadFightMap() {
 		FightTerrain[][] fightMap = null;
 		try {
-			fightMap = fileUtility.loadFightMap();
+			fightMap = FileUtility.loadFightMap();
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail();
@@ -93,13 +93,13 @@ public class TestFileUtitlity {
 	@Test
 	public void testLoadPokemonList() {
 		try {
-			fileUtility.loadPokemons();
+			FileUtility.loadPokemons();
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail("Can't Load Pokemon");
 		}
 
-		assertEquals("all Pokemons = 3", 3, Pokedex.getAllPokemons().size());
+		assertEquals("all Pokemons = 9", 9, Pokedex.getAllPokemons().size());
 
 		String[] args = "001 1.01 0.95 3 10 15 WALK".split(" ");
 		Pokemon testFirstPokemon = new Pokemon(args);
@@ -116,7 +116,7 @@ public class TestFileUtitlity {
 	@Test
 	public void testLoadActiveSkills() {
 		try {
-			fileUtility.loadActiveSkills();
+			FileUtility.loadActiveSkills();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

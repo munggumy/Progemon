@@ -8,7 +8,7 @@ import logic.character.Pokemon;
 import logic.terrain.FightMap;
 import logic.terrain.FightTerrain;
 import utility.RandomUtility;
-import utility.fileUtility;
+import utility.FileUtility;
 
 public class FightGameManager {
 	// null
@@ -31,13 +31,15 @@ public class FightGameManager {
 	/** This method is called before fight starts. */
 	public static void startFight(/** map name */) {
 		try {
-			field = new FightMap(fileUtility.loadFightMap());
+			field = new FightMap(FileUtility.loadFightMap());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		System.out.println("FLAG 01");
 		spawnPokemons();
+		System.out.println("FLAG 02");
 		field.sortPokemons();
+		System.out.println("FLAG 03");
 	}
 
 	/** This method is called after fight ends. */
@@ -48,15 +50,21 @@ public class FightGameManager {
 	/** This method is called to run.*/
 	public static void runFight() {
 		int i = 3;
-		while (i-- >= 0) {
+		while (i >= 0) {
 			currentPokemon = field.getPokemonsOnMap().get(0);
 			currentPokemon.getOwner().runTurn(currentPokemon, field);
 			
 			if(checkWinner()){
 				break;
 			}
+			
+			currentPokemon.calculateNextTurnTime();
+			
 			field.sortPokemons();
+			i--;
 		}
+		
+		System.out.println("i = " + i);
 		
 	}
 
@@ -67,13 +75,13 @@ public class FightGameManager {
 				do {
 					nextX = RandomUtility.randomInt(field.getSizeX() - 1);
 					nextY = RandomUtility.randomInt(field.getSizeY() - 1);
-				} while(!field.addPokemonToMap(nextX, nextY, pokemon));
+				} while(pokemon != null && !field.addPokemonToMap(nextX, nextY, pokemon));
 			}
 		}
 	}
 	
 	private static boolean checkWinner(){
-		for (int i = currentPlayers.size() - 1; i>= 0 ; i++) {
+		for (int i = currentPlayers.size() - 1; i>= 0 ; i--) {
 			if(!currentPlayers.get(i).isLose()){
 				currentPlayers.remove(i);
 			}
