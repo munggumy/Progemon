@@ -133,7 +133,7 @@ public class FightMap {
 	}
 
 	public boolean addPokemonToMap(int x, int y, Pokemon pokemon) {
-		if (pokemon.getMoveType().check(map[y][x]) && this.getPokemonAt(x, y) == null) {
+		if (!outOfMap(x, y) && pokemon != null && pokemon.getMoveType().check(map[y][x]) && this.getPokemonAt(x, y) == null) {
 			// Can be Added!
 			pokemon.setX(x);
 			pokemon.setY(y);
