@@ -36,8 +36,8 @@ public class FightMap {
 		sizeX = map[0].length;
 		sizeY = map.length;
 	}
-	
-	public void sortPokemons(){
+
+	public void sortPokemons() {
 		Collections.sort(pokemonsOnMap, Pokemon.getSpeedComparator());
 	}
 
@@ -58,18 +58,18 @@ public class FightMap {
 		if (range >= 0 && pokemon.getMoveType().check(ft)) {
 			int x = ft.getX();
 			int y = ft.getY();
-			fts.add(map[x][y]);
-			if (x < this.sizeX) {
-				findMovableBlockAround(range - 1, map[x + 1][y], fts, pokemon);
+			fts.add(map[y][x]);
+			if (x < this.sizeX - 1) {
+				findMovableBlockAround(range - 1, map[y][x + 1], fts, pokemon);
 			}
 			if (x > 0) {
-				findMovableBlockAround(range - 1, map[x - 1][y], fts, pokemon);
+				findMovableBlockAround(range - 1, map[y][x - 1], fts, pokemon);
 			}
-			if (y < this.sizeY) {
-				findMovableBlockAround(range - 1, map[x][y + 1], fts, pokemon);
+			if (y < this.sizeY - 1) {
+				findMovableBlockAround(range - 1, map[y + 1][x], fts, pokemon);
 			}
 			if (y < 0) {
-				findMovableBlockAround(range - 1, map[x][y - 1], fts, pokemon);
+				findMovableBlockAround(range - 1, map[y - 1][x], fts, pokemon);
 			}
 		}
 		return fts;
@@ -79,18 +79,18 @@ public class FightMap {
 		if (range >= 0) {
 			int x = ft.getX();
 			int y = ft.getY();
-			fts.add(map[x][y]);
-			if (x < this.sizeX) {
-				findAttackableBlockAround(range - 1, map[x + 1][y], fts);
+			fts.add(map[y][x]);
+			if (x < this.sizeX - 1) {
+				findAttackableBlockAround(range - 1, map[y][x + 1], fts);
 			}
 			if (x > 0) {
-				findAttackableBlockAround(range - 1, map[x - 1][y], fts);
+				findAttackableBlockAround(range - 1, map[y][x - 1], fts);
 			}
-			if (y < this.sizeY) {
-				findAttackableBlockAround(range - 1, map[x][y + 1], fts);
+			if (y < this.sizeY - 1) {
+				findAttackableBlockAround(range - 1, map[y + 1][x], fts);
 			}
 			if (y < 0) {
-				findAttackableBlockAround(range - 1, map[x][y - 1], fts);
+				findAttackableBlockAround(range - 1, map[y - 1][x], fts);
 			}
 		}
 		return fts;
@@ -136,7 +136,8 @@ public class FightMap {
 	}
 
 	public boolean addPokemonToMap(int x, int y, Pokemon pokemon) {
-		if (!outOfMap(x, y) && pokemon != null && pokemon.getMoveType().check(map[y][x]) && this.getPokemonAt(x, y) == null) {
+		if (!outOfMap(x, y) && pokemon != null && pokemon.getMoveType().check(map[y][x])
+				&& this.getPokemonAt(x, y) == null) {
 			// Can be Added!
 			pokemon.setX(x);
 			pokemon.setY(y);
