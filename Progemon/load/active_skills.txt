@@ -5,3 +5,9 @@ Take Down 90
 Bubblebeam 65
 Water Gun 40
 Fly 70
+Razor Leaf 80
+Bubble 50
+Ember 60
+Tackle 40
+Fire Blast 130
+Surf 60
