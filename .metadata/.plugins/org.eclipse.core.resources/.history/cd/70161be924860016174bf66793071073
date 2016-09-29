@@ -1,0 +1,15 @@
+package graphic;
+
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+
+public class DrawingUtility {
+	
+	private static ArrayList<IRenderable> objectOnScreen;
+	private static Graphics2D g2d = (Graphics2D) Frame.getGraphicComponent().getGraphics();
+	
+	public static ArrayList<IRenderable> getObjectOnScreen() {
+		return objectOnScreen;
+	}
+
+}
