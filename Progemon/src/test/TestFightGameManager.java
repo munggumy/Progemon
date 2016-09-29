@@ -30,12 +30,18 @@ public class TestFightGameManager {
 		charlizard.addActiveSkill(ActiveSkill.getActiveSkill("Tackle"));
 		charlizard.addActiveSkill(ActiveSkill.getActiveSkill("Fire Blast"));
 		charlizard.addActiveSkill(ActiveSkill.getActiveSkill("Fly"));
+		charlizard.addActiveSkill(ActiveSkill.getActiveSkill("Ember"));
 		Pokemon ivysaur = Pokedex.getPokemon(2);
 		ivysaur.addActiveSkill(ActiveSkill.getActiveSkill("Tackle"));
 		ivysaur.addActiveSkill(ActiveSkill.getActiveSkill("Razor Leaf"));
+		Pokemon caterpie = Pokedex.getPokemon("Caterpie");
+		caterpie.addActiveSkill(ActiveSkill.getActiveSkill("Tackle"));
+		caterpie.addActiveSkill(ActiveSkill.getActiveSkill("Bug Bite"));
+		
 		
 		p1 = new AIPlayer("AI 1", charlizard);
 		p2 = new AIPlayer("AI 2", ivysaur);
+		p2.addPokemon(caterpie);
 		
 		players = new ArrayList<Player>();
 		players.add(p1);

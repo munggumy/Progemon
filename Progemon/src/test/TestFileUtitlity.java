@@ -122,7 +122,7 @@ public class TestFileUtitlity {
 			e.printStackTrace();
 		}
 
-		ArrayList<ActiveSkill> aSkills = ActiveSkill.getAllActiveSkills();
+		ArrayList<ActiveSkill> aSkills = new ArrayList<ActiveSkill>(ActiveSkill.getAllActiveSkills());
 
 		assertEquals("First Move : Mega Punch", "Mega Punch", aSkills.get(0).getName());
 		assertTrue("First Move : Mega Punch", Double.compare(80, aSkills.get(0).getPower()) == 0);
