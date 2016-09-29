@@ -8,9 +8,12 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import graphic.DrawingUtility;
+import graphic.IRenderable;
+
 /** FightTerrain */
 @SuppressWarnings("unused")
-public class FightTerrain {
+public class FightTerrain implements IRenderable {
 	private int x, y;
 	private boolean isShadowed;
 	private TerrainType type;
@@ -80,16 +83,14 @@ public class FightTerrain {
 		return null;
 	}
 	
-	public void draw(Graphics2D g2){
-		BufferedImage img = null;
-		try {
-			//img = ImageIO.read(new File(fightTerrain.getType().getImageName()));
-			img = ImageIO.read(new File("D:\\ik\\CP_CU\\ProgMeth\\Project\\Progemon\\Progemon\\load\\img\\TREE.png"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		g2.drawImage(img, null, x * 40, y * 40);
+	public void draw(){
+		DrawingUtility.drawFightTerrain(this);
+	}
+	
+	@Override
+	public void getDepth() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override

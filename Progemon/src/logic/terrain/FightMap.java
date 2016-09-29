@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import graphic.DrawingUtility;
+import graphic.IRenderable;
 import logic.character.Pokemon;
 import logic.filters.Filter;
 import logic.filters.MoveFilter;
 
-public class FightMap {
+public class FightMap implements IRenderable {
 
 	public static final int MAX_SIZE_X = 20;
 	public static final int MAX_SIZE_Y = 20;
@@ -72,13 +74,13 @@ public class FightMap {
 		}
 	}
 
-	public static void draw(Graphics2D g2) {
-		System.out.println("reach");
-		g2.fillRect(100, 100, 100, 100);
-		/*
-		 * for (FightTerrain[] fightTerrains : map) { for (FightTerrain
-		 * fightTerrain : fightTerrains) { fightTerrain.draw(g2); } }
-		 */
+	public void draw() {
+		DrawingUtility.drawFightMap(this);
+	}
+	
+	@Override
+	public void getDepth() {
+		// TODO Auto-generated method stub
 	}
 
 	public final int getSizeX() {
