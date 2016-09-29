@@ -34,12 +34,12 @@ public class FightTerrain implements IRenderable {
 		public int getMoveCost() {
 			return this.moveCost;
 		}
-		
-		public String getImageName(){
+
+		public String getImageName() {
 			return "load\\img\\" + this.toString() + ".png";
 		}
 	}
-	
+
 	public FightTerrain(int x, int y, TerrainType type) {
 		// TODO Auto-generated constructor stub
 		this.x = x;
@@ -73,24 +73,24 @@ public class FightTerrain implements IRenderable {
 	public final TerrainType getType() {
 		return type;
 	}
-	
-	public static TerrainType toFightTerrainType(String fightTerrainString){
-		for(TerrainType tt : TerrainType.values()){
-			if(fightTerrainString.equalsIgnoreCase(tt.toString())){
+
+	public static TerrainType toFightTerrainType(String fightTerrainString) {
+		for (TerrainType tt : TerrainType.values()) {
+			if (fightTerrainString.equalsIgnoreCase(tt.toString())) {
 				return tt;
 			}
 		}
 		return null;
 	}
-	
-	public void draw(){
+
+	public void draw() {
 		DrawingUtility.drawFightTerrain(this);
 	}
-	
+
 	@Override
 	public void getDepth() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -123,7 +123,5 @@ public class FightTerrain implements IRenderable {
 			return false;
 		return true;
 	}
-	
-	
 
 }

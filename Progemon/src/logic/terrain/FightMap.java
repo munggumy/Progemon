@@ -97,8 +97,8 @@ public class FightMap implements IRenderable {
 
 	/** Use this to add Pokemon to map. */
 	public boolean addPokemonToMap(int x, int y, Pokemon pokemon) {
-		Filter canBePlacedFitler = new MoveFilter();
-		if (!outOfMap(x, y) && pokemon != null && canBePlacedFitler.check(pokemon, map[y][x])
+		Filter canBePlacedFilter = new MoveFilter();
+		if (!outOfMap(x, y) && pokemon != null && canBePlacedFilter.check(pokemon, this, map[y][x])
 				&& this.getPokemonAt(x, y) == null) {
 			// Can be Added!
 			pokemon.setCurrentFightMap(this);

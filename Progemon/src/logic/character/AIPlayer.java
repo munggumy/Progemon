@@ -7,7 +7,7 @@ import logic.terrain.PathNode;
 import utility.RandomUtility;
 import utility.Savable;
 
-public class AIPlayer extends Player implements Savable {
+public class AIPlayer extends Player {
 
 	public AIPlayer(String name, Pokemon starter_pokemon) {
 		super(name, starter_pokemon);
@@ -33,14 +33,13 @@ public class AIPlayer extends Player implements Savable {
 		pokemon.findBlocksAround(pokemon.getAttackRange(), new AttackFilter());
 		for (Pokemon other : fightMap.getPokemonsOnMap()) {
 
-			if (other.getOwner() != this && pokemon.getAvaliableFightTerrains().contains(other.getCurrentFightTerrain())) {
+			if (other.getOwner() != this
+					&& pokemon.getAvaliableFightTerrains().contains(other.getCurrentFightTerrain())) {
 				// If other is enemy and in attack range.
 				// pokemon.attack(other, selectedSkill);
 				pokemon.attack(other, RandomUtility.randomInt(pokemon.getActiveSkills().size() - 1));
-				
+				break;
 			}
-			
-		}
+		} // end of attack
 	}
-
 }
