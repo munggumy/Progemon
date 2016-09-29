@@ -11,3 +11,4 @@ Ember 60
 Tackle 40
 Fire Blast 130
 Surf 60
+Bug Bite 60
