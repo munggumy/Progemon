@@ -2,6 +2,7 @@ package logic.character;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 
 import graphic.DrawingUtility;
 import graphic.IRenderable;
@@ -179,10 +180,10 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 	private ArrayList<PathNode> paths = new ArrayList<PathNode>();
 
 	/** Called by findBlocksAround() method. */
-	private void findBlocksAroundRecursive(int range, PathNode pathNode, FightTerrain fightTerrain, FightMap map,
+	private void findBlocksAroundRecursive(int range, PathNode currentPath, FightTerrain fightTerrain, FightMap map,
 			Filter filter) {
 		if (filter.check(this, fightTerrain)) {
-			paths.add(pathNode); // adds current pathNode
+			paths.add(currentPath); // adds current pathNode
 			if (range > 0) {
 				// If range > 0, find blocks around it.
 				int x = fightTerrain.getX();
@@ -190,22 +191,22 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 				FightTerrain nextFightTerrain;
 				if (x < map.getSizeX() - 1) {
 					nextFightTerrain = map.getMap()[y][x + 1];
-					findBlocksAroundRecursive(range - 1, new PathNode(nextFightTerrain, pathNode), nextFightTerrain,
+					findBlocksAroundRecursive(range - 1, new PathNode(nextFightTerrain, currentPath), nextFightTerrain,
 							map, filter);
 				}
 				if (x > 0) {
 					nextFightTerrain = map.getMap()[y][x - 1];
-					findBlocksAroundRecursive(range - 1, new PathNode(nextFightTerrain, pathNode), nextFightTerrain,
+					findBlocksAroundRecursive(range - 1, new PathNode(nextFightTerrain, currentPath), nextFightTerrain,
 							map, filter);
 				}
 				if (y < map.getSizeY() - 1) {
 					nextFightTerrain = map.getMap()[y + 1][x];
-					findBlocksAroundRecursive(range - 1, new PathNode(nextFightTerrain, pathNode), nextFightTerrain,
+					findBlocksAroundRecursive(range - 1, new PathNode(nextFightTerrain, currentPath), nextFightTerrain,
 							map, filter);
 				}
 				if (y > 0) {
 					nextFightTerrain = map.getMap()[y - 1][x];
-					findBlocksAroundRecursive(range - 1, new PathNode(nextFightTerrain, pathNode), nextFightTerrain,
+					findBlocksAroundRecursive(range - 1, new PathNode(nextFightTerrain, currentPath), nextFightTerrain,
 							map, filter);
 				}
 			}

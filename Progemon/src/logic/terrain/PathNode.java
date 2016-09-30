@@ -4,12 +4,12 @@ import java.util.Iterator;
 
 /** Terrain -- Terrain -- Terrain -- null */
 public class PathNode implements Iterable<PathNode> {
-	private PathNode previousNodes = null;
-	private FightTerrain thisNode;
+	private PathNode previousNode = null;
+	private FightTerrain fightTerrain;
 
-	public PathNode(FightTerrain thisNode, PathNode previousNodes) {
-		this.previousNodes = previousNodes;
-		this.thisNode = thisNode;
+	public PathNode(FightTerrain terrain, PathNode previousNode) {
+		this.previousNode = previousNode;
+		this.fightTerrain = terrain;
 	}
 
 	public PathNode(FightTerrain newNode) {
@@ -20,8 +20,8 @@ public class PathNode implements Iterable<PathNode> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((previousNodes == null) ? 0 : previousNodes.hashCode());
-		result = prime * result + ((thisNode == null) ? 0 : thisNode.hashCode());
+		result = prime * result + ((previousNode == null) ? 0 : previousNode.hashCode());
+		result = prime * result + ((fightTerrain == null) ? 0 : fightTerrain.hashCode());
 		return result;
 	}
 
@@ -34,15 +34,15 @@ public class PathNode implements Iterable<PathNode> {
 		if (getClass() != obj.getClass())
 			return false;
 		PathNode other = (PathNode) obj;
-		if (previousNodes == null) {
-			if (other.previousNodes != null)
+		if (previousNode == null) {
+			if (other.previousNode != null)
 				return false;
-		} else if (!previousNodes.equals(other.previousNodes))
+		} else if (!previousNode.equals(other.previousNode))
 			return false;
-		if (thisNode == null) {
-			if (other.thisNode != null)
+		if (fightTerrain == null) {
+			if (other.fightTerrain != null)
 				return false;
-		} else if (!thisNode.equals(other.thisNode))
+		} else if (!fightTerrain.equals(other.fightTerrain))
 			return false;
 		return true;
 	}
@@ -56,12 +56,12 @@ public class PathNode implements Iterable<PathNode> {
 
 		@Override
 		public boolean hasNext() {
-			return previousNodes != null;
+			return previousNode != null;
 		}
 
 		@Override
 		public PathNode next() {
-			return previousNodes;
+			return previousNode;
 		}
 
 	}
@@ -69,19 +69,19 @@ public class PathNode implements Iterable<PathNode> {
 	// Getters and Setters
 
 	public final PathNode getPreviousNodes() {
-		return previousNodes;
+		return previousNode;
 	}
 
 	public final FightTerrain getThisNode() {
-		return thisNode;
+		return fightTerrain;
 	}
 
 	public final void setPreviousNodes(PathNode previousNodes) {
-		this.previousNodes = previousNodes;
+		this.previousNode = previousNodes;
 	}
 
 	public final void setThisNode(FightTerrain thisNode) {
-		this.thisNode = thisNode;
+		this.fightTerrain = thisNode;
 	}
 
 }
