@@ -15,30 +15,31 @@ public class Main2 {
 	
 	public static void main(String[] args) {
 		try {
+			FileUtility.loadActiveSkills();
 			FileUtility.loadPokedex();
 			FileUtility.loadPokemons();
-			FileUtility.loadActiveSkills();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		Pokemon charlizard = Pokedex.getPokemon("Charlizard");
-		charlizard.addActiveSkill(ActiveSkill.getActiveSkill("Tackle"));
-		charlizard.addActiveSkill(ActiveSkill.getActiveSkill("Ember"));
-		
-		Pokemon ivysaur = Pokedex.getPokemon("Ivysaur");
-		ivysaur.addActiveSkill(ActiveSkill.getActiveSkill("Razor Leaf"));
+		charlizard.setLevel(40);
+		charlizard.calculateCurrentStats();
+		Pokemon caterpie = Pokedex.getPokemon("Caterpie");
+		caterpie.setLevel(5);
+		caterpie.calculateCurrentStats();
+
 		
 		Pokemon wartortle = Pokedex.getPokemon("Wartortle");
-		wartortle.addActiveSkill(ActiveSkill.getActiveSkill("Surf"));
-		wartortle.addActiveSkill(ActiveSkill.getActiveSkill("Bubblebeam"));
-		wartortle.addActiveSkill(ActiveSkill.getActiveSkill("Tackle"));
-		
-		Pokemon ivysaur2 = Pokedex.getPokemon("Ivysaur");
+		wartortle.setLevel(34);
+		wartortle.calculateCurrentStats();
+		Pokemon pidgeotto = Pokedex.getPokemon("Pidgeotto");
+		pidgeotto.setLevel(30);
+		pidgeotto.calculateCurrentStats();
 		
 		
 		Player p1 = new AIPlayer("AI 1", charlizard);
-		p1.addPokemon(ivysaur2);
-		Player p2 = new AIPlayer("AI 2", ivysaur);
+		p1.addPokemon(caterpie);
+		Player p2 = new AIPlayer("AI 2", pidgeotto);
 		p2.addPokemon(wartortle);
 		
 		

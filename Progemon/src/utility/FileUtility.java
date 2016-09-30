@@ -45,7 +45,7 @@ public class FileUtility {
 					 * id/name attack defence speed hp mRange aRange mType
 					 * attackMoves
 					 */
-					"(\\d+|\\w+)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d+)\\s(\\d+)\\s(\\w+)((\\s\\w+)*)");
+					"(\\d+|\\w+)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d+)\\s(\\d+)\\s(\\w+)\\s?([\\w ,]*)");
 			Matcher matcher = null;
 			while (scanner.hasNextLine()) {
 				matcher = pattern.matcher(scanner.nextLine());
@@ -53,9 +53,9 @@ public class FileUtility {
 					String[] args = { matcher.group(1), matcher.group(2), matcher.group(4), matcher.group(6),
 							matcher.group(8), matcher.group(10), matcher.group(11), matcher.group(12) };
 					if (matcher.group(1).matches("\\d+")) {
-						loadPokemonByID(args, matcher.group(13).split(" "));
+						loadPokemonByID(args, matcher.group(13).split(",[ ]?"));
 					} else if (matcher.group(1).matches("\\w+")) {
-						loadPokemonByName(args, matcher.group(13).split(" "));
+						loadPokemonByName(args, matcher.group(13).split(",[ ]?"));
 					} else {
 						System.err.println("FileUtility.loadPokemons() : Unknown Format");
 					}

@@ -59,7 +59,7 @@ public class Pokedex {
 
 	// get Pokemon methods
 	
-	/** main <code>getPokemon()</code> method */
+	/** main <code>getPokemon()</code> method. gets a clone*/
 	public static final Pokemon getPokemon(int pokemon_id) {
 		for (Pokemon pokemon : allPokemons) {
 			if (pokemon.getID() == pokemon_id) {

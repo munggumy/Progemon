@@ -327,7 +327,7 @@ public class Pokemon implements Cloneable, IRenderable {
 		current.attackStat = calculateStatsEquation(base.attackStat);
 		current.defenceStat = calculateStatsEquation(base.defenceStat);
 		current.speed = calculateStatsEquation(base.speed);
-		current.fullHP = (((2 * base.fullHP) + iv) * level * 0.02) + level + 10;
+		current.fullHP = (((2 * base.fullHP) + iv) * level * 0.01) + level + 10;
 	}
 
 	private double calculateStatsEquation(double inputBaseStat) {

@@ -65,7 +65,6 @@ public class GUIFightGameManager {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -75,10 +74,9 @@ public class GUIFightGameManager {
 				currentPokemon.calculateNextTurnTime();
 				currentPokemon.calculateCurrentStats();
 				tick = 0;
+				removeDeadPokemons();
 			}
 			Frame.getGraphicComponent().repaint();
-
-			removeDeadPokemons();
 
 			if (checkWinner()) {
 				System.out.println("The fight has ended.");
@@ -94,8 +92,7 @@ public class GUIFightGameManager {
 	}
 
 	private void endFight() {
-		// TODO Auto-generated method stub
-
+		Frame.getGraphicComponent().repaint();
 	}
 
 	private static void spawnPokemons() {

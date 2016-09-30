@@ -102,6 +102,7 @@ public class TestFileUtitlity {
 	@Test
 	public void testLoadPokemonList() {
 		try {
+			FileUtility.loadActiveSkills();
 			FileUtility.loadPokemons();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -110,7 +111,7 @@ public class TestFileUtitlity {
 
 		assertEquals("All Pokemons = 10", 10, Pokedex.getAllPokemons().size());
 
-		String[] args = "001 1.01 0.95 10 50 3 1 WALK".split(" ");
+		String[] args = "001 49 49 45 45 3 1 WALK".split(" ");
 		Pokemon testFirstPokemon = new Pokemon(args);
 		Pokemon firstPokemon = Pokedex.getAllPokemons().get(0);
 		
@@ -120,7 +121,13 @@ public class TestFileUtitlity {
 				Double.compare(testFirstPokemon.getMoveRange(), firstPokemon.getMoveRange()) == 0);
 		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getBase().speed, firstPokemon.getBase().speed) == 0);
 		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getBase().fullHP, firstPokemon.getBase().fullHP) == 0);
-		assertEquals("First Pokemon Moves", 0, firstPokemon.getActiveSkills().size());
+		assertEquals("First Pokemon Moves", 2, firstPokemon.getActiveSkills().size());
+		
+		
+		// Ivysaur Moves = 2
+		assertEquals("Ivysaur ActiveSkill", 2, Pokedex.getAllPokemons().get(1).getActiveSkills().size());
+		assertEquals("Ivysaur ActiveSkill", "Tackle", Pokedex.getAllPokemons().get(1).getActiveSkills().get(0).getName());
+		assertEquals("Ivysaur ActiveSkill", "Razor Leaf", Pokedex.getAllPokemons().get(1).getActiveSkills().get(1).getName());
 	}
 
 	@Test
