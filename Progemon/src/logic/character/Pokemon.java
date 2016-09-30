@@ -96,6 +96,7 @@ public class Pokemon implements Cloneable, IRenderable {
 			int attackRange, MoveType moveType, Player owner) {
 		this(id, attackStat, defenceStat, speed, hp, moveRange, attackRange, moveType);
 		this.owner = owner;
+		owner.addPokemon(this);
 	}
 
 	/**
