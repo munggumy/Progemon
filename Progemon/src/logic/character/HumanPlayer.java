@@ -13,9 +13,21 @@ public class HumanPlayer extends Player {
 	}
 
 	@Override
-	public void runTurn(Pokemon pokemon, FightMap fightMap) {
+	public void runTurn(Pokemon pokemon) {
 		// TODO Auto-generated method stub
+		
+	}
 
+	@Override
+	public void pokemonMove(Pokemon pokemon) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void pokemonAttack(Pokemon pokemon) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

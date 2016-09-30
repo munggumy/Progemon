@@ -33,8 +33,11 @@ public class Main2 {
 		wartortle.addActiveSkill(ActiveSkill.getActiveSkill("Bubblebeam"));
 		wartortle.addActiveSkill(ActiveSkill.getActiveSkill("Tackle"));
 		
+		Pokemon ivysaur2 = Pokedex.getPokemon("Ivysaur");
+		
 		
 		Player p1 = new AIPlayer("AI 1", charlizard);
+		p1.addPokemon(ivysaur2);
 		Player p2 = new AIPlayer("AI 2", ivysaur);
 		p2.addPokemon(wartortle);
 		

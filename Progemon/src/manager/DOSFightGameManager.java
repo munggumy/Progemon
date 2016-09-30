@@ -51,7 +51,7 @@ public class DOSFightGameManager {
 		int i = 1;
 		while (true) {
 			currentPokemon = field.getPokemonsOnMap().get(0);
-			currentPokemon.getOwner().runTurn(currentPokemon, field);
+			currentPokemon.getOwner().runTurn(currentPokemon);
 			
 			removeDeadPokemons();
 
