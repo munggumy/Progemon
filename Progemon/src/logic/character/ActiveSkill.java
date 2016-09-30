@@ -21,10 +21,14 @@ public class ActiveSkill {
 	}
 
 	public static ActiveSkill getActiveSkill(String skillName) {
-		return getActiveSkill(skillName, DEFAULT_POWER);
+		return getActiveSkill(skillName, DEFAULT_POWER, true);
+	}
+	
+	public static ActiveSkill getActiveSkill(String skillName, double powerIfNotCreated){
+		return getActiveSkill(skillName, powerIfNotCreated, true);
 	}
 
-	public static ActiveSkill getActiveSkill(String skillName, double powerIfNotCreated) {
+	public static ActiveSkill getActiveSkill(String skillName, double powerIfNotCreated, boolean verbose) {
 		Iterator<ActiveSkill> it = allActiveSkills.iterator();
 		while (it.hasNext()) {
 			ActiveSkill skill = (ActiveSkill) it.next();
@@ -32,12 +36,20 @@ public class ActiveSkill {
 				return skill;
 			}
 		}
+		if (verbose) {
+			System.out.println("ActiveSkill : ActiveSkill " + skillName + " not found...");
+			System.out.println("ActiveSkill : Creating new ActiveSkill with power " + powerIfNotCreated + ".");
+		}
 		return new ActiveSkill(skillName, powerIfNotCreated);
 	}
 
 	// Array Getter
 	public static List<ActiveSkill> getAllActiveSkills() {
 		return Collections.unmodifiableList(allActiveSkills);
+	}
+	
+	public static void clearAllActiveSkills(){
+		allActiveSkills.clear();
 	}
 
 	// getters and setters
@@ -54,8 +66,9 @@ public class ActiveSkill {
 	}
 
 	private final void setName(String name) {
-		if (name == null) {
+		if (name == null || name.matches("\\w") || name.length() <= 1) {
 			name = "";
+			System.err.println("ActiveSkill : Skill has no name!");
 		} else {
 			name = StringUtility.toTitleCase(name);
 		}

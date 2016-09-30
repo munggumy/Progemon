@@ -96,21 +96,22 @@ public class TestFileUtitlity {
 			FileUtility.loadPokemons();
 		} catch (IOException e) {
 			e.printStackTrace();
-			fail("Can't Load Pokemon");
+			fail("Can't Load Pokemon File");
 		}
 
-		assertEquals("all Pokemons = 9", 9, Pokedex.getAllPokemons().size());
+		assertEquals("All Pokemons = 10", 10, Pokedex.getAllPokemons().size());
 
-		String[] args = "001 1.01 0.95 10 15 3 1 WALK".split(" ");
+		String[] args = "001 1.01 0.95 10 50 3 1 WALK".split(" ");
 		Pokemon testFirstPokemon = new Pokemon(args);
 		Pokemon firstPokemon = Pokedex.getAllPokemons().get(0);
+		
 		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getAttackStat(), firstPokemon.getAttackStat()) == 0);
 		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getDefenceStat(), firstPokemon.getDefenceStat()) == 0);
 		assertTrue("First Pokemon Stats",
 				Double.compare(testFirstPokemon.getMoveRange(), firstPokemon.getMoveRange()) == 0);
 		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getSpeed(), firstPokemon.getSpeed()) == 0);
-		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getHp(), firstPokemon.getHp()) == 0);
-
+		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getCurrentHP(), firstPokemon.getCurrentHP()) == 0);
+		assertEquals("First Pokemon Moves", 0, firstPokemon.getActiveSkills().size());
 	}
 
 	@Test
@@ -118,7 +119,6 @@ public class TestFileUtitlity {
 		try {
 			FileUtility.loadActiveSkills();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
