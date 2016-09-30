@@ -56,6 +56,8 @@ public abstract class Player {
 		pokemons.add(temp);
 	}
 
-	public abstract void runTurn(Pokemon pokemon, FightMap fightMap);
+	public abstract void runTurn(Pokemon pokemon);
+	public abstract void pokemonMove(Pokemon pokemon);
+	public abstract void pokemonAttack(Pokemon pokemon);
 
 }
