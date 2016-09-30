@@ -71,7 +71,7 @@ public class GUIFightGameManager {
 			
 			if (tick == 100) {
 				currentPokemon = fightMap.getPokemonsOnMap().get(0);
-				currentPokemon.getOwner().runTurn(currentPokemon, fightMap);
+				currentPokemon.getOwner().runTurn(currentPokemon);
 				currentPokemon.calculateNextTurnTime();
 				tick = 0;
 			}
