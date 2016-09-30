@@ -39,7 +39,7 @@ public class DrawingUtility {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ScreenComponent.g2.drawImage(img, null, pokemon.getX() * 40, pokemon.getY() * 40);
+		ScreenComponent.g2.drawImage(img, null, pokemon.getCurrentFightTerrain().getX() * 40, pokemon.getCurrentFightTerrain().getY() * 40);
 	}
 
 }

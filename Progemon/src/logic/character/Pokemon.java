@@ -19,7 +19,7 @@ public class Pokemon implements Cloneable, IRenderable {
 	private static final String DEFAULT_IMAGE_FILE_LOCATION = "load\\img\\pokemon";
 
 	private double currentHP, nextTurnTime;
-	private int x, y, moveRange, attackRange, id;
+	private int  moveRange, attackRange, id;
 	private Player owner;
 	private MoveType moveType;
 	private Element primaryElement, secondaryElement;
@@ -135,20 +135,14 @@ public class Pokemon implements Cloneable, IRenderable {
 	 */
 	public void move(int x, int y) {
 		if (!currentFightMap.outOfMap(x, y)) {
-			this.x = x;
-			this.y = y;
 			this.currentFightTerrain = currentFightMap.getFightTerrainAt(x, y);
 		} else {
-			this.x = -1;
-			this.y = -1;
 			this.currentFightTerrain = null;
 		}
 	}
 
 	public void move(FightTerrain fightTerrain) {
 		this.currentFightTerrain = fightTerrain;
-		this.x = fightTerrain.getX();
-		this.y = fightTerrain.getY();
 	}
 
 	public void attack(Pokemon p, int selectedSkill) {
@@ -256,14 +250,12 @@ public class Pokemon implements Cloneable, IRenderable {
 	// ActiveSKill methods
 
 	public void addActiveSkill(ActiveSkill newActiveSkill) {
-		System.err.println(this.getName() + " called addActiveSkill(" + newActiveSkill.getName() + ")");
 		if (activeSkills.size() < 4) {
 			activeSkills.add(newActiveSkill);
 		}
 	}
 
 	public void addActiveSkill(String activeSkillName) {
-		System.err.println(this.getName() + " called addActiveSkill(" + activeSkillName + ")");
 		if (activeSkills.size() < 4) {
 			activeSkills.add(ActiveSkill.getActiveSkill(activeSkillName));
 		}
@@ -441,14 +433,6 @@ public class Pokemon implements Cloneable, IRenderable {
 
 	public final Stat getCurrent() {
 		return current;
-	}
-
-	public final int getX() {
-		return x;
-	}
-
-	public final int getY() {
-		return y;
 	}
 
 	public final MoveType getMoveType() {

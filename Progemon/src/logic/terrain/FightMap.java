@@ -63,7 +63,7 @@ public class FightMap implements IRenderable {
 
 	public Pokemon getPokemonAt(int x, int y) {
 		for (Pokemon pokemon : pokemonsOnMap) {
-			if (pokemon.getX() == x && pokemon.getY() == y) {
+			if (pokemon.getCurrentFightTerrain().getX() ==  x && pokemon.getCurrentFightTerrain().getY() == y) {
 				return pokemon;
 			}
 		}

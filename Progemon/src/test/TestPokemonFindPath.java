@@ -40,8 +40,8 @@ public class TestPokemonFindPath {
 
 	@Test
 	public void testBasics() {
-		assertEquals(1, fearow.getX());
-		assertEquals(1, fearow.getY());
+		assertEquals(1, fearow.getCurrentFightTerrain().getX());
+		assertEquals(1, fearow.getCurrentFightTerrain().getY());
 		assertEquals(MoveType.FLY, fearow.getMoveType());
 		assertEquals(fearowMoveRange, fearow.getMoveRange());
 		assertEquals(fearowAttackRange, fearow.getAttackRange());
