@@ -22,16 +22,25 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 	private Player owner;
 	private MoveType moveType;
 	private Element primaryElement, secondaryElement;
-	private ArrayList<ActiveSkill> activeSkills = new ArrayList<ActiveSkill>();
+	private static ArrayList<ActiveSkill> activeSkills = new ArrayList<ActiveSkill>();
 	private ArrayList<PassiveSkill> passiveSkills = new ArrayList<PassiveSkill>();
 	private String imageFileName;
+//	private Stat base, current;
 
 	/** Used in findBlocksAround() */
 	private FightMap currentFightMap = null;
 	private FightTerrain currentFightTerrain = null;
-	
+
 	private int level = 1;
 	private double exp = 0;
+
+//	public class Stat {
+//		private String name;
+//		private double attackStat, defenceStat, speed, fullHP;
+//		private MoveType moveType;
+//		private Element primaryElement, secondaryElement;
+//	}
+	
 
 	public static enum MoveType {
 		FLY, SWIM, WALK;
@@ -234,15 +243,15 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 			activeSkills.add(ActiveSkill.getActiveSkill(activeSkillName));
 		}
 	}
-	
-	public void removeActiveSkill(ActiveSkill activeSkill){
-		if(activeSkills.contains(activeSkill)){
+
+	public void removeActiveSkill(ActiveSkill activeSkill) {
+		if (activeSkills.contains(activeSkill)) {
 			activeSkills.remove(activeSkill);
 		}
 	}
-	
-	public void removeActiveSkill(String activeSkillName){
-		if(activeSkills.contains(ActiveSkill.getActiveSkill(activeSkillName))){
+
+	public void removeActiveSkill(String activeSkillName) {
+		if (activeSkills.contains(ActiveSkill.getActiveSkill(activeSkillName))) {
 			activeSkills.remove(ActiveSkill.getActiveSkill(activeSkillName));
 		}
 	}
