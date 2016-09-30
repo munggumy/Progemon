@@ -229,6 +229,12 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 			activeSkills.add(newActiveSkill);
 		}
 	}
+	
+	public void addActiveSkill(String activeSkillName) {
+		if (activeSkills.size() < 4) {
+			activeSkills.add(ActiveSkill.getActiveSkill(activeSkillName));
+		}
+	}
 
 	// public ArrayList<FightTerrain> findMovableBlockAround(int range,
 	// FightTerrain ft, ArrayList<FightTerrain> fts,
