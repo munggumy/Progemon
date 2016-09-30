@@ -20,7 +20,7 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 	private int x, y, moveRange, attackRange, id;
 	private Player owner;
 	private MoveType moveType;
-	private ElementType primaryElement, secondaryElement;
+	private Element primaryElement, secondaryElement;
 	private ArrayList<ActiveSkill> activeSkills = new ArrayList<ActiveSkill>();
 	private ArrayList<PassiveSkill> passiveSkills = new ArrayList<PassiveSkill>();
 	private String imageFileName;
@@ -28,9 +28,11 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 	/** Used in findBlocksAround() */
 	private FightMap currentFightMap = null;
 	private FightTerrain currentFightTerrain = null;
+	
 	private int level = 1;
+	private double exp = 0;
 
-	public static enum MoveType{
+	public static enum MoveType {
 		FLY, SWIM, WALK;
 
 		public boolean check(FightTerrain ft) {
@@ -47,10 +49,6 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 			}
 		}
 
-	}
-
-	public static enum ElementType {
-		FIRE, GRASS, WATER, POISON, FLYING, BUG;
 	}
 
 	public static Comparator<Pokemon> getSpeedComparator() {
@@ -80,19 +78,19 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 			return o1.id - o2.id;
 		}
 	}
-	
+
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		return (Pokemon)super.clone();
+		return (Pokemon) super.clone();
 	}
 
 	// Constructor
 
 	public Pokemon(int id, double attackStat, double defenceStat, double speed, double hp, int moveRange,
-			int attackRange, MoveType moveType, Player owner){
+			int attackRange, MoveType moveType, Player owner) {
 		this(id, attackStat, defenceStat, speed, hp, moveRange, attackRange, moveType);
 		this.owner = owner;
-		
+
 	}
 
 	public Pokemon(int id, double attackStat, double defenceStat, double speed, double hp, int moveRange,
@@ -131,7 +129,7 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 			this.x = x;
 			this.y = y;
 			this.currentFightTerrain = currentFightMap.getFightTerrainAt(x, y);
-		} else{
+		} else {
 			this.x = -1;
 			this.y = -1;
 			this.currentFightTerrain = null;
@@ -229,10 +227,22 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 			activeSkills.add(newActiveSkill);
 		}
 	}
-	
+
 	public void addActiveSkill(String activeSkillName) {
 		if (activeSkills.size() < 4) {
 			activeSkills.add(ActiveSkill.getActiveSkill(activeSkillName));
+		}
+	}
+	
+	public void removeActiveSkill(ActiveSkill activeSkill){
+		if(activeSkills.contains(activeSkill)){
+			activeSkills.remove(activeSkill);
+		}
+	}
+	
+	public void removeActiveSkill(String activeSkillName){
+		if(activeSkills.contains(ActiveSkill.getActiveSkill(activeSkillName))){
+			activeSkills.remove(ActiveSkill.getActiveSkill(activeSkillName));
 		}
 	}
 
@@ -293,17 +303,17 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public void draw() {
 		// TODO Auto-generated method stub
 		DrawingUtility.drawPokemon(this);
 	}
-	
+
 	@Override
 	public void getDepth() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	// Getters and Setters
@@ -351,7 +361,7 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 	public final int getID() {
 		return id;
 	}
-	
+
 	public final Player getOwner() {
 		return owner;
 	}
@@ -371,11 +381,10 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 	public String getName() {
 		return Pokedex.getPokemonName(id);
 	}
-	
-	public void setOwner(Player owner){
+
+	public void setOwner(Player owner) {
 		this.owner = owner;
 	}
-
 
 	public final double getAttackStat() {
 		return attackStat;
@@ -393,11 +402,11 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 		return id;
 	}
 
-	public final ElementType getPrimaryElement() {
+	public final Element getPrimaryElement() {
 		return primaryElement;
 	}
 
-	public final ElementType getSecondaryElement() {
+	public final Element getSecondaryElement() {
 		return secondaryElement;
 	}
 
@@ -434,15 +443,19 @@ public class Pokemon implements Comparable<Pokemon>, Cloneable, IRenderable {
 		return currentFightTerrain;
 	}
 
-	public void setImageFileLocation(String imageFileName){
+	public void setImageFileLocation(String imageFileName) {
 		this.imageFileName = imageFileName;
 	}
-	
-	public void setImageFileLocation(){
+
+	public void setImageFileLocation() {
 		setImageFileLocation(DEFAULT_IMAGE_FILE_LOCATION + "\\" + this.getName() + ".png");
 	}
-	
-	public String getImageName(){
+
+	public String getImageName() {
 		return imageFileName;
+	}
+
+	public final double getExp() {
+		return exp;
 	}
 }
