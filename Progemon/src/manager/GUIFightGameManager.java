@@ -73,6 +73,7 @@ public class GUIFightGameManager {
 				currentPokemon = fightMap.getPokemonsOnMap().get(0);
 				currentPokemon.getOwner().runTurn(currentPokemon);
 				currentPokemon.calculateNextTurnTime();
+				currentPokemon.calculateCurrentStats();
 				tick = 0;
 			}
 			Frame.getGraphicComponent().repaint();

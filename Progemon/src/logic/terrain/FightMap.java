@@ -56,6 +56,10 @@ public class FightMap implements IRenderable {
 	public FightTerrain getFightTerrainAt(int x, int y) {
 		return map[y][x];
 	}
+	
+	public void setFightTerrainAt(int x, int y, FightTerrain fightTerrain){
+		map[y][x] = fightTerrain;
+	}
 
 	public Pokemon getPokemonAt(int x, int y) {
 		for (Pokemon pokemon : pokemonsOnMap) {

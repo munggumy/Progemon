@@ -43,8 +43,10 @@ public class TestFileUtitlity {
 		}
 
 		// Check HashMap properties
+		
+		Pokedex.printPokedex();
 
-		assertEquals("Length = 11", 11, Pokedex.getPokedex().size());
+		assertEquals("Length = 28", 28, Pokedex.getPokedex().size());
 
 		// Contains
 
@@ -55,6 +57,10 @@ public class TestFileUtitlity {
 		assertTrue("Contains Charmander", Pokedex.getPokedex().containsValue("Charmander"));
 		assertTrue("Contains Charmander", Pokedex.getPokedex().containsKey(4));
 		assertEquals("ID 004 = Charmander", Pokedex.getPokedex().get(4), "Charmander");
+		
+		assertTrue("Contains Pikachu", Pokedex.getPokedex().containsValue("Pikachu"));
+		assertTrue("Contains Pikachu", Pokedex.getPokedex().containsKey(25));
+		assertEquals("ID 025 = Pikachu", Pokedex.getPokedex().get(25), "Pikachu");
 
 		// Doesn't Contains
 		assertFalse("Doesn't contains Satoshi", Pokedex.getPokedex().containsValue("Satoshi"));
@@ -87,6 +93,9 @@ public class TestFileUtitlity {
 		// GRASS ROCK ROCK TREE WATER WATER GRASS GRASS
 		assertTrue("Second Row First Column",
 				new FightTerrain(0, 1, FightTerrain.TerrainType.GRASS).equals(fightMap[1][0]));
+		assertTrue(new FightTerrain(1,1, FightTerrain.TerrainType.ROCK).equals(fightMap[1][1]));
+		assertTrue(new FightTerrain(3,1, FightTerrain.TerrainType.TREE).equals(fightMap[1][3]));
+		assertTrue(new FightTerrain(5,1, FightTerrain.TerrainType.WATER).equals(fightMap[1][5]));
 
 	}
 
@@ -105,17 +114,18 @@ public class TestFileUtitlity {
 		Pokemon testFirstPokemon = new Pokemon(args);
 		Pokemon firstPokemon = Pokedex.getAllPokemons().get(0);
 		
-		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getAttackStat(), firstPokemon.getAttackStat()) == 0);
-		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getDefenceStat(), firstPokemon.getDefenceStat()) == 0);
+		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getBase().attackStat, firstPokemon.getBase().attackStat) == 0);
+		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getBase().defenceStat, firstPokemon.getBase().defenceStat) == 0);
 		assertTrue("First Pokemon Stats",
 				Double.compare(testFirstPokemon.getMoveRange(), firstPokemon.getMoveRange()) == 0);
-		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getSpeed(), firstPokemon.getSpeed()) == 0);
-		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getCurrentHP(), firstPokemon.getCurrentHP()) == 0);
+		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getBase().speed, firstPokemon.getBase().speed) == 0);
+		assertTrue("First Pokemon Stats", Double.compare(testFirstPokemon.getBase().fullHP, firstPokemon.getBase().fullHP) == 0);
 		assertEquals("First Pokemon Moves", 0, firstPokemon.getActiveSkills().size());
 	}
 
 	@Test
 	public void testLoadActiveSkills() {
+		ActiveSkill.clearAllActiveSkills();
 		try {
 			FileUtility.loadActiveSkills();
 		} catch (IOException e) {
@@ -128,6 +138,27 @@ public class TestFileUtitlity {
 		assertTrue("First Move : Mega Punch", Double.compare(80, aSkills.get(0).getPower()) == 0);
 		assertEquals("Second Move : Razor Wind", "Razor Wind", aSkills.get(1).getName());
 		assertTrue("Second Move : Razor Wind", Double.compare(80, aSkills.get(1).getPower()) == 0);
+	}
+	
+	
+	@Test
+	public void testLoadActiveSkills2(){
+		ActiveSkill.clearAllActiveSkills();
+		String customFilePath = "test/test1loadActiveSkills.txt";
+		try {
+			FileUtility.loadActiveSkills(customFilePath);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		ArrayList<ActiveSkill> aSkills = new ArrayList<ActiveSkill>(ActiveSkill.getAllActiveSkills());
+		
+		assertEquals("Size of allActiveSkills", 2, aSkills.size());
+		
+		assertEquals("First Move : Hello WORLD", "Hello World", aSkills.get(0).getName());
+		assertTrue("First Move : Hello WORLD", Double.compare(13, aSkills.get(0).getPower()) == 0);
+		assertEquals("Second Move : Utit Mo Ko", "Utit Mo Ko", aSkills.get(1).getName());
+		assertTrue("Second Move : Utit Mo Ko", Double.compare(91, aSkills.get(1).getPower()) == 0);
 	}
 
 }

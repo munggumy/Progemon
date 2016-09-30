@@ -1,7 +1,7 @@
 package utility;
 
 public class StringUtility {
-	
+
 	private static final int DEFAULT_HP_BAR_LENGTH = 24;
 
 	public static String toTitleCase(String inputString) {
@@ -20,22 +20,30 @@ public class StringUtility {
 		}
 		return out;
 	}
-	
-	public static String hpBar(double percent, int length){
+
+	/** Percent in range [0,1] */
+	public static String hpBar(double percent, int length) {
 		StringBuilder out = new StringBuilder("[");
-		int shaded = (int) (percent * ((double) length));
-		for(short i = 0; i < shaded; i++){
-			out.append("=");
+		length = length < 0 ? DEFAULT_HP_BAR_LENGTH : length; // length boundary [> 0]
+		percent = percent > 1 ? 1 : (percent < 0 ? 0 : percent); // percent boundary [0,1]
+		int shaded = (int) (percent * ((double) length)); // rounds down
+		System.out.println(shaded);
+		if (shaded > 0) {
+			for (short i = 0; i < shaded; i++) {
+				out.append("=");
+			}
 		}
 		int unshaded = length - shaded;
-		for(short i = 0; i < unshaded; i++){
-			out.append(" ");
+		if (unshaded > 0) {
+			for (short i = 0; i < unshaded; i++) {
+				out.append(" ");
+			}
 		}
 		out.append("]");
 		return out.toString();
 	}
-	
-	public static String hpBar(double percent){
+
+	public static String hpBar(double percent) {
 		return hpBar(percent, DEFAULT_HP_BAR_LENGTH);
 	}
 }

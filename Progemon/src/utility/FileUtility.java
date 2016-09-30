@@ -24,9 +24,8 @@ public class FileUtility {
 	private static final String DEFAULT_ACTIVE_SKILLS = DEFAULT_PATH + "/active_skills.txt";
 	private static FileReader reader;
 	private static Scanner scanner;
-	
-	
-	public static void loadAllDefaults() throws IOException{
+
+	public static void loadAllDefaults() throws IOException {
 		loadActiveSkills();
 		loadPokedex();
 		loadPokemons();
@@ -42,14 +41,17 @@ public class FileUtility {
 			reader = new FileReader(filePath);
 			scanner = new Scanner(reader);
 			Pattern pattern = Pattern.compile(
-					/* id/name      attack             defence           speed               hp                mRange   aRange   mType     attackMoves*/
+					/*
+					 * id/name attack defence speed hp mRange aRange mType
+					 * attackMoves
+					 */
 					"(\\d+|\\w+)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d+)\\s(\\d+)\\s(\\w+)((\\s\\w+)*)");
 			Matcher matcher = null;
 			while (scanner.hasNextLine()) {
 				matcher = pattern.matcher(scanner.nextLine());
 				if (matcher.find()) {
 					String[] args = { matcher.group(1), matcher.group(2), matcher.group(4), matcher.group(6),
-							matcher.group(8), matcher.group(10), matcher.group(11), matcher.group(12)};
+							matcher.group(8), matcher.group(10), matcher.group(11), matcher.group(12) };
 					if (matcher.group(1).matches("\\d+")) {
 						loadPokemonByID(args, matcher.group(13).split(" "));
 					} else if (matcher.group(1).matches("\\w+")) {
@@ -57,7 +59,7 @@ public class FileUtility {
 					} else {
 						System.err.println("FileUtility.loadPokemons() : Unknown Format");
 					}
-					
+
 				} else {
 					System.err.println("FileUtility.loadPokemons() : Needs at least 8 Parameters per pokemon!");
 				}
@@ -73,6 +75,8 @@ public class FileUtility {
 				// }
 			}
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			if (reader != null) {
@@ -90,11 +94,10 @@ public class FileUtility {
 
 	private static void loadPokemonByID(String[] args, String[] activeSkills) {
 		Pokemon new_pokemon = new Pokemon(args);
-		for(String activeSkillName : activeSkills){
-			if(!activeSkillName.isEmpty()){
+		for (String activeSkillName : activeSkills) {
+			if (!activeSkillName.isEmpty()) {
 				new_pokemon.addActiveSkill(activeSkillName);
 			}
-			
 		}
 		Pokedex.addPokemonToList(new_pokemon);
 	}
@@ -220,11 +223,11 @@ public class FileUtility {
 			int skillPower;
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
-				if(line.matches("^#+.*")){
+				if (line.matches("^#+.*")) {
 					continue;
 				}
 				matcher = pattern.matcher(line);
-				if(matcher.find()){
+				if (matcher.find()) {
 					skillName = matcher.group(1);
 					skillPower = Integer.parseInt(matcher.group(2));
 					ActiveSkill.getActiveSkill(skillName, skillPower, false);

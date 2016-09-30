@@ -15,11 +15,11 @@ import utility.Pokedex;
 public class TestPokedex {
 
 	private HashMap<Integer, String> pokedex;
-	//Usage name/ID attack defense speed hp moveRange attackRange moveType
-	private Pokemon pikachu = new Pokemon(23, 1.01, 1.01, 3, 8.9, 3,3, MoveType.WALK);
-	private Pokemon pikachu2 = new Pokemon(23, 1.10, 1.07, 3, 8.87, 2,4, MoveType.WALK);
-	private Pokemon weedle = new Pokemon(7, 0.79, 0.91, 4, 10.9, 3,6, MoveType.WALK);
-	private Pokemon pidgeot = new Pokemon(14, 1.59, 1.30, 5, 16.0, 1,4, MoveType.FLY);
+	// Usage name/ID attack defense speed hp moveRange attackRange moveType
+	private Pokemon pikachu = new Pokemon(25, 1.01, 1.01, 3, 8.9, 3, 3, MoveType.WALK);
+	private Pokemon pikachu2 = new Pokemon(25, 1.10, 1.07, 3, 8.87, 2, 4, MoveType.WALK);
+	private Pokemon weedle = new Pokemon(7, 0.79, 0.91, 4, 10.9, 3, 6, MoveType.WALK);
+	private Pokemon pidgeot = new Pokemon(14, 1.59, 1.30, 5, 16.0, 1, 4, MoveType.FLY);
 
 	@Before
 	public void setUp() throws Exception {
@@ -80,6 +80,7 @@ public class TestPokedex {
 		assertEquals(pidgeot, Pokedex.getAllPokemons().get(1));
 		assertEquals(pikachu, Pokedex.getAllPokemons().get(2));
 
+		System.out.println("Expected Error must appear below this line.");
 		Pokedex.addPokemonToList(pikachu2);
 
 		assertEquals(3, Pokedex.getAllPokemons().size());
@@ -99,39 +100,66 @@ public class TestPokedex {
 		assertEquals(2, Pokedex.getAllPokemons().size());
 
 		Pokemon tester;
+		
 		tester = Pokedex.getPokemon(pikachu.getID());
-		assertEquals(pikachu, tester);
-		assertNotEquals(weedle, tester);
+		
+		assertEquals(pikachu.getID(), tester.getID());
+		assertEquals(pikachu.getAttackRange(), tester.getAttackRange());
+		assertEquals(pikachu.getActiveSkills(), tester.getActiveSkills());
+		assertEquals(pikachu.getBase(), tester.getBase());
+		
+		assertNotEquals(weedle.getID(), tester.getID());
+		
 		tester = Pokedex.getPokemon(pidgeot.getID());
-		assertEquals(pidgeot, tester);
-		assertNotEquals(pikachu, tester);
-
+		
+		assertEquals(pidgeot.getID(), tester.getID());
+		assertEquals(pidgeot.getAttackRange(), tester.getAttackRange());
+		assertEquals(pidgeot.getActiveSkills(), tester.getActiveSkills());
+		assertEquals(pidgeot.getBase(), tester.getBase());
+		assertNotEquals(pikachu.getID(), tester.getID());
+		
+		
+		System.out.println("Expected Error must appear below this line.");
 		tester = Pokedex.getPokemon(weedle.getID());
 		assertNull(tester);
 
 	}
 
-	@Test public void testGetPokemonString(){
+	@Test
+	public void testGetPokemonString() {
 		Pokedex.clearAllPokemons();
 		assertTrue(Pokedex.getAllPokemons().isEmpty());
-		
+
 		Pokedex.addPokemonToPokedex(pikachu.getID(), "Pikachu");
-		
+
 		Pokedex.addPokemonToList(pikachu);
 		Pokedex.addPokemonToList(pidgeot);
 		assertEquals(2, Pokedex.getAllPokemons().size());
-		
+
 		Pokemon tester;
-		
+
 		// Equals ignore case
-		
+
 		tester = Pokedex.getPokemon("Pikachu");
-		assertEquals(pikachu, tester);
+		
+		assertEquals(pikachu.getID(), tester.getID());
+		assertEquals(pikachu.getAttackRange(), tester.getAttackRange());
+		assertEquals(pikachu.getActiveSkills(), tester.getActiveSkills());
+		assertEquals(pikachu.getBase(), tester.getBase());
+		
 		tester = Pokedex.getPokemon("pikachu");
-		assertEquals(pikachu, tester);
+		
+		assertEquals(pikachu.getID(), tester.getID());
+		assertEquals(pikachu.getAttackRange(), tester.getAttackRange());
+		assertEquals(pikachu.getActiveSkills(), tester.getActiveSkills());
+		assertEquals(pikachu.getBase(), tester.getBase());
+	
 		tester = Pokedex.getPokemon("PIkaChU");
-		assertEquals(pikachu, tester);
-		
-		
+	
+		assertEquals(pikachu.getID(), tester.getID());
+		assertEquals(pikachu.getAttackRange(), tester.getAttackRange());
+		assertEquals(pikachu.getActiveSkills(), tester.getActiveSkills());
+		assertEquals(pikachu.getBase(), tester.getBase());
+
 	}
 }
