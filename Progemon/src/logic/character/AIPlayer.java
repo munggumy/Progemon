@@ -1,11 +1,12 @@
 package logic.character;
 
+import java.util.LinkedList;
+
 import logic.filters.AttackFilter;
 import logic.filters.MoveFilter;
-import logic.terrain.FightMap;
-import logic.terrain.PathNode;
+import logic.terrain.FightTerrain;
+import logic.terrain.Path;
 import utility.RandomUtility;
-import utility.Savable;
 
 public class AIPlayer extends Player {
 
@@ -28,8 +29,10 @@ public class AIPlayer extends Player {
 		int x = pokemon.getCurrentFightTerrain().getX();
 		int y = pokemon.getCurrentFightTerrain().getY();
 		pokemon.findBlocksAround(pokemon.getMoveRange(), new MoveFilter());
-		PathNode nextPath = RandomUtility.randomElement(pokemon.getPaths());
-		pokemon.move(nextPath.getThisNode().getX(), nextPath.getThisNode().getY());
+		pokemon.sortPaths();
+//		LinkedList<FightTerrain> nextPath = RandomUtility.randomElement(pokemon.getPaths());
+		Path nextPath = pokemon.getPaths().get(0);
+		pokemon.move(nextPath.getLast().getX(), nextPath.getLast().getY());
 		System.out.println("Pokemon " + pokemon.getName() + " moved from (" + x + ", " + y + ") to ("
 				+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY() + ").");
 	}

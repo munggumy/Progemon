@@ -26,3 +26,5 @@ Gust 40
 Twineedle 50
 Pursuit 40
 Aerial Ace 60
+Poison String 15
+Wing Attack 70

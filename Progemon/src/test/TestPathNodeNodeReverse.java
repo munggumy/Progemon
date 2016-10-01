@@ -32,6 +32,7 @@ public class TestPathNodeNodeReverse {
 	public void testCase1element() {
 		assertFalse(nd1.equals(null));
 		PathNode old = nd1;
+		PathNode.reverseUtil(nd3, nd3.getPreviousNodes());
 	}
 	
 	@Test

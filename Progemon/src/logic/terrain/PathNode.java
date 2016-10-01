@@ -15,6 +15,24 @@ public class PathNode implements Iterable<PathNode> {
 	public PathNode(FightTerrain newNode) {
 		this(newNode, null);
 	}
+	
+	public void reverse(){
+		
+	}
+	
+	public static PathNode reverseUtil(PathNode current, PathNode update){
+		PathNode head;
+		if(current.previousNode.previousNode == null){
+			current.previousNode.previousNode = current;
+			head = current.previousNode;
+			current.previousNode = null;
+			return head;
+		}
+		current.previousNode = reverseUtil(current.previousNode, current);
+		head = current.previousNode;
+		current.previousNode = update;
+		return head;
+	}
 
 	@Override
 	public int hashCode() {

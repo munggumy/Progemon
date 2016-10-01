@@ -117,7 +117,7 @@ public class FightMap implements IRenderable {
 	/** Use this to remove Pokemon from map */
 	public boolean removePokemonFromMap(Pokemon pokemon) {
 		if (pokemonsOnMap.contains(pokemon)) {
-			pokemon.move(-1, -1);
+			pokemon.move(null);
 			pokemon.setCurrentFightMap(null);
 			pokemonsOnMap.remove(pokemon);
 			return true;

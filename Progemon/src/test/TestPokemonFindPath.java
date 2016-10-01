@@ -13,7 +13,7 @@ import logic.filters.MoveFilter;
 import logic.terrain.FightMap;
 import logic.terrain.FightTerrain;
 import logic.terrain.FightTerrain.TerrainType;
-import logic.terrain.PathNode;
+import logic.terrain.Path;
 import utility.FileUtility;
 
 public class TestPokemonFindPath {
@@ -40,6 +40,8 @@ public class TestPokemonFindPath {
 
 	@Test
 	public void testBasics() {
+		
+		System.out.println("Test Basics");
 		assertEquals(1, fearow.getCurrentFightTerrain().getX());
 		assertEquals(1, fearow.getCurrentFightTerrain().getY());
 		assertEquals(MoveType.FLY, fearow.getMoveType());
@@ -53,25 +55,29 @@ public class TestPokemonFindPath {
 
 	@Test
 	public void testFindBlocksCaseZero() {
+		
+		System.out.println("Test Find Blocks Case Zero");
 
 		// case range = 0
+		System.out.println("(0, 0)");
 		fearow.move(0, 0);
 
 		fearow.findBlocksAround(0, new MoveFilter());
-		System.out.println(fearow.getPaths());
 		assertEquals(1, fearow.getPaths().size());
-		assertEquals(fearow.getCurrentFightTerrain(), fearow.getPaths().get(0).getThisNode());
+		assertEquals(fearow.getCurrentFightTerrain(), fearow.getPaths().get(0).getLast());
 
+		System.out.println("(5, 5)");
 		fearow.move(5, 5);
 
 		fearow.findBlocksAround(0, new MoveFilter());
-		System.out.println(fearow.getPaths());
 		assertEquals(1, fearow.getPaths().size());
-		assertEquals(fearow.getCurrentFightTerrain(), fearow.getPaths().get(0).getThisNode());
+		assertEquals(fearow.getCurrentFightTerrain(), fearow.getPaths().get(0).getLast());
 	}
 
 	@Test
 	public void testFindBlocksCenter() {
+		
+		System.out.println("Test Find Blocks Center");
 
 		// Set terrains
 		pikachu.getCurrentFightMap().setFightTerrainAt(1, 1, new FightTerrain(1, 1, TerrainType.ROCK));
@@ -87,29 +93,47 @@ public class TestPokemonFindPath {
 		assertEquals(TerrainType.ROCK, fearow.getCurrentFightTerrain().getType());
 
 		// case range = 0
-
+		
+		
+		fearow.move(5,5);
 		fearow.findBlocksAround(0, new MoveFilter());
-		ArrayList<PathNode> nodeZero = fearow.getPaths();
+		ArrayList<Path> nonNode = new ArrayList<Path>(fearow.getPaths());
+		assertTrue(fearow.getPaths().get(0).getFirst().getX() == 5);
+		assertTrue(fearow.getPaths().get(0).getFirst().getY() == 5);
+		assertTrue(fearow.getPaths().get(0).getLast().getX() == 5);
+		assertTrue(fearow.getPaths().get(0).getLast().getY() == 5);
+		assertEquals(nonNode, fearow.getPaths());
+		
+		fearow.move(3, 3);
+		fearow.findBlocksAround(0, new MoveFilter());
+		ArrayList<Path> nodeZero = new ArrayList<Path>(fearow.getPaths());
+		assertTrue(fearow.getPaths().get(0).getFirst().getX() == 3);
+		assertTrue(fearow.getPaths().get(0).getFirst().getY() == 3);
+		assertTrue(fearow.getPaths().get(0).getLast().getX() == 3);
+		assertTrue(fearow.getPaths().get(0).getLast().getY() == 3);
+		assertNotEquals(nonNode, nodeZero);
+		assertEquals(nodeZero, fearow.getPaths());
+		assertFalse(fearow.getPaths().containsAll(nonNode));
 
 		// case range = 1
 
-		fearow.move(3, 3);
-
 		fearow.findBlocksAround(1, new MoveFilter());
-		ArrayList<PathNode> nodeOne = fearow.getPaths();
+		ArrayList<Path> nodeOne = new ArrayList<Path>(fearow.getPaths());
 
 		assertEquals(5, fearow.getPaths().size());
 		assertTrue(fearow.getPaths().contains(nodeZero.get(0)));
 		assertTrue(fearow.getPaths().containsAll(nodeOne));
+		assertFalse(fearow.getPaths().containsAll(nonNode));
 
 		// case range = 2
 
 		fearow.findBlocksAround(2, new MoveFilter());
-		ArrayList<PathNode> nodeTwo = fearow.getPaths();
+		ArrayList<Path> nodeTwo = new ArrayList<Path>(fearow.getPaths());
 
 		assertEquals(21, fearow.getPaths().size());
 		assertTrue(fearow.getPaths().contains(nodeZero.get(0)));
 		assertTrue(fearow.getPaths().containsAll(nodeOne));
+		assertFalse(fearow.getPaths().containsAll(nonNode));
 
 		// case range = 3
 
@@ -120,21 +144,24 @@ public class TestPokemonFindPath {
 		assertTrue(fearow.getPaths().containsAll(nodeTwo));
 		assertEquals(84, fearow.getPaths().size()); // 84 because reach map
 													// bounds
+		assertFalse(fearow.getPaths().containsAll(nonNode));
 	}
 
 	@Test
 	public void testMapBoundary() {
+		
+		System.out.println("Test Map Boundary");
 
 		// case range = 0
 
 		fearow.move(0, 0);
 		fearow.findBlocksAround(0, new MoveFilter());
-		ArrayList<PathNode> nodeZero = fearow.getPaths();
+		ArrayList<Path> nodeZero = new ArrayList<Path>(fearow.getPaths());
 
 		// case range = 1 at position (0,0)
 
 		fearow.findBlocksAround(1, new MoveFilter());
-		ArrayList<PathNode> nodeOne = fearow.getPaths();
+		ArrayList<Path> nodeOne = new ArrayList<Path>(fearow.getPaths());
 
 		assertEquals(3, fearow.getPaths().size());
 		assertTrue(fearow.getPaths().containsAll(nodeZero));
@@ -151,19 +178,21 @@ public class TestPokemonFindPath {
 
 	@Test
 	public void testUnmovableTerrains() {
+		
+		System.out.println("Test Unmovable Terrains");
 
 		// case range 0 at position (0,1)
 
 		pikachu.move(0, 1);
 		pikachu.findBlocksAround(0, new MoveFilter());
-		ArrayList<PathNode> nodeZero = pikachu.getPaths();
+		ArrayList<Path> nodeZero = new ArrayList<Path>(pikachu.getPaths());
 		assertEquals(1, pikachu.getPaths().size());
 
 		// case range 1 at position (0,1) -- rock on right side, boundary on
 		// left side
 
 		pikachu.findBlocksAround(1, new MoveFilter());
-		ArrayList<PathNode> nodeOne = pikachu.getPaths();
+		ArrayList<Path> nodeOne = new ArrayList<Path>(pikachu.getPaths());
 		assertEquals(3, pikachu.getPaths().size());
 		assertTrue(pikachu.getPaths().containsAll(nodeZero));
 

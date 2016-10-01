@@ -75,6 +75,7 @@ public class GUIFightGameManager {
 				currentPokemon.calculateCurrentStats();
 				tick = 0;
 				removeDeadPokemons();
+				fightMap.sortPokemons();
 			}
 			Frame.getGraphicComponent().repaint();
 
@@ -83,9 +84,6 @@ public class GUIFightGameManager {
 				System.out.println("The winner is " + winnerPlayer.getName());
 				break;
 			}
-
-
-			fightMap.sortPokemons();
 		}
 
 		System.out.println("END OF FIGHT");
@@ -130,8 +128,8 @@ public class GUIFightGameManager {
 			Pokemon p = fightMap.getPokemonsOnMap().get(i);
 			if (p.isDead()) {
 				System.out.println(p.getName() + " is DEAD!");
+				boolean a = ScreenComponent.getObjectOnScreen().remove(p);
 				fightMap.removePokemonFromMap(p);
-				ScreenComponent.getObjectOnScreen().remove(p);
 			}
 		}
 	}

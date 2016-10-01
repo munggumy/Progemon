@@ -24,17 +24,21 @@ public class Main2 {
 		Pokemon charlizard = Pokedex.getPokemon("Charlizard");
 		charlizard.setLevel(40);
 		charlizard.calculateCurrentStats();
+		charlizard.resetHP();
 		Pokemon caterpie = Pokedex.getPokemon("Caterpie");
 		caterpie.setLevel(5);
 		caterpie.calculateCurrentStats();
+		caterpie.resetHP();
 
 		
 		Pokemon wartortle = Pokedex.getPokemon("Wartortle");
 		wartortle.setLevel(34);
 		wartortle.calculateCurrentStats();
+		wartortle.resetHP();
 		Pokemon pidgeotto = Pokedex.getPokemon("Pidgeotto");
 		pidgeotto.setLevel(30);
 		pidgeotto.calculateCurrentStats();
+		pidgeotto.resetHP();
 		
 		
 		Player p1 = new AIPlayer("AI 1", charlizard);
