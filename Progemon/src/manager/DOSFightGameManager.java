@@ -3,8 +3,8 @@ package manager;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import logic.character.Player;
 import logic.character.Pokemon;
+import logic.player.Player;
 import logic.terrain.FightMap;
 import utility.FileUtility;
 import utility.RandomUtility;
@@ -35,7 +35,7 @@ public class DOSFightGameManager {
 	/** This method is called before fight starts. */
 	public static void startFight(/** map name */
 	) {
-		
+
 		spawnPokemons();
 		field.sortPokemons();
 		System.out.println(" ======= Game Initialized without errors ======= ");
@@ -52,7 +52,7 @@ public class DOSFightGameManager {
 		while (true) {
 			currentPokemon = field.getPokemonsOnMap().get(0);
 			currentPokemon.getOwner().runTurn(currentPokemon);
-			
+
 			removeDeadPokemons();
 
 			if (checkWinner()) {
@@ -61,7 +61,10 @@ public class DOSFightGameManager {
 				break;
 			}
 
+			System.out.println(currentPokemon.getName() + " : " + currentPokemon.getAttackStat() + " "
+					+ currentPokemon.getCurrentHP() + " " + currentPokemon.getFullHP());
 			currentPokemon.calculateNextTurnTime();
+			currentPokemon.calculateCurrentStats();
 
 			field.sortPokemons();
 			i++;
@@ -100,17 +103,16 @@ public class DOSFightGameManager {
 		return winnerPlayer != null;
 
 	}
-	
-	public static void removeDeadPokemons(){
-		for(int i = field.getPokemonsOnMap().size() - 1; i >= 0 ; i--){
+
+	public static void removeDeadPokemons() {
+		for (int i = field.getPokemonsOnMap().size() - 1; i >= 0; i--) {
 			Pokemon p = field.getPokemonsOnMap().get(i);
-			if(p.isDead()){
+			if (p.isDead()) {
 				System.out.println(p.getName() + " is DEAD!");
 				field.removePokemonFromMap(p);
 			}
 		}
 	}
-	
 
 	public static final ArrayList<Player> getPlayers() {
 		return players;

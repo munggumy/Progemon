@@ -1,8 +1,8 @@
-package logic.character;
+package logic.player;
 
 import java.util.ArrayList;
 
-import logic.terrain.FightMap;
+import logic.character.Pokemon;
 
 public abstract class Player {
 	private String name;
@@ -46,14 +46,8 @@ public abstract class Player {
 	}
 	
 	public void addPokemon(Pokemon pokemon){
-		Pokemon temp = null;
-		try {
-			temp = (Pokemon) pokemon.clone();
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-		}
-		temp.setOwner(this);
-		pokemons.add(temp);
+		pokemon.setOwner(this);
+		pokemons.add(pokemon);
 	}
 
 	public abstract void runTurn(Pokemon pokemon);

@@ -4,8 +4,6 @@ package logic.filters;
 import logic.character.Pokemon;
 import logic.terrain.FightMap;
 import logic.terrain.FightTerrain;
-import logic.character.Pokemon;
-import logic.terrain.FightTerrain;
 
 
 public abstract class Filter {

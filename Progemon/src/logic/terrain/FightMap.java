@@ -1,6 +1,5 @@
 package logic.terrain;
 
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +17,17 @@ public class FightMap implements IRenderable {
 	private int sizeX, sizeY;
 	private FightTerrain[][] map;
 	private ArrayList<Pokemon> pokemonsOnMap = new ArrayList<Pokemon>();
+
+	static public enum Direction {
+		UP(0, -1), DOWN(0, 1), LEFT(-1, 0), RIGHT(1, 0);
+
+		public int x, y;
+
+		Direction(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+	}
 
 	public FightMap(int sizeX, int sizeY) {
 		if (sizeX < 0) {
@@ -54,12 +64,23 @@ public class FightMap implements IRenderable {
 	}
 
 	public FightTerrain getFightTerrainAt(int x, int y) {
+		if(outOfMap(x, y)){
+			return null;
+		}
 		return map[y][x];
+	}
+	
+	public FightTerrain getFightTerrainAt(FightTerrain paramFT, Direction d){
+		return getFightTerrainAt(paramFT.getX() + d.x, paramFT.getY() + d.y);
+	}
+
+	public void setFightTerrainAt(int x, int y, FightTerrain fightTerrain) {
+		map[y][x] = fightTerrain;
 	}
 
 	public Pokemon getPokemonAt(int x, int y) {
 		for (Pokemon pokemon : pokemonsOnMap) {
-			if (pokemon.getX() == x && pokemon.getY() == y) {
+			if (pokemon.getCurrentFightTerrain().getX() == x && pokemon.getCurrentFightTerrain().getY() == y) {
 				return pokemon;
 			}
 		}
@@ -113,7 +134,7 @@ public class FightMap implements IRenderable {
 	/** Use this to remove Pokemon from map */
 	public boolean removePokemonFromMap(Pokemon pokemon) {
 		if (pokemonsOnMap.contains(pokemon)) {
-			pokemon.move(-1, -1);
+			pokemon.move(null);
 			pokemon.setCurrentFightMap(null);
 			pokemonsOnMap.remove(pokemon);
 			return true;

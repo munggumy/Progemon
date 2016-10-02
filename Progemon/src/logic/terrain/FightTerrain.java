@@ -20,7 +20,6 @@ public class FightTerrain implements IRenderable {
 
 	public static enum TerrainType {
 		GRASS, ROCK, WATER, TREE, GROUND;
-
 		private int moveCost;
 
 		private TerrainType(int moveCost) {
@@ -55,7 +54,7 @@ public class FightTerrain implements IRenderable {
 
 	@Override
 	public String toString() {
-		return "FightTerrain [x=" + x + ", y=" + y + ", isShadowed=" + isShadowed + ", type=" + type + "]";
+		return "FightTerrain [x=" + x + ", y=" + y + ", type=" + type + "]";
 	}
 
 	public final int getX() {

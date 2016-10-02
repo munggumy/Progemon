@@ -3,10 +3,12 @@ package manager;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import graphic.DialogBox;
 import graphic.Frame;
+import graphic.QueueBox;
 import graphic.ScreenComponent;
-import logic.character.Player;
 import logic.character.Pokemon;
+import logic.player.Player;
 import logic.terrain.FightMap;
 import utility.FileUtility;
 import utility.RandomUtility;
@@ -37,11 +39,12 @@ public class GUIFightGameManager {
 		try {
 			fightMap = new FightMap(FileUtility.loadFightMap());
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
+		// Load Graphics
 		new Frame();
+		
 
 		startFight();
 		runFight();
@@ -51,11 +54,16 @@ public class GUIFightGameManager {
 
 	private void startFight() {
 		ScreenComponent.addObject(fightMap);
+		
 		spawnPokemons();
 		fightMap.sortPokemons();
 		for (Pokemon pokemon : fightMap.getPokemonsOnMap()) {
 			ScreenComponent.addObject(pokemon);
 		}
+
+		ScreenComponent.addObject(new DialogBox());
+		DialogBox.sentMessage("Pokemon Trainer Brock wants to fight you! \nPokemon Trainer Brock sent Wartortle and Pidgeotto!");
+		ScreenComponent.addObject(new QueueBox(fightMap));
 		Frame.getGraphicComponent().repaint();
 	}
 
@@ -65,7 +73,6 @@ public class GUIFightGameManager {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -73,28 +80,26 @@ public class GUIFightGameManager {
 				currentPokemon = fightMap.getPokemonsOnMap().get(0);
 				currentPokemon.getOwner().runTurn(currentPokemon);
 				currentPokemon.calculateNextTurnTime();
+				currentPokemon.calculateCurrentStats();
+				removeDeadPokemons();
+				fightMap.sortPokemons();
 				tick = 0;
 			}
+			
 			Frame.getGraphicComponent().repaint();
-
-			removeDeadPokemons();
 
 			if (checkWinner()) {
 				System.out.println("The fight has ended.");
 				System.out.println("The winner is " + winnerPlayer.getName());
 				break;
 			}
-
-
-			fightMap.sortPokemons();
 		}
 
 		System.out.println("END OF FIGHT");
 	}
 
 	private void endFight() {
-		// TODO Auto-generated method stub
-
+		Frame.getGraphicComponent().repaint();
 	}
 
 	private static void spawnPokemons() {
@@ -132,8 +137,8 @@ public class GUIFightGameManager {
 			Pokemon p = fightMap.getPokemonsOnMap().get(i);
 			if (p.isDead()) {
 				System.out.println(p.getName() + " is DEAD!");
+				boolean a = ScreenComponent.getObjectOnScreen().remove(p);
 				fightMap.removePokemonFromMap(p);
-				ScreenComponent.getObjectOnScreen().remove(p);
 			}
 		}
 	}
