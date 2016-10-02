@@ -1,6 +1,6 @@
-package logic.character;
+package logic.player;
 
-import logic.terrain.FightMap;
+import logic.character.Pokemon;
 
 public class HumanPlayer extends Player {
 

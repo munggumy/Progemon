@@ -6,7 +6,7 @@ import logic.terrain.FightMap;
 import logic.terrain.FightTerrain;
 
 public class MoveFilter extends OverlapFilter {
-
+	
 	@Override
 	public boolean check(Pokemon pokemon, FightTerrain fightTerrain) {
 		return checkTerrain(pokemon, fightTerrain) && super.check(pokemon, fightTerrain);

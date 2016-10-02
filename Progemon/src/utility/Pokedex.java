@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import logic.character.Player;
 import logic.character.Pokemon;
+import logic.player.Player;
 
 public class Pokedex {
 	private static HashMap<Integer, String> pokedex = new HashMap<Integer, String>();
@@ -57,11 +57,16 @@ public class Pokedex {
 		return allPokemons;
 	}
 
+	// get Pokemon methods
+	
+	/** main <code>getPokemon()</code> method. gets a clone*/
 	public static final Pokemon getPokemon(int pokemon_id) {
 		for (Pokemon pokemon : allPokemons) {
 			if (pokemon.getID() == pokemon_id) {
 				try {
-					return (Pokemon) pokemon.clone();
+					Pokemon temp = (Pokemon) pokemon.clone();
+					temp.calculateCurrentStats();
+					return temp;
 				} catch (CloneNotSupportedException e) {
 					e.printStackTrace();
 				}
@@ -85,6 +90,12 @@ public class Pokedex {
 		Pokemon out = getPokemon(pokemon_name);
 		out.setOwner(owner);
 		return out;
+	}
+	
+	public static final void printPokedex(){
+		for(Map.Entry<Integer, String> entry : pokedex.entrySet()){
+			System.out.println("ID " + entry.getKey() + " = " + entry.getValue());
+		}
 	}
 	
 	public static final void clearPokedex(){
