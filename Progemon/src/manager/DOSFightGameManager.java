@@ -3,8 +3,8 @@ package manager;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import logic.character.Player;
 import logic.character.Pokemon;
+import logic.player.Player;
 import logic.terrain.FightMap;
 import utility.FileUtility;
 import utility.RandomUtility;

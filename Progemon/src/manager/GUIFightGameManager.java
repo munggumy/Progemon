@@ -3,10 +3,12 @@ package manager;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import graphic.DialogBox;
 import graphic.Frame;
+import graphic.QueueBox;
 import graphic.ScreenComponent;
-import logic.character.Player;
 import logic.character.Pokemon;
+import logic.player.Player;
 import logic.terrain.FightMap;
 import utility.FileUtility;
 import utility.RandomUtility;
@@ -37,11 +39,12 @@ public class GUIFightGameManager {
 		try {
 			fightMap = new FightMap(FileUtility.loadFightMap());
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
+		// Load Graphics
 		new Frame();
+		
 
 		startFight();
 		runFight();
@@ -51,11 +54,16 @@ public class GUIFightGameManager {
 
 	private void startFight() {
 		ScreenComponent.addObject(fightMap);
+		
 		spawnPokemons();
 		fightMap.sortPokemons();
 		for (Pokemon pokemon : fightMap.getPokemonsOnMap()) {
 			ScreenComponent.addObject(pokemon);
 		}
+
+		ScreenComponent.addObject(new DialogBox());
+		DialogBox.sentMessage("Pokemon Trainer Brock wants to fight you! \nPokemon Trainer Brock sent Wartortle and Pidgeotto!");
+		ScreenComponent.addObject(new QueueBox(fightMap));
 		Frame.getGraphicComponent().repaint();
 	}
 
@@ -73,10 +81,11 @@ public class GUIFightGameManager {
 				currentPokemon.getOwner().runTurn(currentPokemon);
 				currentPokemon.calculateNextTurnTime();
 				currentPokemon.calculateCurrentStats();
-				tick = 0;
 				removeDeadPokemons();
 				fightMap.sortPokemons();
+				tick = 0;
 			}
+			
 			Frame.getGraphicComponent().repaint();
 
 			if (checkWinner()) {

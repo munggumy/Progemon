@@ -1,10 +1,8 @@
-package logic.character;
+package logic.player;
 
-import java.util.LinkedList;
-
+import logic.character.Pokemon;
 import logic.filters.AttackFilter;
 import logic.filters.MoveFilter;
-import logic.terrain.FightTerrain;
 import logic.terrain.Path;
 import utility.RandomUtility;
 

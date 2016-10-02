@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import logic.character.Player;
 import logic.character.Pokemon;
+import logic.player.Player;
 
 public class Pokedex {
 	private static HashMap<Integer, String> pokedex = new HashMap<Integer, String>();

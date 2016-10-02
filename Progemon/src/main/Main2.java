@@ -3,16 +3,15 @@ package main;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import logic.character.AIPlayer;
-import logic.character.ActiveSkill;
-import logic.character.Player;
 import logic.character.Pokemon;
+import logic.player.AIPlayer;
+import logic.player.Player;
 import manager.GUIFightGameManager;
 import utility.FileUtility;
 import utility.Pokedex;
 
 public class Main2 {
-	
+
 	public static void main(String[] args) {
 		try {
 			FileUtility.loadActiveSkills();
@@ -30,7 +29,6 @@ public class Main2 {
 		caterpie.calculateCurrentStats();
 		caterpie.resetHP();
 
-		
 		Pokemon wartortle = Pokedex.getPokemon("Wartortle");
 		wartortle.setLevel(34);
 		wartortle.calculateCurrentStats();
@@ -39,20 +37,19 @@ public class Main2 {
 		pidgeotto.setLevel(30);
 		pidgeotto.calculateCurrentStats();
 		pidgeotto.resetHP();
-		
-		
+
 		Player p1 = new AIPlayer("AI 1", charlizard);
 		p1.addPokemon(caterpie);
 		Player p2 = new AIPlayer("AI 2", pidgeotto);
 		p2.addPokemon(wartortle);
-		
-		
+
 		ArrayList<Player> players = new ArrayList<Player>();
 		players.add(p1);
 		players.add(p2);
-		
+
+		@SuppressWarnings("unused")
 		GUIFightGameManager gui = new GUIFightGameManager(players);
-		
+
 	}
 
 }

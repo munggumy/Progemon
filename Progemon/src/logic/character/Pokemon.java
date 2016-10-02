@@ -3,15 +3,16 @@ package logic.character;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 
 import graphic.DrawingUtility;
 import graphic.IRenderable;
 import logic.filters.Filter;
+import logic.filters.MoveFilter;
+import logic.player.Player;
 import logic.terrain.FightMap;
+import logic.terrain.FightMap.Direction;
 import logic.terrain.FightTerrain;
 import logic.terrain.Path;
-import logic.terrain.PathNode;
 import utility.Pokedex;
 import utility.RandomUtility;
 import utility.StringUtility;
@@ -139,6 +140,9 @@ public class Pokemon implements Cloneable, IRenderable {
 	 *            position
 	 */
 	public void move(int x, int y) {
+		if (currentFightMap == null) {
+			System.err.println("Pokemon.move() : [ID=" + id + "].currentFightMap not set");
+		}
 		if (!currentFightMap.outOfMap(x, y)) {
 			this.currentFightTerrain = currentFightMap.getFightTerrainAt(x, y);
 		} else {
@@ -163,7 +167,7 @@ public class Pokemon implements Cloneable, IRenderable {
 				p.getName(), p.getCurrentHP());
 	}
 
-	// Interface methods
+	// Comparators
 
 	public static Comparator<Pokemon> getSpeedComparator() {
 		return new SpeedComparator();
@@ -172,13 +176,7 @@ public class Pokemon implements Cloneable, IRenderable {
 	private static class SpeedComparator implements Comparator<Pokemon> {
 		@Override
 		public int compare(Pokemon o1, Pokemon o2) {
-			if (Double.compare(o1.nextTurnTime, o2.nextTurnTime) > 0) {
-				return 1;
-			} else if (Double.compare(o1.nextTurnTime, o2.nextTurnTime) < 0) {
-				return -1;
-			} else {
-				return 0;
-			}
+			return Double.compare(o1.nextTurnTime, o2.nextTurnTime);
 		}
 	}
 
@@ -192,6 +190,19 @@ public class Pokemon implements Cloneable, IRenderable {
 			return o1.id - o2.id;
 		}
 	}
+
+	public static Comparator<Pokemon> getHPComparator() {
+		return new HPComparator();
+	}
+
+	private static class HPComparator implements Comparator<Pokemon> {
+		@Override
+		public int compare(Pokemon p1, Pokemon p2) {
+			return Double.compare(p1.currentHP, p2.currentHP);
+		}
+	}
+
+	// Clone
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
@@ -210,70 +221,121 @@ public class Pokemon implements Cloneable, IRenderable {
 	// }
 
 	public void findBlocksAround(int range, Filter filter) {
-		this.paths.clear();
-		findBlocksAroundRecursive(range, createNewPath(this.currentFightTerrain, null), this.currentFightTerrain,
-				this.currentFightMap, filter);
+		paths.clear();
+		findBlocksAroundRecursive(range, new Path(currentFightTerrain), currentFightTerrain, filter);
 	}
 
 	/** Called by findBlocksAround() method. */
 	// private void findBlocksAroundRecursive(int range, PathNode currentPath,
 	// FightTerrain fightTerrain, FightMap map,
 	// Filter filter) {
-	private void findBlocksAroundRecursive(int range, Path currentPath,
-			FightTerrain currentFightTerrain, FightMap map, Filter filter) {
+	private void findBlocksAroundRecursive(int range, Path currentPath, FightTerrain currentFightTerrain,
+			Filter filter) {
 		if (filter.check(this, currentFightTerrain)) {
 			paths.add(currentPath); // adds current pathNode
-			if (range > 0) {
-				// If range > 0, find blocks around it.
-				int x = currentFightTerrain.getX();
-				int y = currentFightTerrain.getY();
+			if (range >= currentFightTerrain.getType().getMoveCost()) {
+				// If range > currentMoveCost , find blocks around it.
 				FightTerrain nextFightTerrain;
-				if (x < map.getSizeX() - 1) {
-					nextFightTerrain = map.getMap()[y][x + 1];
-					findBlocksAroundRecursive(range - 1, createNewPath(nextFightTerrain, currentPath), nextFightTerrain,
-							map, filter);
-				}
-				if (x > 0) {
-					nextFightTerrain = map.getMap()[y][x - 1];
-					findBlocksAroundRecursive(range - 1, createNewPath(nextFightTerrain, currentPath), nextFightTerrain,
-							map, filter);
-				}
-				if (y < map.getSizeY() - 1) {
-					nextFightTerrain = map.getMap()[y + 1][x];
-					findBlocksAroundRecursive(range - 1, createNewPath(nextFightTerrain, currentPath), nextFightTerrain,
-							map, filter);
-				}
-				if (y > 0) {
-					nextFightTerrain = map.getMap()[y - 1][x];
-					findBlocksAroundRecursive(range - 1, createNewPath(nextFightTerrain, currentPath), nextFightTerrain,
-							map, filter);
+				for (Direction direction : Direction.values()) {
+					nextFightTerrain = currentFightMap.getFightTerrainAt(currentFightTerrain, direction);
+					if (nextFightTerrain != null) {
+						findBlocksAroundRecursive(range - currentFightTerrain.getType().getMoveCost(),
+								new Path(nextFightTerrain, currentPath), nextFightTerrain, filter);
+					}
 				}
 			}
 		}
 	}
 
-	/** old, old, old, old, NEW */
-	private static Path createNewPath(FightTerrain nextFightTerrain,
-			Path currentPath) {
-		Path temp;
-		if(currentPath == null){
-			temp = new Path();
-		} else {
-			temp = new Path(currentPath);
-		}
-		if (nextFightTerrain != null) {
-			temp.add(nextFightTerrain);
-		}
-		return temp;
-	}
-
 	public ArrayList<FightTerrain> getAvaliableFightTerrains() {
 		ArrayList<FightTerrain> out = new ArrayList<FightTerrain>();
+		FightTerrain last;
 		for (Path path : paths) {
-			out.add(path.getLast());
+			last = path.getLast();
+			System.out.println(last);
+			if (last != null && !out.contains(last)) {
+				out.add(last);
+			}
 		}
 		return out;
 	}
+
+	public Path findPathTo(FightTerrain destination) {
+		return findPathTo(destination, 20);
+	}
+
+	public Path findPathTo(FightTerrain destination, int limit) {
+
+		/** Inner Class with counter */
+		final class PathWithCounter extends Path {
+			/**
+			 * Generated Serial ID
+			 */
+			private static final long serialVersionUID = 7182452962943995194L;
+			short totalCost = 0;
+
+			PathWithCounter(FightTerrain nextFightTerrain, short counter) {
+				super(nextFightTerrain);
+				this.totalCost = counter;
+			}
+
+			PathWithCounter(FightTerrain nextFightTerrain, Path currentPath, short counter) {
+				super(nextFightTerrain, currentPath);
+				this.totalCost = counter;
+			}
+		}
+
+		paths.clear();
+
+		paths.add(new PathWithCounter(getCurrentFightTerrain(), (short) 0));
+
+		boolean stupidPath;
+		int roundsPassed = 0;
+		short index = 0, lastPathIterCost = 0;
+		int nextTerrainCost;
+		Path lastPathIter;
+		FightTerrain nextTerrain;
+		Filter moveFilter = new MoveFilter();
+
+		while (roundsPassed < limit) {
+			if (index >= paths.size()) {
+				System.err.println("Pokemon.findPath() : Failed to find Path");
+				return null;
+			}
+			lastPathIter = paths.get(index);
+			lastPathIterCost = ((PathWithCounter) lastPathIter).totalCost;
+			for (Direction direction : Direction.values()) {
+				nextTerrain = currentFightMap.getFightTerrainAt(lastPathIter.getLast(), direction);
+				if (nextTerrain != null && moveFilter.check(this, nextTerrain)) {
+					// nextTerrain is movable!
+					nextTerrainCost = nextTerrain.getType().getMoveCost();
+					stupidPath = false;
+					for (Path otherPath : paths) {
+						PathWithCounter otherPathWithCounter = (PathWithCounter) otherPath;
+						if (otherPath.getLast().equals(nextTerrain)
+								&& otherPathWithCounter.totalCost <= lastPathIterCost + nextTerrainCost) {
+							// There is a duplicate element in paths.
+							stupidPath = true;
+							break;
+						}
+					}
+					if (!stupidPath) {
+						paths.add(new PathWithCounter(nextTerrain, lastPathIter,
+								(short) (lastPathIterCost + nextTerrainCost)));
+						if (nextTerrain.equals(destination)) {
+							// We have found the solution!
+							return paths.get(paths.size() - 1);
+						}
+					}
+				}
+			} // end for direction
+			roundsPassed++;
+			index++;
+		} // end of while loop
+
+		System.err.println("Pokemon.findPath() : Failed to find Path within internal limit.");
+		return null;
+	} // end of Pokemon.findPath()
 
 	// ActiveSKill methods
 
@@ -300,6 +362,31 @@ public class Pokemon implements Cloneable, IRenderable {
 			activeSkills.remove(ActiveSkill.getActiveSkill(activeSkillName));
 		}
 	}
+
+	// if (x < map.getSizeX() - 1) {
+	// nextFightTerrain = map.getMap()[y][x + 1];
+	// findBlocksAroundRecursive(range - 1, new Path(nextFightTerrain,
+	// currentPath), nextFightTerrain, map,
+	// filter);
+	// }
+	// if (x > 0) {
+	// nextFightTerrain = map.getMap()[y][x - 1];
+	// findBlocksAroundRecursive(range - 1, new Path(nextFightTerrain,
+	// currentPath), nextFightTerrain, map,
+	// filter);
+	// }
+	// if (y < map.getSizeY() - 1) {
+	// nextFightTerrain = map.getMap()[y + 1][x];
+	// findBlocksAroundRecursive(range - 1, new Path(nextFightTerrain,
+	// currentPath), nextFightTerrain, map,
+	// filter);
+	// }
+	// if (y > 0) {
+	// nextFightTerrain = map.getMap()[y - 1][x];
+	// findBlocksAroundRecursive(range - 1, new Path(nextFightTerrain,
+	// currentPath), nextFightTerrain, map,
+	// filter);
+	// }
 
 	// public ArrayList<FightTerrain> findMovableBlockAround(int range,
 	// FightTerrain ft, ArrayList<FightTerrain> fts,
@@ -360,8 +447,8 @@ public class Pokemon implements Cloneable, IRenderable {
 	private double calculateStatsEquation(double inputBaseStat) {
 		return (((2 * inputBaseStat) + iv) * level * 0.01) + 5;
 	}
-	
-	public void sortPaths(){
+
+	public void sortPaths() {
 		Collections.shuffle(paths);
 		Collections.sort(paths);
 		Collections.reverse(paths);

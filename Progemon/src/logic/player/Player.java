@@ -1,8 +1,8 @@
-package logic.character;
+package logic.player;
 
 import java.util.ArrayList;
 
-import logic.terrain.FightMap;
+import logic.character.Pokemon;
 
 public abstract class Player {
 	private String name;

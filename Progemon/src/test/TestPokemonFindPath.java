@@ -123,7 +123,7 @@ public class TestPokemonFindPath {
 		assertEquals(5, fearow.getPaths().size());
 		assertTrue(fearow.getPaths().contains(nodeZero.get(0)));
 		assertTrue(fearow.getPaths().containsAll(nodeOne));
-		assertFalse(fearow.getPaths().containsAll(nonNode));
+		assertFalse(fearow.getPaths().contains(nonNode));
 
 		// case range = 2
 
@@ -133,7 +133,7 @@ public class TestPokemonFindPath {
 		assertEquals(21, fearow.getPaths().size());
 		assertTrue(fearow.getPaths().contains(nodeZero.get(0)));
 		assertTrue(fearow.getPaths().containsAll(nodeOne));
-		assertFalse(fearow.getPaths().containsAll(nonNode));
+		assertFalse(fearow.getPaths().contains(nonNode));
 
 		// case range = 3
 

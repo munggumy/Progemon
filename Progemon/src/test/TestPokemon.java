@@ -1,14 +1,17 @@
 package test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import logic.character.AIPlayer;
-import logic.character.Player;
 import logic.character.Pokemon;
 import logic.character.Pokemon.MoveType;
+import logic.player.AIPlayer;
+import logic.player.Player;
 
 public class TestPokemon {
 	

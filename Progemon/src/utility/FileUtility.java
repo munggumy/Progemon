@@ -1,8 +1,8 @@
 package utility;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +23,7 @@ public class FileUtility {
 	private static final String DEFAULT_LOAD_FIGHT_MAP = DEFAULT_PATH + "/fight_map.txt";
 	private static final String DEFAULT_ACTIVE_SKILLS = DEFAULT_PATH + "/active_skills.txt";
 	private static FileReader reader;
+	private static BufferedReader bufReader;
 	private static Scanner scanner;
 
 	public static void loadAllDefaults() throws IOException {
@@ -39,7 +40,8 @@ public class FileUtility {
 	public static void loadPokemons(String filePath) throws IOException {
 		try {
 			reader = new FileReader(filePath);
-			scanner = new Scanner(reader);
+			bufReader = new BufferedReader(reader);
+			scanner = new Scanner(bufReader);
 			Pattern pattern = Pattern.compile(
 					/*
 					 * id/name attack defence speed hp mRange aRange mType
@@ -85,6 +87,9 @@ public class FileUtility {
 			if (scanner != null) {
 				scanner.close();
 			}
+			if (bufReader != null){
+				bufReader.close();
+			}
 		}
 	}
 
@@ -119,7 +124,8 @@ public class FileUtility {
 	public static void loadPokedex(String filePath) throws IOException {
 		try {
 			reader = new FileReader(filePath);
-			scanner = new Scanner(reader);
+			bufReader = new BufferedReader(reader);
+			scanner = new Scanner(bufReader);
 			Pattern pattern = Pattern.compile("(\\d+)\\s([\\w\\s]+)");
 			Matcher matcher;
 			int temp_id;
@@ -142,6 +148,9 @@ public class FileUtility {
 			if (reader != null) {
 				reader.close();
 			}
+			if (bufReader != null){
+				bufReader.close();
+			}
 		}
 	}
 
@@ -155,7 +164,8 @@ public class FileUtility {
 		ArrayList<FightTerrain[]> temp_map = new ArrayList<FightTerrain[]>();
 		try {
 			reader = new FileReader(filePath);
-			scanner = new Scanner(reader);
+			bufReader = new BufferedReader(reader);
+			scanner = new Scanner(bufReader);
 			int widthInBlocks = scanner.nextInt();
 			int heightInBlocks = scanner.nextInt();
 			for (int y = 0; y < heightInBlocks; y++) {
@@ -170,6 +180,9 @@ public class FileUtility {
 			}
 			if (scanner != null) {
 				scanner.close();
+			}
+			if (bufReader != null){
+				bufReader.close();
 			}
 		}
 
@@ -213,10 +226,11 @@ public class FileUtility {
 
 	// Load Active Skills
 
-	public static void loadActiveSkills(String filepath) throws IOException {
+	public static void loadActiveSkills(String filePath) throws IOException {
 		try {
-			reader = new FileReader(filepath);
-			scanner = new Scanner(reader);
+			reader = new FileReader(filePath);
+			bufReader = new BufferedReader(reader);
+			scanner = new Scanner(bufReader);
 			Pattern pattern = Pattern.compile("([\\w\\s]+)\\s(\\d+)");
 			Matcher matcher;
 			String skillName;
@@ -241,6 +255,9 @@ public class FileUtility {
 			}
 			if (scanner != null) {
 				scanner.close();
+			}
+			if (bufReader != null){
+				bufReader.close();
 			}
 		}
 	}

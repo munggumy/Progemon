@@ -7,12 +7,14 @@ public class Path extends LinkedList<FightTerrain> implements Comparable<Path> {
 
 	private static final long serialVersionUID = 2418393279076119053L;
 
-	public Path() {
+	public Path(FightTerrain paramFT) {
 		super();
+		super.add(paramFT);
 	}
 
-	public Path(Collection<FightTerrain> c) {
+	public Path(FightTerrain paramFT, Collection<FightTerrain> c) {
 		super(c);
+		super.add(paramFT);
 	}
 
 	@Override
@@ -27,4 +29,5 @@ public class Path extends LinkedList<FightTerrain> implements Comparable<Path> {
 		}
 		return this.size() - paramPath.size();
 	}
+	
 }

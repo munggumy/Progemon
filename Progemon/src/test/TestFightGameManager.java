@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
-import logic.character.AIPlayer;
 import logic.character.ActiveSkill;
-import logic.character.Player;
 import logic.character.Pokemon;
+import logic.player.AIPlayer;
+import logic.player.Player;
 import logic.terrain.FightMap;
 import manager.DOSFightGameManager;
 import utility.FileUtility;
