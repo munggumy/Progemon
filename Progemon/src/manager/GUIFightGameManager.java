@@ -57,13 +57,10 @@ public class GUIFightGameManager {
 		
 		spawnPokemons();
 		fightMap.sortPokemons();
-		for (Pokemon pokemon : fightMap.getPokemonsOnMap()) {
-			ScreenComponent.addObject(pokemon);
-		}
 
 		ScreenComponent.addObject(new DialogBox());
 		DialogBox.sentMessage("Pokemon Trainer Brock wants to fight you! \nPokemon Trainer Brock sent Wartortle and Pidgeotto!");
-		ScreenComponent.addObject(new QueueBox(fightMap));
+		ScreenComponent.addObject(new QueueBox());
 		Frame.getGraphicComponent().repaint();
 	}
 
@@ -137,7 +134,6 @@ public class GUIFightGameManager {
 			Pokemon p = fightMap.getPokemonsOnMap().get(i);
 			if (p.isDead()) {
 				System.out.println(p.getName() + " is DEAD!");
-				boolean a = ScreenComponent.getObjectOnScreen().remove(p);
 				fightMap.removePokemonFromMap(p);
 			}
 		}
