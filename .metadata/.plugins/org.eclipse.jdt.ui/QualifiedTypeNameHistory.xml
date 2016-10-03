@@ -9,7 +9,6 @@
 <fullyQualifiedTypeName name="java.awt.Graphics2D"/>
 <fullyQualifiedTypeName name="logic.terrain.FightTerrain"/>
 <fullyQualifiedTypeName name="utility.FileUtility"/>
-<fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="graphic.IRenderable"/>
 <fullyQualifiedTypeName name="logic.terrain.FightMap"/>
 <fullyQualifiedTypeName name="graphic.DrawingUtility"/>
@@ -19,4 +18,12 @@
 <fullyQualifiedTypeName name="javax.swing.JPanel"/>
 <fullyQualifiedTypeName name="graphic.Frame"/>
 <fullyQualifiedTypeName name="java.awt.BorderLayout"/>
+<fullyQualifiedTypeName name="manager.GUIFightGameManager"/>
+<fullyQualifiedTypeName name="graphic.ScreenComponent"/>
+<fullyQualifiedTypeName name="java.awt.Color"/>
+<fullyQualifiedTypeName name="java.awt.RenderingHints"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="logic.character.Pokemon"/>
+<fullyQualifiedTypeName name="graphic.QueueBox"/>
+<fullyQualifiedTypeName name="java.util.List"/>
 </qualifiedTypeNameHistroy>

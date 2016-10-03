@@ -51,7 +51,15 @@ public abstract class Player {
 	}
 
 	public abstract void runTurn(Pokemon pokemon);
+		/*if(!move){
+			pokemonMove();
+		}
+		else if(!attack){
+			pokemonAttack();
+		}	*/
+	/** Override <code>this</code> in Each Player Type*/
 	public abstract void pokemonMove(Pokemon pokemon);
+	/** Override <code>this</code> in Each Player Type*/
 	public abstract void pokemonAttack(Pokemon pokemon);
 
 }
