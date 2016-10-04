@@ -259,6 +259,14 @@ public class Pokemon implements Cloneable, IRenderable {
 		}
 		return out;
 	}
+	
+	
+	/** Must call <code>findBlocksAround()</code> method before calling this method. */
+	public void shadowBlocks(){
+		for(FightTerrain available : getAvaliableFightTerrains() ){
+			available.setShadowed(true);
+		}
+	}
 
 	public Path findPathTo(FightTerrain destination) {
 		return findPathTo(destination, 20);

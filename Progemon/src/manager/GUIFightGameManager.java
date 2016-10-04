@@ -1,5 +1,7 @@
 package manager;
 
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -11,6 +13,7 @@ import logic.character.Pokemon;
 import logic.player.Player;
 import logic.terrain.FightMap;
 import utility.FileUtility;
+import utility.InputUtility;
 import utility.RandomUtility;
 
 public class GUIFightGameManager {
@@ -70,6 +73,9 @@ public class GUIFightGameManager {
 	private void runFight() {
 		while (true) {
 			tick++;
+			
+			checkInputs();
+			
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
@@ -96,6 +102,19 @@ public class GUIFightGameManager {
 		}
 
 		System.out.println("END OF FIGHT");
+	}
+
+	private void checkInputs() {
+		for (InputEvent inputEvent : InputUtility.getInputEvents()) {
+			if (inputEvent instanceof MouseEvent) {
+				MouseEvent mEvent = (MouseEvent) inputEvent;
+				if(mEvent.getID() == MouseEvent.MOUSE_MOVED){
+					System.out.println("MOVE  \t" + mEvent);
+				} else if (mEvent.getID() == MouseEvent.MOUSE_CLICKED){
+					System.out.println("CLICKED\t" + mEvent );
+				}
+			}
+		}
 	}
 
 	private void endFight() {

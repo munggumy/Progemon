@@ -12,7 +12,6 @@ public class QueueBox implements IRenderable {
 	private static FightMap fightMap;
 	
 	public QueueBox(FightMap fightMap) {
-		// TODO Auto-generated constructor stub
 		QueueBox.fightMap = fightMap;
 	}
 	
