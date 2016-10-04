@@ -3,10 +3,12 @@ package logic.player;
 import java.util.ArrayList;
 
 import logic.character.Pokemon;
+import manager.GUIFightGameManager;
 
 public abstract class Player {
 	private String name;
 	private ArrayList<Pokemon> pokemons;
+	private boolean movephrase = false, attackphrase = false;
 
 	public boolean isLose() {
 		for (Pokemon pokemon : pokemons) {
@@ -45,21 +47,36 @@ public abstract class Player {
 		return pokemons;
 	}
 	
+	public void setAttackphrase(boolean attackphrase) {
+		this.attackphrase = attackphrase;
+	}
+	
+	public void setMovephrase(boolean movephrase) {
+		this.movephrase = movephrase;
+	}
+	
 	public void addPokemon(Pokemon pokemon){
 		pokemon.setOwner(this);
 		pokemons.add(pokemon);
 	}
 
-	public abstract void runTurn(Pokemon pokemon);
-		/*if(!move){
-			pokemonMove();
+	public final void runTurn(Pokemon pokemon){
+		if(!movephrase){
+			pokemonMove(pokemon);
 		}
-		else if(!attack){
-			pokemonAttack();
-		}	*/
+		else if(!attackphrase){
+			pokemonAttack(pokemon);
+		}
+		else{
+			movephrase = false;
+			attackphrase = false;
+			GUIFightGameManager.setEndturn(true);
+		}
+	}
+	
 	/** Override <code>this</code> in Each Player Type*/
 	public abstract void pokemonMove(Pokemon pokemon);
 	/** Override <code>this</code> in Each Player Type*/
 	public abstract void pokemonAttack(Pokemon pokemon);
-
+	
 }

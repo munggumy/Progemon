@@ -18,7 +18,6 @@
 <fullyQualifiedTypeName name="javax.swing.JPanel"/>
 <fullyQualifiedTypeName name="graphic.Frame"/>
 <fullyQualifiedTypeName name="java.awt.BorderLayout"/>
-<fullyQualifiedTypeName name="manager.GUIFightGameManager"/>
 <fullyQualifiedTypeName name="graphic.ScreenComponent"/>
 <fullyQualifiedTypeName name="java.awt.Color"/>
 <fullyQualifiedTypeName name="java.awt.RenderingHints"/>
@@ -26,4 +25,6 @@
 <fullyQualifiedTypeName name="logic.character.Pokemon"/>
 <fullyQualifiedTypeName name="graphic.QueueBox"/>
 <fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="java.nio.file.Paths"/>
+<fullyQualifiedTypeName name="manager.GUIFightGameManager"/>
 </qualifiedTypeNameHistroy>

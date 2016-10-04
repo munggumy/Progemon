@@ -20,6 +20,7 @@ public class GUIFightGameManager {
 	private static FightMap fightMap = null;
 	private static Pokemon currentPokemon = null;
 	private static Player winnerPlayer = null;
+	private static boolean endturn = false;
 	int tick = 0;
 
 	public GUIFightGameManager(ArrayList<Player> players) {
@@ -73,11 +74,16 @@ public class GUIFightGameManager {
 				e.printStackTrace();
 			}
 			
-			if (tick == 100) {
-				currentPokemon = fightMap.getPokemonsOnMap().get(0);
-				currentPokemon.getOwner().runTurn(currentPokemon);
-				currentPokemon.calculateNextTurnTime();
-				currentPokemon.calculateCurrentStats();
+			if (tick == 10) {
+				if(!endturn){
+					currentPokemon = fightMap.getPokemonsOnMap().get(0);
+					currentPokemon.getOwner().runTurn(currentPokemon);
+				}
+				else{
+					currentPokemon.calculateNextTurnTime();
+					currentPokemon.calculateCurrentStats();
+					endturn = false;
+				}
 				removeDeadPokemons();
 				fightMap.sortPokemons();
 				tick = 0;
@@ -157,6 +163,10 @@ public class GUIFightGameManager {
 
 	public static final Player getWinnerPlayer() {
 		return winnerPlayer;
+	}
+	
+	public static void setEndturn(boolean endturn) {
+		GUIFightGameManager.endturn = endturn;
 	}
 
 }

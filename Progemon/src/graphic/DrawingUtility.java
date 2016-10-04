@@ -20,8 +20,8 @@ public class DrawingUtility {
 				fightTerrain.draw();
 			}
 		}
-		for (Pokemon pokemon : fightMap.getPokemonsOnMap()) {
-			pokemon.draw();
+		for (int i = 0; i < fightMap.getPokemonsOnMap().size(); i++){
+			fightMap.getPokemonsOnMap().get(i).draw();
 		}
 	}
 
