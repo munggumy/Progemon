@@ -3,12 +3,13 @@ package logic.player;
 import java.util.ArrayList;
 
 import logic.character.Pokemon;
+import logic.filters.MoveFilter;
 import manager.GUIFightGameManager;
 
 public abstract class Player {
 	private String name;
 	private ArrayList<Pokemon> pokemons;
-	private boolean movephrase = false, attackphrase = false;
+	private boolean movephrase = false, attackphrase = false, initial = false;
 
 	public boolean isLose() {
 		for (Pokemon pokemon : pokemons) {
@@ -61,13 +62,20 @@ public abstract class Player {
 	}
 
 	public final void runTurn(Pokemon pokemon){
-		if(!movephrase){
+		if(!initial){
+			pokemon.findBlocksAround(pokemon.getMoveRange(), new MoveFilter());
+			pokemon.sortPaths();
+			pokemon.shadowBlocks();
+			initial = true;
+		}
+		else if(!movephrase){
 			pokemonMove(pokemon);
 		}
 		else if(!attackphrase){
 			pokemonAttack(pokemon);
 		}
 		else{
+			initial = false;
 			movephrase = false;
 			attackphrase = false;
 			GUIFightGameManager.setEndturn(true);

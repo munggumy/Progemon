@@ -1,8 +1,11 @@
 package graphic;
 
 import java.awt.Font;
+import java.awt.event.KeyEvent;
 
 import javax.swing.SwingUtilities;
+
+import utility.InputUtility;
 
 public class DialogBox implements IRenderable{
 	
@@ -15,11 +18,12 @@ public class DialogBox implements IRenderable{
 	private static Font font = DEFAULT_FONT;
 	private static int textDelay = 5, textDelayCounter = 5, newLineDelay = 0, newLineDelayCounter = 0, currentLine = 0;
 	private static int yShift = 0;
+	private static boolean hasSentMessage = true;
 	
 	@Override
 	public void draw() {
 		// TODO Auto-generated method stub
-		if(textDelayCounter == textDelay){
+		if(textDelayCounter == textDelay && (nextWord.length() > 0) || message.length() > 0){
 			if(nextWord.length() > 0){
 				messageOnScreen[currentLine] += nextWord.substring(0, 1);
 				nextWord = nextWord.substring(1, nextWord.length());
@@ -43,6 +47,14 @@ public class DialogBox implements IRenderable{
 				}
 			}
 			textDelayCounter = 0;
+		}
+		else if (message.length() == 0 && nextWord.length() == 0){
+			KeyEvent kEvent = InputUtility.getLastKeyEvent();
+			if (kEvent != null && kEvent.getKeyChar() == 'a'){
+				clear();
+				hasSentMessage = true;
+				System.out.println("sent!!!!!!!!!!!");
+			}
 		}
 		else{
 			textDelayCounter++;
@@ -87,10 +99,12 @@ public class DialogBox implements IRenderable{
 	
 	public static void sentMessage(String message) {
 		DialogBox.message = message;
+		hasSentMessage = false;
 	}
 	
 	public static void clear() {
-		DialogBox.message = "";
+		messageOnScreen[0] = "";
+		messageOnScreen[1] = "";
 	}
 	
 	public static Font getFont() {
@@ -115,6 +129,10 @@ public class DialogBox implements IRenderable{
 	
 	public static int getyShift() {
 		return yShift;
+	}
+	
+	public static boolean hasSentMessage() {
+		return hasSentMessage;
 	}
 
 }

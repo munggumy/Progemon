@@ -9,6 +9,7 @@ import graphic.IRenderable;
 import logic.character.Pokemon;
 import logic.filters.Filter;
 import logic.filters.MoveFilter;
+import utility.InputUtility;
 
 public class FightMap implements IRenderable {
 
@@ -96,6 +97,10 @@ public class FightMap implements IRenderable {
 	}
 
 	public void draw() {
+		int x = InputUtility.getMouseX(), y = InputUtility.getMouseY();
+		if(0 <= x && x <= 319 && 0 <= y && y <= 239){
+			getFightTerrainAt((int) Math.floor(x / 40), (int) Math.floor(y / 40)).setCursur(true);
+		}
 		DrawingUtility.drawFightMap(this);
 	}
 
