@@ -36,12 +36,11 @@ public class AIPlayer extends Player {
 			if(thinkDelayCounter == thinkDelay){
 				x = pokemon.getCurrentFightTerrain().getX();
 				y = pokemon.getCurrentFightTerrain().getY();
-				pokemon.findBlocksAround(pokemon.getMoveRange(), new MoveFilter());
-				pokemon.sortPaths();
 	//			LinkedList<FightTerrain> nextPath = RandomUtility.randomElement(pokemon.getPaths());
 				nextPath = pokemon.getPaths().get(0);
 				input = true;
 				thinkDelayCounter = 0;
+				pokemon.getCurrentFightMap().unshadowAllBlocks();
 			}
 			else{
 				thinkDelayCounter++;

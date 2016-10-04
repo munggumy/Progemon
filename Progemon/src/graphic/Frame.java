@@ -1,5 +1,7 @@
 package graphic;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -36,6 +38,18 @@ public class Frame {
 			@Override
 			public void mouseMoved(MouseEvent e) {
 				super.mouseMoved(e);
+				InputUtility.addInputEvents(e);
+				InputUtility.setMouseX(e.getX() - 8);
+				InputUtility.setMouseY(e.getY() - 31);
+			}
+
+		});
+		frame.addKeyListener(new KeyAdapter() {
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				// TODO Auto-generated method stub
+				super.keyPressed(e);
 				InputUtility.addInputEvents(e);
 			}
 
