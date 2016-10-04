@@ -69,6 +69,10 @@ public class FightTerrain implements IRenderable {
 		return isShadowed;
 	}
 
+	public final void setShadowed(boolean isShadowed) {
+		this.isShadowed = isShadowed;
+	}
+
 	public final TerrainType getType() {
 		return type;
 	}

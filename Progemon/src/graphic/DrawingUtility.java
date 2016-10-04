@@ -30,7 +30,6 @@ public class DrawingUtility {
 		try {
 			img = ImageIO.read(new File(fightTerrain.getType().getImageName()));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		ScreenComponent.g2.drawImage(img, null, fightTerrain.getX() * 40, fightTerrain.getY() * 40);
