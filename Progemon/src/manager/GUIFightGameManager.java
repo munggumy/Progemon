@@ -20,8 +20,10 @@ import utility.RandomUtility;
 public class GUIFightGameManager {
 
 	private static ArrayList<Player> players;
+	/** List of player which are not dead. */
 	private static ArrayList<Player> currentPlayers;
 	private static FightMap fightMap = null;
+	/** Find Current Player from this. */
 	private static Pokemon currentPokemon = null;
 	private static Player winnerPlayer = null;
 	private static boolean endturn = false;
@@ -49,7 +51,6 @@ public class GUIFightGameManager {
 
 		// Load Graphics
 		new Frame();
-		
 
 		startFight();
 		runFight();
@@ -59,12 +60,13 @@ public class GUIFightGameManager {
 
 	private void startFight() {
 		ScreenComponent.addObject(fightMap);
-		
+
 		spawnPokemons();
 		fightMap.sortPokemons();
 
 		ScreenComponent.addObject(new DialogBox());
-		DialogBox.sentMessage("Pokemon Trainer Brock wants to fight you! \nPokemon Trainer Brock sent Wartortle and Pidgeotto!");
+		DialogBox.sentMessage(
+				"Pokemon Trainer Brock wants to fight you! \nPokemon Trainer Brock sent Wartortle and Pidgeotto!");
 		ScreenComponent.addObject(new QueueBox());
 		Frame.getGraphicComponent().repaint();
 	}
@@ -72,23 +74,22 @@ public class GUIFightGameManager {
 	private void runFight() {
 		while (true) {
 			tick++;
-			
+
 			checkInputs();
-			
+
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
-			if (DialogBox.hasSentMessage()){
-			
+
+			if (DialogBox.hasSentMessage()) {
+
 				if (tick >= 10) {
-					if(!endturn){
+					if (!endturn) {
 						currentPokemon = fightMap.getPokemonsOnMap().get(0);
 						currentPokemon.getOwner().runTurn(currentPokemon);
-					}
-					else{
+					} else {
 						currentPokemon.calculateNextTurnTime();
 						currentPokemon.calculateCurrentStats();
 						endturn = false;
@@ -97,14 +98,14 @@ public class GUIFightGameManager {
 					fightMap.sortPokemons();
 					tick = 0;
 				}
-				
+
 			}
-			
+
 			Frame.getGraphicComponent().repaint();
 
 			if (checkWinner()) {
 				DialogBox.sentMessage("END OF FIGHT");
-				if (DialogBox.hasSentMessage()){
+				if (DialogBox.hasSentMessage()) {
 					System.out.println("The fight has ended.");
 					System.out.println("The winner is " + winnerPlayer.getName());
 					break;
@@ -119,16 +120,17 @@ public class GUIFightGameManager {
 		for (InputEvent inputEvent : InputUtility.getInputEvents()) {
 			if (inputEvent instanceof MouseEvent) {
 				MouseEvent mEvent = (MouseEvent) inputEvent;
-				if(mEvent.getID() == MouseEvent.MOUSE_MOVED){
-					System.out.println("MOVE   \t" + mEvent);
-				} else if (mEvent.getID() == MouseEvent.MOUSE_CLICKED){
-					System.out.println("CLICKED\t" + mEvent );
+				if (mEvent.getID() == MouseEvent.MOUSE_MOVED) {
+					InputUtility.setLastMouseMoveEvent(mEvent);
+				} else if (mEvent.getID() == MouseEvent.MOUSE_CLICKED) {
+					if (mEvent.getButton() == MouseEvent.BUTTON1) {
+						InputUtility.setLastMouseClickEvent(mEvent);
+					}
+				} else if (inputEvent instanceof KeyEvent) {
+					KeyEvent kEvent = (KeyEvent) inputEvent;
+					InputUtility.setLastKeyEvent(kEvent);
+					System.out.println("KEY    \t" + kEvent);
 				}
-			}
-			else if (inputEvent instanceof KeyEvent) {
-				KeyEvent kEvent = (KeyEvent) inputEvent;
-				InputUtility.setLastKeyEvent(kEvent);
-				System.out.println("KEY    \t" + kEvent);
 			}
 		}
 	}
@@ -196,7 +198,7 @@ public class GUIFightGameManager {
 	public static final Player getWinnerPlayer() {
 		return winnerPlayer;
 	}
-	
+
 	public static void setEndturn(boolean endturn) {
 		GUIFightGameManager.endturn = endturn;
 	}

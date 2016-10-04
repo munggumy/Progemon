@@ -20,7 +20,6 @@ public class HumanPlayer extends Player {
 
 	@Override
 	public void pokemonMove(Pokemon pokemon) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -29,5 +28,9 @@ public class HumanPlayer extends Player {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
+	
+	
 
 }
