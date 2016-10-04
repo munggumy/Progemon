@@ -1,5 +1,7 @@
 package logic.player;
 
+import java.nio.file.Paths;
+
 import logic.character.Pokemon;
 import logic.filters.AttackFilter;
 import logic.filters.MoveFilter;
@@ -7,6 +9,12 @@ import logic.terrain.Path;
 import utility.RandomUtility;
 
 public class AIPlayer extends Player {
+	
+	private boolean input = false;
+	private Path nextPath;
+	private int x, y;
+	private int moveCounter = 1;
+	private int thinkDelay = 10, thinkDelayCounter = 0;
 
 	public AIPlayer(String name, Pokemon starter_pokemon) {
 		super(name, starter_pokemon);
@@ -16,23 +24,46 @@ public class AIPlayer extends Player {
 		super(name);
 	}
 
-	@Override
+	/*@Override
 	public void runTurn(Pokemon pokemon) {
 		pokemonMove(pokemon);
 		pokemonAttack(pokemon);
-	}
+	}*/
 
 	@Override
 	public void pokemonMove(Pokemon pokemon) {
-		int x = pokemon.getCurrentFightTerrain().getX();
-		int y = pokemon.getCurrentFightTerrain().getY();
-		pokemon.findBlocksAround(pokemon.getMoveRange(), new MoveFilter());
-		pokemon.sortPaths();
-//		LinkedList<FightTerrain> nextPath = RandomUtility.randomElement(pokemon.getPaths());
-		Path nextPath = pokemon.getPaths().get(0);
-		pokemon.move(nextPath.getLast().getX(), nextPath.getLast().getY());
-		System.out.println("Pokemon " + pokemon.getName() + " moved from (" + x + ", " + y + ") to ("
-				+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY() + ").");
+		if(!input){
+			if(thinkDelayCounter == thinkDelay){
+				x = pokemon.getCurrentFightTerrain().getX();
+				y = pokemon.getCurrentFightTerrain().getY();
+				pokemon.findBlocksAround(pokemon.getMoveRange(), new MoveFilter());
+				pokemon.sortPaths();
+	//			LinkedList<FightTerrain> nextPath = RandomUtility.randomElement(pokemon.getPaths());
+				nextPath = pokemon.getPaths().get(0);
+				input = true;
+				thinkDelayCounter = 0;
+			}
+			else{
+				thinkDelayCounter++;
+			}
+		}
+		else{
+			if(moveCounter < nextPath.size()){
+				if(nextPath.get(moveCounter) != pokemon.getCurrentFightTerrain()){
+					pokemon.move(nextPath.get(moveCounter));
+				}
+				else{
+					moveCounter++;
+				}
+			}
+			else{
+				System.out.println("Pokemon " + pokemon.getName() + " moved from (" + x + ", " + y + ") to ("
+						+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY() + ").");
+				moveCounter = 1;
+				input = false;
+				setMovephrase(true);
+			}
+		}
 	}
 
 	@Override
@@ -49,5 +80,6 @@ public class AIPlayer extends Player {
 				break;
 			}
 		} // end of attack
+		setAttackphrase(true);
 	}
 }

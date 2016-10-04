@@ -23,6 +23,7 @@ public class GUIFightGameManager {
 	private static FightMap fightMap = null;
 	private static Pokemon currentPokemon = null;
 	private static Player winnerPlayer = null;
+	private static boolean endturn = false;
 	int tick = 0;
 
 	public GUIFightGameManager(ArrayList<Player> players) {
@@ -60,13 +61,10 @@ public class GUIFightGameManager {
 		
 		spawnPokemons();
 		fightMap.sortPokemons();
-		for (Pokemon pokemon : fightMap.getPokemonsOnMap()) {
-			ScreenComponent.addObject(pokemon);
-		}
 
 		ScreenComponent.addObject(new DialogBox());
 		DialogBox.sentMessage("Pokemon Trainer Brock wants to fight you! \nPokemon Trainer Brock sent Wartortle and Pidgeotto!");
-		ScreenComponent.addObject(new QueueBox(fightMap));
+		ScreenComponent.addObject(new QueueBox());
 		Frame.getGraphicComponent().repaint();
 	}
 
@@ -82,11 +80,16 @@ public class GUIFightGameManager {
 				e.printStackTrace();
 			}
 			
-			if (tick == 100) {
-				currentPokemon = fightMap.getPokemonsOnMap().get(0);
-				currentPokemon.getOwner().runTurn(currentPokemon);
-				currentPokemon.calculateNextTurnTime();
-				currentPokemon.calculateCurrentStats();
+			if (tick == 10) {
+				if(!endturn){
+					currentPokemon = fightMap.getPokemonsOnMap().get(0);
+					currentPokemon.getOwner().runTurn(currentPokemon);
+				}
+				else{
+					currentPokemon.calculateNextTurnTime();
+					currentPokemon.calculateCurrentStats();
+					endturn = false;
+				}
 				removeDeadPokemons();
 				fightMap.sortPokemons();
 				tick = 0;
@@ -156,7 +159,6 @@ public class GUIFightGameManager {
 			Pokemon p = fightMap.getPokemonsOnMap().get(i);
 			if (p.isDead()) {
 				System.out.println(p.getName() + " is DEAD!");
-				boolean a = ScreenComponent.getObjectOnScreen().remove(p);
 				fightMap.removePokemonFromMap(p);
 			}
 		}
@@ -180,6 +182,10 @@ public class GUIFightGameManager {
 
 	public static final Player getWinnerPlayer() {
 		return winnerPlayer;
+	}
+	
+	public static void setEndturn(boolean endturn) {
+		GUIFightGameManager.endturn = endturn;
 	}
 
 }

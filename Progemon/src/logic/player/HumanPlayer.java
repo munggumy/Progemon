@@ -12,11 +12,11 @@ public class HumanPlayer extends Player {
 		super(name);
 	}
 
-	@Override
+	/*@Override
 	public void runTurn(Pokemon pokemon) {
 		// TODO Auto-generated method stub
 		
-	}
+	}*/
 
 	@Override
 	public void pokemonMove(Pokemon pokemon) {

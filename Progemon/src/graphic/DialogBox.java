@@ -1,7 +1,6 @@
 package graphic;
 
 import java.awt.Font;
-import java.awt.FontMetrics;
 
 import javax.swing.SwingUtilities;
 
@@ -57,7 +56,7 @@ public class DialogBox implements IRenderable{
 		
 	}
 	
-	public static void toNewLine(){
+	private static void toNewLine(){
 		if(newLineDelayCounter == newLineDelay){
 			if(yShift >= 25){
 				messageOnScreen[0] = messageOnScreen[1];

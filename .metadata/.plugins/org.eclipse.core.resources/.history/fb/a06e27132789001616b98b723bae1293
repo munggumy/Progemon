@@ -1,0 +1,80 @@
+package logic.player;
+
+import logic.character.Pokemon;
+import logic.filters.AttackFilter;
+import logic.filters.MoveFilter;
+import logic.terrain.Path;
+import utility.RandomUtility;
+
+public class AIPlayer extends Player {
+	
+	private boolean move = false, input = false;
+	private Path nextPath;
+	private int x, y;
+	private int moveCounter = 0;
+
+	public AIPlayer(String name, Pokemon starter_pokemon) {
+		super(name, starter_pokemon);
+	}
+
+	public AIPlayer(String name) {
+		super(name);
+	}
+
+	/*@Override
+	public void runTurn(Pokemon pokemon) {
+		pokemonMove(pokemon);
+		pokemonAttack(pokemon);
+	}*/
+
+	@Override
+	public void pokemonMove(Pokemon pokemon) {
+		if(!input){
+			x = pokemon.getCurrentFightTerrain().getX();
+			y = pokemon.getCurrentFightTerrain().getY();
+			pokemon.findBlocksAround(pokemon.getMoveRange(), new MoveFilter());
+			pokemon.sortPaths();
+//			LinkedList<FightTerrain> nextPath = RandomUtility.randomElement(pokemon.getPaths());
+			nextPath = pokemon.getPaths().get(0);
+			input = true;
+		}
+		else if(!move){
+			if(moveCounter < nextPath.size()){
+				if(nextPath.get(moveCounter) != pokemon.getCurrentFightTerrain()){
+					pokemon.move(nextPath.get(moveCounter).getX(), nextPath.get(moveCounter).getY());
+				}
+				else{
+					moveCounter++;
+				}
+			}
+			else{
+				move = true;
+			}
+		}
+		else{
+			System.out.println("Pokemon " + pokemon.getName() + " moved from (" + x + ", " + y + ") to ("
+					+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY() + ").");
+			moveCounter = 0;
+			input = false;
+			move = false;
+			setMovephrase(true);
+		}
+	}
+
+	@Override
+	public void pokemonAttack(Pokemon pokemon) {
+		// attack
+		pokemon.findBlocksAround(pokemon.getAttackRange(), new AttackFilter());
+		for (Pokemon other : pokemon.getCurrentFightMap().getPokemonsOnMap()) {
+
+			if (other.getOwner() != this
+					&& pokemon.getAvaliableFightTerrains().contains(other.getCurrentFightTerrain())) {
+				// If other is enemy and in attack range.
+				// pokemon.attack(other, selectedSkill);
+				pokemon.attack(other, RandomUtility.randomInt(pokemon.getActiveSkills().size() - 1));
+				break;
+			}
+		} // end of attack
+		setAttackphrase(true);
+	}
+}
