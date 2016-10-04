@@ -2,6 +2,7 @@ package utility;
 
 
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class InputUtility {
@@ -9,6 +10,7 @@ public class InputUtility {
 	private static int mouseX, mouseY;
 	private static boolean mouseIsClicked;
 	private static ArrayList<InputEvent> inputEvents = new ArrayList<InputEvent>();
+	private static KeyEvent lastKeyEvent;
 	
 	
 	/** When get element, it clears the history of event. */
@@ -44,6 +46,16 @@ public class InputUtility {
 
 	public static final void setMouseIsClicked(boolean mouseIsClicked) {
 		InputUtility.mouseIsClicked = mouseIsClicked;
+	}
+	
+	public static KeyEvent getLastKeyEvent() {
+		KeyEvent temp = lastKeyEvent;
+		lastKeyEvent = null;
+		return temp;
+	}
+	
+	public static void setLastKeyEvent(KeyEvent lastKeyEvent) {
+		InputUtility.lastKeyEvent = lastKeyEvent;
 	}
 
 }
