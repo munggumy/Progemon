@@ -64,13 +64,13 @@ public class FightMap implements IRenderable {
 	}
 
 	public FightTerrain getFightTerrainAt(int x, int y) {
-		if(outOfMap(x, y)){
+		if (outOfMap(x, y)) {
 			return null;
 		}
 		return map[y][x];
 	}
-	
-	public FightTerrain getFightTerrainAt(FightTerrain paramFT, Direction d){
+
+	public FightTerrain getFightTerrainAt(FightTerrain paramFT, Direction d) {
 		return getFightTerrainAt(paramFT.getX() + d.x, paramFT.getY() + d.y);
 	}
 
@@ -116,7 +116,10 @@ public class FightMap implements IRenderable {
 		return Collections.unmodifiableList(pokemonsOnMap);
 	}
 
-	/** Use this to add Pokemon to map. */
+	/**
+	 * Use this to add Pokemon to map. Returns true if pokemon can be placed and
+	 * places the pokemon.
+	 */
 	public boolean addPokemonToMap(int x, int y, Pokemon pokemon) {
 		Filter canBePlacedFilter = new MoveFilter();
 		if (!outOfMap(x, y) && pokemon != null && canBePlacedFilter.check(pokemon, this, map[y][x])
@@ -131,7 +134,9 @@ public class FightMap implements IRenderable {
 		}
 	}
 
-	/** Use this to remove Pokemon from map */
+	/**
+	 * Use this to remove Pokemon from map. Returns true if pokemon is on map.
+	 */
 	public boolean removePokemonFromMap(Pokemon pokemon) {
 		if (pokemonsOnMap.contains(pokemon)) {
 			pokemon.move(null);
@@ -140,6 +145,14 @@ public class FightMap implements IRenderable {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	public void unshadowAllBlocks() {
+		for (int j = 0; j < sizeY; j++) {
+			for (int i = 0; i < sizeX; i++) {
+				map[j][i].setShadowed(false);
+			}
 		}
 	}
 

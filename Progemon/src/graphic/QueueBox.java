@@ -10,6 +10,7 @@ import manager.GUIFightGameManager;
 public class QueueBox implements IRenderable {
 	
 	protected static final String QUEUE_BOX_PATH = "load\\img\\queuebox\\Theme1.png";
+
 	private static final int ORIGIN_X = 326, ORIGIN_Y = 18, WIDTH = 68, HEIGHT = 40;
 	private static final int BOX_X = 320, BOX_Y = 0;
 	private static ArrayList<Pokemon> pokemonsOnQueue = new ArrayList<Pokemon>();
