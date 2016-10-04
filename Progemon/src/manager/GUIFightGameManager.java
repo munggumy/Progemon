@@ -1,6 +1,7 @@
 package manager;
 
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -82,26 +83,33 @@ public class GUIFightGameManager {
 				e.printStackTrace();
 			}
 
-			if (tick == 10) {
-				if (!endturn) {
-					currentPokemon = fightMap.getPokemonsOnMap().get(0);
-					currentPokemon.getOwner().runTurn(currentPokemon);
-				} else {
-					currentPokemon.calculateNextTurnTime();
-					currentPokemon.calculateCurrentStats();
-					endturn = false;
+			if (DialogBox.hasSentMessage()) {
+
+				if (tick >= 10) {
+					if (!endturn) {
+						currentPokemon = fightMap.getPokemonsOnMap().get(0);
+						currentPokemon.getOwner().runTurn(currentPokemon);
+					} else {
+						currentPokemon.calculateNextTurnTime();
+						currentPokemon.calculateCurrentStats();
+						endturn = false;
+					}
+					removeDeadPokemons();
+					fightMap.sortPokemons();
+					tick = 0;
 				}
-				removeDeadPokemons();
-				fightMap.sortPokemons();
-				tick = 0;
+
 			}
 
 			Frame.getGraphicComponent().repaint();
 
 			if (checkWinner()) {
-				System.out.println("The fight has ended.");
-				System.out.println("The winner is " + winnerPlayer.getName());
-				break;
+				DialogBox.sentMessage("END OF FIGHT");
+				if (DialogBox.hasSentMessage()) {
+					System.out.println("The fight has ended.");
+					System.out.println("The winner is " + winnerPlayer.getName());
+					break;
+				}
 			}
 		}
 
@@ -118,7 +126,11 @@ public class GUIFightGameManager {
 					if (mEvent.getButton() == MouseEvent.BUTTON1) {
 						InputUtility.setLastMouseClickEvent(mEvent);
 					}
-				} 
+				} else if (inputEvent instanceof KeyEvent) {
+					KeyEvent kEvent = (KeyEvent) inputEvent;
+					InputUtility.setLastKeyEvent(kEvent);
+					System.out.println("KEY    \t" + kEvent);
+				}
 			}
 		}
 	}

@@ -27,12 +27,23 @@ public class DrawingUtility {
 
 	public static void drawFightTerrain(FightTerrain fightTerrain) {
 		BufferedImage img = null;
+		BufferedImage shadow = null;
+		BufferedImage cursur = null;
 		try {
 			img = ImageIO.read(new File(fightTerrain.getType().getImageName()));
+			shadow = ImageIO.read(new File("load\\img\\terrain\\shadow20.png"));
+			cursur = ImageIO.read(new File("load\\img\\terrain\\cursur.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		ScreenComponent.g2.drawImage(img, null, fightTerrain.getX() * 40, fightTerrain.getY() * 40);
+		if(fightTerrain.isShadowed()){
+			ScreenComponent.g2.drawImage(shadow, null, fightTerrain.getX() * 40, fightTerrain.getY() * 40);
+		}
+		if(fightTerrain.isCursur()){
+			ScreenComponent.g2.drawImage(cursur, null, fightTerrain.getX() * 40, fightTerrain.getY() * 40);
+			fightTerrain.setCursur(false);
+		}
 	}
 
 	public static void drawPokemon(Pokemon pokemon) {
