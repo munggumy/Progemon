@@ -1,7 +1,5 @@
 package logic.player;
 
-import java.nio.file.Paths;
-
 import logic.character.Pokemon;
 import logic.filters.AttackFilter;
 import logic.filters.MoveFilter;

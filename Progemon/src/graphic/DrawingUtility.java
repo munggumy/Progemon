@@ -20,7 +20,7 @@ public class DrawingUtility {
 				fightTerrain.draw();
 			}
 		}
-		for (int i = 0; i < fightMap.getPokemonsOnMap().size(); i++){
+		for (int i = 0; i < fightMap.getPokemonsOnMap().size(); i++) {
 			fightMap.getPokemonsOnMap().get(i).draw();
 		}
 	}
@@ -102,25 +102,29 @@ public class DrawingUtility {
 			} else {
 				ScreenComponent.g2.setColor(Color.RED);
 			}
-			ScreenComponent.g2.fillRect(QueueBox.getOriginX() + QueueBox.getDelta()[i][0] + 6, QueueBox.getOriginY() + QueueBox.getDelta()[i][1] + 2 + i * 40, 6, 36);
+			ScreenComponent.g2.fillRect(QueueBox.getOriginX() + QueueBox.getDelta()[i][0] + 6,
+					QueueBox.getOriginY() + QueueBox.getDelta()[i][1] + 2 + i * 40, 6, 36);
 			ScreenComponent.g2.setColor(Color.BLACK);
 			ScreenComponent.g2.setFont(DialogBox.getFont());
 			int messageHeight = ScreenComponent.g2.getFontMetrics(DialogBox.getFont()).getHeight();
-			ScreenComponent.g2.drawString("Lv." + pokemonsOnQueue.get(i).getLevel(), QueueBox.getOriginX() + QueueBox.getDelta()[i][0] + 24, QueueBox.getOriginY() + QueueBox.getDelta()[i][1] + 15 + i * 40 + messageHeight);
+			ScreenComponent.g2.drawString("Lv." + pokemonsOnQueue.get(i).getLevel(),
+					QueueBox.getOriginX() + QueueBox.getDelta()[i][0] + 24,
+					QueueBox.getOriginY() + QueueBox.getDelta()[i][1] + 15 + i * 40 + messageHeight);
 
 			// pixel error test
-//			ScreenComponent.g2.setColor(Color.BLUE);
-//			ScreenComponent.g2.fillRect(326, 450, 68, 40);
-//			ScreenComponent.g2.setColor(Color.RED);
-//			ScreenComponent.g2.fillRect(326, 490, 68, 40);
-//			ScreenComponent.g2.setColor(Color.GREEN);
-//			ScreenComponent.g2.fillRect(326, 530, 68, 40);
-//			ScreenComponent.g2.setColor(Color.BLACK);
-//			ScreenComponent.g2.drawRect(326, 450, 68, 40);
-//			ScreenComponent.g2.drawRect(326, 490, 68, 40);
-//			ScreenComponent.g2.drawRect(326, 530, 68, 40);
+			// ScreenComponent.g2.setColor(Color.BLUE);
+			// ScreenComponent.g2.fillRect(326, 450, 68, 40);
+			// ScreenComponent.g2.setColor(Color.RED);
+			// ScreenComponent.g2.fillRect(326, 490, 68, 40);
+			// ScreenComponent.g2.setColor(Color.GREEN);
+			// ScreenComponent.g2.fillRect(326, 530, 68, 40);
+			// ScreenComponent.g2.setColor(Color.BLACK);
+			// ScreenComponent.g2.drawRect(326, 450, 68, 40);
+			// ScreenComponent.g2.drawRect(326, 490, 68, 40);
+			// ScreenComponent.g2.drawRect(326, 530, 68, 40);
 
-			ScreenComponent.g2.drawImage(img, null, QueueBox.getOriginX() + QueueBox.getDelta()[i][0], QueueBox.getOriginY() + QueueBox.getDelta()[i][1] + i * 40);
+			ScreenComponent.g2.drawImage(img, null, QueueBox.getOriginX() + QueueBox.getDelta()[i][0],
+					QueueBox.getOriginY() + QueueBox.getDelta()[i][1] + i * 40);
 		}
 		ScreenComponent.g2.setClip(null);
 
@@ -131,5 +135,4 @@ public class DrawingUtility {
 		 * ScreenComponent.g2.drawImage(img2, 0, 0, 40, 40, null);
 		 */
 	}
-
 }

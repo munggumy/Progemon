@@ -59,7 +59,9 @@ public abstract class Player {
 		pokemon.setOwner(this);
 		pokemons.add(pokemon);
 	}
-
+	
+	
+	/** Each turn calls this. */
 	public final void runTurn(Pokemon pokemon){
 		if(!movephrase){
 			pokemonMove(pokemon);
@@ -78,5 +80,9 @@ public abstract class Player {
 	public abstract void pokemonMove(Pokemon pokemon);
 	/** Override <code>this</code> in Each Player Type*/
 	public abstract void pokemonAttack(Pokemon pokemon);
+	
+	public abstract void doEvent(MouseEvent e){
+		
+	}
 	
 }

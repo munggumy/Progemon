@@ -1,17 +1,16 @@
 package utility;
 
-
 import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class InputUtility {
 
 	private static int mouseX, mouseY;
-	private static boolean mouseIsClicked;
+	private static MouseEvent lastMouseClickEvent, lastMouseMoveEvent;
 	private static ArrayList<InputEvent> inputEvents = new ArrayList<InputEvent>();
-	
-	
-	/** When get element, it clears the history of event. */
+
+	/** When it gets elements, it clears the history of event. */
 	public static final ArrayList<InputEvent> getInputEvents() {
 		ArrayList<InputEvent> temp = new ArrayList<InputEvent>(inputEvents);
 		inputEvents.clear();
@@ -30,10 +29,6 @@ public class InputUtility {
 		return mouseY;
 	}
 
-	public static final boolean isMouseIsClicked() {
-		return mouseIsClicked;
-	}
-
 	public static final void setMouseX(int mouseX) {
 		InputUtility.mouseX = mouseX;
 	}
@@ -42,8 +37,20 @@ public class InputUtility {
 		InputUtility.mouseY = mouseY;
 	}
 
-	public static final void setMouseIsClicked(boolean mouseIsClicked) {
-		InputUtility.mouseIsClicked = mouseIsClicked;
+	public static final MouseEvent getLastMouseClickEvent() {
+		return lastMouseClickEvent;
+	}
+
+	public static final void setLastMouseClickEvent(MouseEvent lastMouseClickEvent) {
+		InputUtility.lastMouseClickEvent = lastMouseClickEvent;
+	}
+
+	public static final MouseEvent getLastMouseMoveEvent() {
+		return lastMouseMoveEvent;
+	}
+
+	public static final void setLastMouseMoveEvent(MouseEvent lastMouseMoveEvent) {
+		InputUtility.lastMouseMoveEvent = lastMouseMoveEvent;
 	}
 
 }

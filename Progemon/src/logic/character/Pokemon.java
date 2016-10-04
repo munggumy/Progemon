@@ -220,6 +220,7 @@ public class Pokemon implements Cloneable, IRenderable {
 	// currentFightMap, filter);
 	// }
 
+	
 	public void findBlocksAround(int range, Filter filter) {
 		paths.clear();
 		findBlocksAroundRecursive(range, new Path(currentFightTerrain), currentFightTerrain, filter);
@@ -246,7 +247,7 @@ public class Pokemon implements Cloneable, IRenderable {
 			}
 		}
 	}
-
+	
 	public ArrayList<FightTerrain> getAvaliableFightTerrains() {
 		ArrayList<FightTerrain> out = new ArrayList<FightTerrain>();
 		FightTerrain last;
@@ -259,11 +260,13 @@ public class Pokemon implements Cloneable, IRenderable {
 		}
 		return out;
 	}
-	
-	
-	/** Must call <code>findBlocksAround()</code> method before calling this method. */
-	public void shadowBlocks(){
-		for(FightTerrain available : getAvaliableFightTerrains() ){
+
+	/**
+	 * Must call <code>findBlocksAround()</code> method before calling this
+	 * method.
+	 */
+	public void shadowBlocks() {
+		for (FightTerrain available : getAvaliableFightTerrains()) {
 			available.setShadowed(true);
 		}
 	}
@@ -297,7 +300,7 @@ public class Pokemon implements Cloneable, IRenderable {
 
 		paths.add(new PathWithCounter(getCurrentFightTerrain(), (short) 0));
 
-		boolean stupidPath;
+		boolean duplicatePath;
 		int roundsPassed = 0;
 		short index = 0, lastPathIterCost = 0;
 		int nextTerrainCost;
@@ -317,17 +320,17 @@ public class Pokemon implements Cloneable, IRenderable {
 				if (nextTerrain != null && moveFilter.check(this, nextTerrain)) {
 					// nextTerrain is movable!
 					nextTerrainCost = nextTerrain.getType().getMoveCost();
-					stupidPath = false;
+					duplicatePath = false;
 					for (Path otherPath : paths) {
 						PathWithCounter otherPathWithCounter = (PathWithCounter) otherPath;
 						if (otherPath.getLast().equals(nextTerrain)
 								&& otherPathWithCounter.totalCost <= lastPathIterCost + nextTerrainCost) {
 							// There is a duplicate element in paths.
-							stupidPath = true;
+							duplicatePath = true;
 							break;
 						}
 					}
-					if (!stupidPath) {
+					if (!duplicatePath) {
 						paths.add(new PathWithCounter(nextTerrain, lastPathIter,
 								(short) (lastPathIterCost + nextTerrainCost)));
 						if (nextTerrain.equals(destination)) {
