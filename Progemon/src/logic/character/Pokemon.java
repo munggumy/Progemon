@@ -596,6 +596,10 @@ public class Pokemon implements Cloneable, IRenderable {
 		return moveRange;
 	}
 
+	public void setMoveRange(int moveRange) {
+		this.moveRange = moveRange;
+	}
+
 	public int getAttackRange() {
 		return attackRange;
 	}
