@@ -65,8 +65,8 @@ public class GUIFightGameManager {
 		fightMap.sortPokemons();
 
 		ScreenComponent.addObject(new DialogBox());
-		DialogBox.sentMessage(
-				"Pokemon Trainer Brock wants to fight you! \nPokemon Trainer Brock sent Wartortle and Pidgeotto!");
+		DialogBox.sendMessage(
+				"Press '" + DialogBox.START_CHAR + "' to start!");
 		ScreenComponent.addObject(new QueueBox());
 		Frame.getGraphicComponent().repaint();
 	}
@@ -104,7 +104,7 @@ public class GUIFightGameManager {
 			Frame.getGraphicComponent().repaint();
 
 			if (checkWinner()) {
-				DialogBox.sentMessage("END OF FIGHT");
+				DialogBox.sendMessage("END OF FIGHT");
 				if (DialogBox.hasSentMessage()) {
 					System.out.println("The fight has ended.");
 					System.out.println("The winner is " + winnerPlayer.getName());
@@ -114,6 +114,10 @@ public class GUIFightGameManager {
 		}
 
 		System.out.println("END OF FIGHT");
+	}
+
+	private void endFight() {
+		Frame.getGraphicComponent().repaint();
 	}
 
 	private void checkInputs() {
@@ -126,17 +130,14 @@ public class GUIFightGameManager {
 					if (mEvent.getButton() == MouseEvent.BUTTON1) {
 						InputUtility.setLastMouseClickEvent(mEvent);
 					}
-				} else if (inputEvent instanceof KeyEvent) {
-					KeyEvent kEvent = (KeyEvent) inputEvent;
-					InputUtility.setLastKeyEvent(kEvent);
-					System.out.println("KEY    \t" + kEvent);
 				}
+			} else if (inputEvent instanceof KeyEvent) {
+				KeyEvent kEvent = (KeyEvent) inputEvent;
+				InputUtility.setLastKeyEvent(kEvent);
+				System.out.println("KEY    \t" + kEvent);
 			}
-		}
-	}
 
-	private void endFight() {
-		Frame.getGraphicComponent().repaint();
+		}
 	}
 
 	private static void spawnPokemons() {

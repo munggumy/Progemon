@@ -7,12 +7,14 @@ import logic.terrain.Path;
 import utility.RandomUtility;
 
 public class AIPlayer extends Player {
-	
+
 	private boolean input = false;
 	private Path nextPath;
 	private int x, y;
 	private int moveCounter = 1;
 	private int thinkDelay = 10, thinkDelayCounter = 0;
+
+	// Constructors
 
 	public AIPlayer(String name, Pokemon starter_pokemon) {
 		super(name, starter_pokemon);
@@ -22,61 +24,63 @@ public class AIPlayer extends Player {
 		super(name);
 	}
 
-	/*@Override
-	public void runTurn(Pokemon pokemon) {
-		pokemonMove(pokemon);
-		pokemonAttack(pokemon);
-	}*/
-
 	@Override
 	public void pokemonMove(Pokemon pokemon) {
-		if(!input){
-			if(thinkDelayCounter == thinkDelay){
+		if (!input) {
+			if (thinkDelayCounter == thinkDelay) {
 				x = pokemon.getCurrentFightTerrain().getX();
 				y = pokemon.getCurrentFightTerrain().getY();
-	//			LinkedList<FightTerrain> nextPath = RandomUtility.randomElement(pokemon.getPaths());
-				nextPath = pokemon.getPaths().get(0);
+				// LinkedList<FightTerrain> nextPath =
+				// RandomUtility.randomElement(pokemon.getPaths());
+				nextPath = calculateNextPath(pokemon);
 				input = true;
 				thinkDelayCounter = 0;
 				pokemon.getCurrentFightMap().unshadowAllBlocks();
-			}
-			else{
+			} else {
 				thinkDelayCounter++;
 			}
-		}
-		else{
-			if(moveCounter < nextPath.size()){
-				if(nextPath.get(moveCounter) != pokemon.getCurrentFightTerrain()){
+		} else { // not input
+			if (moveCounter < nextPath.size()) {
+				if (nextPath.get(moveCounter) != pokemon.getCurrentFightTerrain()) {
 					pokemon.move(nextPath.get(moveCounter));
-				}
-				else{
+				} else {
 					moveCounter++;
 				}
-			}
-			else{
+			} else {
 				System.out.println("Pokemon " + pokemon.getName() + " moved from (" + x + ", " + y + ") to ("
-						+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY() + ").");
+						+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY()
+						+ ").");
 				moveCounter = 1;
 				input = false;
-				setMovephrase(true);
+				setMovePhase(true);
 			}
 		}
 	}
+	
+	/** This can be overrided by other AIs */
+	protected Path calculateNextPath(Pokemon pokemon) {
+		return pokemon.getPaths().get(0);
+	}
 
 	@Override
-	public void pokemonAttack(Pokemon pokemon) {
+	/**
+	 * @param attackingPokemon
+	 *            The <code>Pokemon</code> that is used to attack other
+	 *            <code>Pokemon</code>.
+	 */
+	public void pokemonAttack(Pokemon attackingPokemon) {
 		// attack
-		pokemon.findBlocksAround(pokemon.getAttackRange(), new AttackFilter());
-		for (Pokemon other : pokemon.getCurrentFightMap().getPokemonsOnMap()) {
+		attackingPokemon.findBlocksAround(attackingPokemon.getAttackRange(), new AttackFilter());
+		for (Pokemon other : attackingPokemon.getCurrentFightMap().getPokemonsOnMap()) {
 
 			if (other.getOwner() != this
-					&& pokemon.getAvaliableFightTerrains().contains(other.getCurrentFightTerrain())) {
+					&& attackingPokemon.getAvaliableFightTerrains().contains(other.getCurrentFightTerrain())) {
 				// If other is enemy and in attack range.
 				// pokemon.attack(other, selectedSkill);
-				pokemon.attack(other, RandomUtility.randomInt(pokemon.getActiveSkills().size() - 1));
+				attackingPokemon.attack(other, RandomUtility.randomInt(attackingPokemon.getActiveSkills().size() - 1));
 				break;
 			}
 		} // end of attack
-		setAttackphrase(true);
+		setAttackPhase(true);
 	}
 }

@@ -9,16 +9,9 @@ import manager.GUIFightGameManager;
 public abstract class Player {
 	private String name;
 	private ArrayList<Pokemon> pokemons;
-	private boolean movephrase = false, attackphrase = false, initial = false;
-
-	public boolean isLose() {
-		for (Pokemon pokemon : pokemons) {
-			if (!pokemon.isDead()) {
-				return false;
-			}
-		}
-		return true;
-	}
+	private boolean movePhase = false, attackPhase = false, initial = false;
+	
+	// Constructor
 
 	public Player(String name) {
 		this.name = name;
@@ -39,28 +32,8 @@ public abstract class Player {
 		}
 
 	}
-
-	public final String getName() {
-		return name;
-	}
-
-	public final ArrayList<Pokemon> getPokemons() {
-		return pokemons;
-	}
 	
-	public void setAttackphrase(boolean attackphrase) {
-		this.attackphrase = attackphrase;
-	}
-	
-	public void setMovephrase(boolean movephrase) {
-		this.movephrase = movephrase;
-	}
-	
-	public void addPokemon(Pokemon pokemon){
-		pokemon.setOwner(this);
-		pokemons.add(pokemon);
-	}
-	
+	// Run turn
 	
 	/** Each turn calls this. */
 	public final void runTurn(Pokemon pokemon){
@@ -70,16 +43,16 @@ public abstract class Player {
 			pokemon.shadowBlocks();
 			initial = true;
 		}
-		else if(!movephrase){
+		else if(!movePhase){
 			pokemonMove(pokemon);
 		}
-		else if(!attackphrase){
+		else if(!attackPhase){
 			pokemonAttack(pokemon);
 		}
 		else{
 			initial = false;
-			movephrase = false;
-			attackphrase = false;
+			movePhase = false;
+			attackPhase = false;
 			GUIFightGameManager.setEndturn(true);
 		}
 	}
@@ -89,5 +62,40 @@ public abstract class Player {
 	/** Override <code>this</code> in Each Player Type*/
 	public abstract void pokemonAttack(Pokemon pokemon);
 
+	
+	/** Checks if this player loses (All pokemons are dead) */
+	public boolean isLose() {
+		for (Pokemon pokemon : pokemons) {
+			if (!pokemon.isDead()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	// Getters
+
+	public final String getName() {
+		return name;
+	}
+
+	public final ArrayList<Pokemon> getPokemons() {
+		return pokemons;
+	}
+	
+	public void setAttackPhase(boolean attackphrase) {
+		this.attackPhase = attackphrase;
+	}
+	
+	public void setMovePhase(boolean movephrase) {
+		this.movePhase = movephrase;
+	}
+	
+	public void addPokemon(Pokemon pokemon){
+		pokemon.setOwner(this);
+		pokemons.add(pokemon);
+	}
+	
+	
 	
 }

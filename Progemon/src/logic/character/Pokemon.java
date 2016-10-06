@@ -1,13 +1,20 @@
 package logic.character;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
+
+import javax.imageio.ImageIO;
 
 import graphic.DrawingUtility;
 import graphic.IRenderable;
 import logic.filters.Filter;
 import logic.filters.MoveFilter;
+import logic.filters.MoveNoOverlapFilter;
 import logic.player.Player;
 import logic.terrain.FightMap;
 import logic.terrain.FightMap.Direction;
@@ -33,6 +40,7 @@ public class Pokemon implements Cloneable, IRenderable {
 	private Stat base = new Stat();
 	private Stat current = new Stat();
 	private String imageFileName;
+	private BufferedImage bufferedImage;
 	/** Individual value */
 	private double iv = RandomUtility.randomInt(0, 15) + 32;
 
@@ -220,7 +228,6 @@ public class Pokemon implements Cloneable, IRenderable {
 	// currentFightMap, filter);
 	// }
 
-	
 	public void findBlocksAround(int range, Filter filter) {
 		paths.clear();
 		findBlocksAroundRecursive(range, new Path(currentFightTerrain), currentFightTerrain, filter);
@@ -247,13 +254,12 @@ public class Pokemon implements Cloneable, IRenderable {
 			}
 		}
 	}
-	
+
 	public ArrayList<FightTerrain> getAvaliableFightTerrains() {
 		ArrayList<FightTerrain> out = new ArrayList<FightTerrain>();
 		FightTerrain last;
 		for (Path path : paths) {
 			last = path.getLast();
-			System.out.println(last);
 			if (last != null && !out.contains(last)) {
 				out.add(last);
 			}
@@ -306,7 +312,7 @@ public class Pokemon implements Cloneable, IRenderable {
 		int nextTerrainCost;
 		Path lastPathIter;
 		FightTerrain nextTerrain;
-		Filter moveFilter = new MoveFilter();
+		Filter moveFilter = new MoveNoOverlapFilter();
 
 		while (roundsPassed < limit) {
 			if (index >= paths.size()) {
@@ -321,13 +327,21 @@ public class Pokemon implements Cloneable, IRenderable {
 					// nextTerrain is movable!
 					nextTerrainCost = nextTerrain.getType().getMoveCost();
 					duplicatePath = false;
-					for (Path otherPath : paths) {
-						PathWithCounter otherPathWithCounter = (PathWithCounter) otherPath;
-						if (otherPath.getLast().equals(nextTerrain)
-								&& otherPathWithCounter.totalCost <= lastPathIterCost + nextTerrainCost) {
-							// There is a duplicate element in paths.
-							duplicatePath = true;
-							break;
+					Iterator<Path> pathIter = paths.iterator();
+					while(pathIter.hasNext()){
+						Path existingPath = pathIter.next();
+						PathWithCounter existingPathWithCounter = (PathWithCounter) existingPath;
+						if (existingPath.getLast().equals(nextTerrain)) {
+							if (existingPathWithCounter.totalCost <= lastPathIterCost + nextTerrainCost) {
+								// There is a duplicate element in paths.
+								duplicatePath = true;
+								break;
+							} 
+							else {
+								//beware concurrent error
+								pathIter.remove();
+								break;
+							}
 						}
 					}
 					if (!duplicatePath) {
@@ -346,7 +360,9 @@ public class Pokemon implements Cloneable, IRenderable {
 
 		System.err.println("Pokemon.findPath() : Failed to find Path within internal limit.");
 		return null;
-	} // end of Pokemon.findPath()
+	} // end
+		// of
+		// Pokemon.findPath()
 
 	// ActiveSKill methods
 
@@ -483,6 +499,15 @@ public class Pokemon implements Cloneable, IRenderable {
 
 	@Override
 	public void getDepth() {
+	}
+	
+	public void loadImage(String filePath){
+		try {
+			bufferedImage = ImageIO.read(new File(imageFileName));
+		} catch (IOException e) {
+			System.err.println(getName() + " can't find Image \"" + imageFileName + "\"" );
+			e.printStackTrace();
+		}
 	}
 
 	// Getters and Setters
@@ -631,7 +656,25 @@ public class Pokemon implements Cloneable, IRenderable {
 		setImageFileLocation(DEFAULT_IMAGE_FILE_LOCATION + "\\" + this.getName() + ".png");
 	}
 
-	public String getImageName() {
+	public static final String getDefaultImageFileLocation() {
+		return DEFAULT_IMAGE_FILE_LOCATION;
+	}
+
+	public final int getId() {
+		return id;
+	}
+
+	public final String getImageFileName() {
 		return imageFileName;
 	}
+
+	public final BufferedImage getBufferedImage() {
+		return bufferedImage;
+	}
+
+	public final double getIv() {
+		return iv;
+	}
+	
+	
 }
