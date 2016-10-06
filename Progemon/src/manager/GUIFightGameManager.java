@@ -81,7 +81,7 @@ public class GUIFightGameManager {
 				e.printStackTrace();
 			}
 			
-			if (DialogBox.hasSentMessage()){
+			if (DialogBox.hasSentMessage() && QueueBox.isQueue()){
 			
 				if (tick >= 10) {
 					if(!endturn){
@@ -104,11 +104,9 @@ public class GUIFightGameManager {
 
 			if (checkWinner()) {
 				DialogBox.sentMessage("END OF FIGHT");
-				if (DialogBox.hasSentMessage()){
-					System.out.println("The fight has ended.");
-					System.out.println("The winner is " + winnerPlayer.getName());
-					break;
-				}
+				System.out.println("The fight has ended.");
+				System.out.println("The winner is " + winnerPlayer.getName());
+				break;
 			}
 		}
 
@@ -134,7 +132,14 @@ public class GUIFightGameManager {
 	}
 
 	private void endFight() {
-		Frame.getGraphicComponent().repaint();
+		
+		while(true){
+			if(DialogBox.hasSentMessage()){
+				break;
+			}
+			Frame.getGraphicComponent().repaint();
+		}
+			
 	}
 
 	private static void spawnPokemons() {
