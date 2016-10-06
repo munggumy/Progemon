@@ -20,6 +20,7 @@ public class QueueBox implements IRenderable {
 	private static final int MOVE_TIME = 20, MOVE_RATE = 2;
 	private static int removeTimeCounter = 0, moveTimeCounter = 0;
 	private static boolean remove = false, move = false, insert = false;
+	private static boolean isQueue = true;
 			
 	public QueueBox() {
 		// TODO Auto-generated constructor stub
@@ -49,7 +50,11 @@ public class QueueBox implements IRenderable {
 			equal = false;
 		}
 		if(!equal){
+			isQueue = false;
 			update();
+		}
+		else{
+			isQueue = true;
 		}
 		DrawingUtility.drawQueueBox();
 	}
@@ -147,6 +152,10 @@ public class QueueBox implements IRenderable {
 	
 	public static int[][] getDelta() {
 		return delta;
+	}
+	
+	public static boolean isQueue() {
+		return isQueue;
 	}
 
 }

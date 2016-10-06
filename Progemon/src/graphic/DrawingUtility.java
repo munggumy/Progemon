@@ -1,12 +1,16 @@
 package graphic;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.SwingUtilities;
+import javax.swing.ImageIcon;
 
 import logic.character.Pokemon;
 import logic.terrain.FightMap;
@@ -73,6 +77,7 @@ public class DrawingUtility {
 	}
 
 	public static void drawDialogBox() {
+		Image sign = new ImageIcon("load\\img\\dialogbox\\Theme1_sign.gif").getImage();
 		BufferedImage img = null;
 		try {
 			img = ImageIO.read(new File(DialogBox.DIALOG_BOX_PATH));
@@ -88,6 +93,9 @@ public class DrawingUtility {
 				DialogBox.getY() + 12 + messageHeight - DialogBox.getyShift());
 		ScreenComponent.g2.drawString(DialogBox.getMessageOnScreen()[1], DialogBox.getX() + 20,
 				DialogBox.getY() + 37 + messageHeight - DialogBox.getyShift());
+		if(DialogBox.getEndLineWidth() != 0){
+			ScreenComponent.g2.drawImage(sign, DialogBox.getX() + 25 + DialogBox.getEndLineWidth(), DialogBox.getY() + 39, null);
+		}
 		ScreenComponent.g2.setClip(null);
 	}
 
@@ -141,6 +149,10 @@ public class DrawingUtility {
 		 * ImageIcon("load\\img\\pokemon\\Dratini.gif").getImage();
 		 * ScreenComponent.g2.drawImage(img2, 0, 0, 40, 40, null);
 		 */
+	}
+	
+	public static int computeStringWidth(Font font, String str){
+		return SwingUtilities.computeStringWidth(ScreenComponent.g2.getFontMetrics(font), str);
 	}
 
 }
