@@ -19,8 +19,8 @@ public class FightMap implements IRenderable {
 	private FightTerrain[][] map;
 	private ArrayList<Pokemon> pokemonsOnMap = new ArrayList<Pokemon>();
 
-	static public enum Direction {
-		UP(0, -1), DOWN(0, 1), LEFT(-1, 0), RIGHT(1, 0);
+	public static enum Direction {
+		UP(0, -1), LEFT(-1, 0), DOWN(0, 1),  RIGHT(1, 0);
 
 		public int x, y;
 
@@ -52,6 +52,7 @@ public class FightMap implements IRenderable {
 		sizeY = map.length;
 	}
 
+	/** Sort by Speed. Used in calculation of Turn Time and Queue. */
 	public void sortPokemons() {
 		Collections.sort(pokemonsOnMap, Pokemon.getSpeedComparator());
 	}
@@ -98,7 +99,7 @@ public class FightMap implements IRenderable {
 
 	public void draw() {
 		int x = InputUtility.getMouseX(), y = InputUtility.getMouseY();
-		if(0 <= x && x <= 319 && 0 <= y && y <= 239){
+		if (0 <= x && x <= 319 && 0 <= y && y <= 239) {
 			getFightTerrainAt((int) Math.floor(x / 40), (int) Math.floor(y / 40)).setCursur(true);
 		}
 		DrawingUtility.drawFightMap(this);
@@ -117,6 +118,7 @@ public class FightMap implements IRenderable {
 		return sizeY;
 	}
 
+	/** @return List<Pokemon> Unmodifiable List of Pokemons on Map. */
 	public final List<Pokemon> getPokemonsOnMap() {
 		return Collections.unmodifiableList(pokemonsOnMap);
 	}
