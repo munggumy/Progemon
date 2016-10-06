@@ -9,6 +9,7 @@ import utility.InputUtility;
 
 public class DialogBox implements IRenderable{
 	
+	public static final char START_CHAR = 'a';
 	protected static final String DIALOG_BOX_PATH = "load\\img\\dialogbox\\Theme1.png";
 	
 	private static final int x = 0, y = 240;
@@ -50,10 +51,9 @@ public class DialogBox implements IRenderable{
 		}
 		else if (message.length() == 0 && nextWord.length() == 0){
 			KeyEvent kEvent = InputUtility.getLastKeyEvent();
-			if (kEvent != null && kEvent.getKeyChar() == 'a'){
+			if (kEvent != null && kEvent.getKeyChar() == START_CHAR){
 				clear();
 				hasSentMessage = true;
-				System.out.println("sent!!!!!!!!!!!");
 			}
 		}
 		else{
@@ -97,7 +97,7 @@ public class DialogBox implements IRenderable{
 		return message;
 	}
 	
-	public static void sentMessage(String message) {
+	public static void sendMessage(String message) {
 		DialogBox.message = message;
 		hasSentMessage = false;
 	}
