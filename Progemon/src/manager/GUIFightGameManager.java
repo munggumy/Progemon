@@ -49,7 +49,6 @@ public class GUIFightGameManager {
 
 		// Load Graphics
 		new Frame();
-		
 
 		startFight();
 		runFight();
@@ -59,12 +58,13 @@ public class GUIFightGameManager {
 
 	private void startFight() {
 		ScreenComponent.addObject(fightMap);
-		
+
 		spawnPokemons();
 		fightMap.sortPokemons();
 
 		ScreenComponent.addObject(new DialogBox());
-		DialogBox.sentMessage("Pokemon Trainer Brock wants to fight you! \nPokemon Trainer Brock sent Wartortle and Pidgeotto!");
+		DialogBox.sentMessage(
+				"Pokemon Trainer Brock wants to fight you! \nPokemon Trainer Brock sent Wartortle and Pidgeotto!");
 		ScreenComponent.addObject(new QueueBox());
 		Frame.getGraphicComponent().repaint();
 	}
@@ -72,23 +72,22 @@ public class GUIFightGameManager {
 	private void runFight() {
 		while (true) {
 			tick++;
-			
+
 			checkInputs();
-			
+
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
-			if (DialogBox.hasSentMessage() && QueueBox.isQueue()){
-			
+
+			if (DialogBox.hasSentMessage() && QueueBox.isQueue()) {
+
 				if (tick >= 10) {
-					if(!endturn){
+					if (!endturn) {
 						currentPokemon = fightMap.getPokemonsOnMap().get(0);
 						currentPokemon.getOwner().runTurn(currentPokemon);
-					}
-					else{
+					} else {
 						currentPokemon.calculateNextTurnTime();
 						currentPokemon.calculateCurrentStats();
 						endturn = false;
@@ -97,9 +96,9 @@ public class GUIFightGameManager {
 					fightMap.sortPokemons();
 					tick = 0;
 				}
-				
+
 			}
-			
+
 			Frame.getGraphicComponent().repaint();
 
 			if (checkWinner()) {
@@ -117,13 +116,12 @@ public class GUIFightGameManager {
 		for (InputEvent inputEvent : InputUtility.getInputEvents()) {
 			if (inputEvent instanceof MouseEvent) {
 				MouseEvent mEvent = (MouseEvent) inputEvent;
-				if(mEvent.getID() == MouseEvent.MOUSE_MOVED){
+				if (mEvent.getID() == MouseEvent.MOUSE_MOVED) {
 					System.out.println("MOVE   \t" + mEvent);
-				} else if (mEvent.getID() == MouseEvent.MOUSE_CLICKED){
-					System.out.println("CLICKED\t" + mEvent );
+				} else if (mEvent.getID() == MouseEvent.MOUSE_CLICKED) {
+					System.out.println("CLICKED\t" + mEvent);
 				}
-			}
-			else if (inputEvent instanceof KeyEvent) {
+			} else if (inputEvent instanceof KeyEvent) {
 				KeyEvent kEvent = (KeyEvent) inputEvent;
 				InputUtility.setLastKeyEvent(kEvent);
 				System.out.println("KEY    \t" + kEvent);
@@ -132,14 +130,14 @@ public class GUIFightGameManager {
 	}
 
 	private void endFight() {
-		
-		while(true){
-			if(DialogBox.hasSentMessage()){
+
+		while (true) {
+			if (DialogBox.hasSentMessage()) {
 				break;
 			}
 			Frame.getGraphicComponent().repaint();
 		}
-			
+
 	}
 
 	private static void spawnPokemons() {
@@ -201,7 +199,7 @@ public class GUIFightGameManager {
 	public static final Player getWinnerPlayer() {
 		return winnerPlayer;
 	}
-	
+
 	public static void setEndturn(boolean endturn) {
 		GUIFightGameManager.endturn = endturn;
 	}
