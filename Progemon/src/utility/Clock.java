@@ -2,30 +2,47 @@ package utility;
 
 public class Clock {
 	
-	private static double fps = 60;
+	private static double tps = 60;
 	private static long time;
-	private static int waitingTime = (int) (1 / fps);
+	private static long periodTime = (long) ((1000 / tps) * 1000 * 1000);
 	
 	public Clock() {
 		// TODO Auto-generated constructor stub
-		time = System.currentTimeMillis();
+		time = System.nanoTime();
 	}
 	
 	public static void tick(){
-		long currentTime = System.currentTimeMillis();
-		if(currentTime - time < waitingTime){
+		periodTime = (long) ((1000 / tps) * 1000 * 1000);
+		long currentTime = System.nanoTime();
+		if(currentTime - time < periodTime){
+			int waitingTime = (int) (periodTime - currentTime + time);
+			
+			//time check
+			/*System.out.println("currentTime" + currentTime);
+			System.out.println("Time" + time);
+			System.out.println("periodTime" + periodTime);
+			System.out.println("waitingTime" + waitingTime);*/
+			
 			try {
-				Thread.sleep(waitingTime - currentTime + time);
+				Thread.sleep((long) (Math.floor(waitingTime / (1000 * 1000))), waitingTime % (1000 * 1000));
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			time = currentTime;
 		}
+		time += periodTime;
 	}
 	
-	public static void setFps(double fps) {
-		Clock.fps = fps;
+	public static double getTps() {
+		return tps;
+	}
+	
+	public static void setTps(double tps) {
+		Clock.tps = tps;
+	}
+	
+	public static long getTime() {
+		return time;
 	}
 
 }
