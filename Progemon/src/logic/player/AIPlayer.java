@@ -12,7 +12,8 @@ public class AIPlayer extends Player {
 	private Path nextPath;
 	private int x, y;
 	private int moveCounter = 1;
-	private int thinkDelay = 10, thinkDelayCounter = 0;
+	private int thinkDelay = 20, thinkDelayCounter = 0;
+	private int moveDelay = 5, moveDelayCounter = 0;
 
 	// Constructors
 
@@ -39,20 +40,25 @@ public class AIPlayer extends Player {
 			} else {
 				thinkDelayCounter++;
 			}
-		} else { // not input
-			if (moveCounter < nextPath.size()) {
-				if (nextPath.get(moveCounter) != pokemon.getCurrentFightTerrain()) {
+		}
+		else{
+			if(moveCounter == nextPath.size()){
+				System.out.println("Pokemon " + pokemon.getName() + " moved from (" + x + ", " + y + ") to ("
+						+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY() + ").");
+				moveCounter = 1;
+				input = false;
+				setMovephrase(true);
+			}
+			else if(moveDelay == moveDelayCounter){
+				if(nextPath.get(moveCounter) != pokemon.getCurrentFightTerrain()){
 					pokemon.move(nextPath.get(moveCounter));
 				} else {
 					moveCounter++;
 				}
-			} else {
-				System.out.println("Pokemon " + pokemon.getName() + " moved from (" + x + ", " + y + ") to ("
-						+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY()
-						+ ").");
-				moveCounter = 1;
-				input = false;
-				setMovePhase(true);
+				moveDelayCounter = 0;
+			}
+			else{
+				moveDelayCounter++;
 			}
 		}
 	}

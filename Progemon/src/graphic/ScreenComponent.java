@@ -25,7 +25,6 @@ public class ScreenComponent extends JComponent {
 		// TODO Auto-generated method stub
 		super.paintComponent(g);
 		g2 = (Graphics2D) g;
-		g2.setBackground(Color.BLACK);
 		
 		//anti aliasing
 		/*g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

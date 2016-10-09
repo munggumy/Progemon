@@ -1,0 +1,35 @@
+package utility;
+
+public class Clock {
+	
+	private static double tps = 30;
+	private static long time;
+	private static int waitingTime = (int) (1000 / tps);
+	
+	public Clock() {
+		// TODO Auto-generated constructor stub
+		time = System.currentTimeMillis();
+	}
+	
+	public static void tick(){
+		long currentTime = System.currentTimeMillis();
+		if(currentTime - time < waitingTime){
+			try {
+				Thread.sleep(waitingTime - currentTime + time);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		time += waitingTime;
+	}
+	
+	public static void setTps(double tps) {
+		Clock.tps = tps;
+	}
+	
+	public static long getTime() {
+		return time;
+	}
+
+}
