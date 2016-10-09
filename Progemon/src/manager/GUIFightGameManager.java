@@ -49,7 +49,7 @@ public class GUIFightGameManager {
 
 		// Load Graphics
 		new Frame();
-		
+
 		new Clock();
 
 		startFight();
@@ -65,8 +65,7 @@ public class GUIFightGameManager {
 		fightMap.sortPokemons();
 
 		ScreenComponent.addObject(new DialogBox());
-		DialogBox.sentMessage(
-				"Pokemon Trainer Brock wants to fight you! \nPokemon Trainer Brock sent Wartortle and Pidgeotto!");
+		DialogBox.sentMessage("Press 'a' to start! Press 'a' to start! Press 'a' to start! Press 'a' to start! Press 'a' to start! Press 'a' to start!");
 		ScreenComponent.addObject(new QueueBox());
 		Frame.getGraphicComponent().repaint();
 	}
@@ -90,7 +89,7 @@ public class GUIFightGameManager {
 				fightMap.sortPokemons();
 
 			}
-			
+
 			QueueBox.update();
 			DialogBox.update();
 			Frame.getGraphicComponent().repaint();
@@ -101,7 +100,7 @@ public class GUIFightGameManager {
 				System.out.println("The winner is " + winnerPlayer.getName());
 				break;
 			}
-			
+
 			Clock.tick();
 		}
 
@@ -121,11 +120,10 @@ public class GUIFightGameManager {
 				KeyEvent kEvent = (KeyEvent) inputEvent;
 				InputUtility.setLastKeyEvent(kEvent);
 				System.out.println("KEY    \t" + kEvent);
-				if(kEvent.getKeyChar() == ' '){
-					if(kEvent.getID() == KeyEvent.KEY_PRESSED){
+				if (kEvent.getKeyChar() == ' ') {
+					if (kEvent.getID() == KeyEvent.KEY_PRESSED) {
 						Clock.setTps(300);
-					}
-					else if(kEvent.getID() == KeyEvent.KEY_RELEASED){
+					} else if (kEvent.getID() == KeyEvent.KEY_RELEASED) {
 						Clock.setTps(60);
 					}
 				}
@@ -136,17 +134,17 @@ public class GUIFightGameManager {
 	private void endFight() {
 
 		while (true) {
-			
+
 			checkInputs();
-			
+
 			if (DialogBox.hasSentMessage()) {
 				break;
 			}
-			
+
 			QueueBox.update();
 			DialogBox.update();
 			Frame.getGraphicComponent().repaint();
-			
+
 			Clock.tick();
 		}
 

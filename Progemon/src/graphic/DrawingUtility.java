@@ -146,10 +146,9 @@ public class DrawingUtility {
 	}
 
 	public static int computeStringWidth(Font font, String str) {
-		if(str.length() == 0 || ScreenComponent.g2 == null){
+		if (str.length() == 0 || ScreenComponent.g2 == null) {
 			return 0;
-		}
-		else{
+		} else {
 			return SwingUtilities.computeStringWidth(ScreenComponent.g2.getFontMetrics(font), str);
 		}
 	}
