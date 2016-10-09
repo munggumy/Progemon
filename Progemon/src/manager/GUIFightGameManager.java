@@ -65,7 +65,7 @@ public class GUIFightGameManager {
 		fightMap.sortPokemons();
 
 		ScreenComponent.addObject(new DialogBox());
-		DialogBox.sentMessage("Press 'a' to start! Press 'a' to start! Press 'a' to start! Press 'a' to start! Press 'a' to start! Press 'a' to start!");
+		DialogBox.sentMessage("Press 'a' to start!");
 		ScreenComponent.addObject(new QueueBox());
 		Frame.getGraphicComponent().repaint();
 	}
@@ -112,10 +112,12 @@ public class GUIFightGameManager {
 			if (inputEvent instanceof MouseEvent) {
 				MouseEvent mEvent = (MouseEvent) inputEvent;
 				if (mEvent.getID() == MouseEvent.MOUSE_MOVED) {
+					InputUtility.setLastMouseMoveEvent(mEvent);
 					System.out.println("MOVE   \t" + mEvent);
-				} else if (mEvent.getID() == MouseEvent.MOUSE_CLICKED) {
+				} else if (mEvent.getID() == MouseEvent.MOUSE_CLICKED && mEvent.getButton() == MouseEvent.BUTTON1) {
+					InputUtility.setLastMouseClickEvent(mEvent);
 					System.out.println("CLICKED\t" + mEvent);
-				}
+				} // end mouse event
 			} else if (inputEvent instanceof KeyEvent) {
 				KeyEvent kEvent = (KeyEvent) inputEvent;
 				InputUtility.setLastKeyEvent(kEvent);
@@ -126,7 +128,7 @@ public class GUIFightGameManager {
 					} else if (kEvent.getID() == KeyEvent.KEY_RELEASED) {
 						Clock.setTps(60);
 					}
-				}
+				} // end key event
 			}
 		}
 	}
