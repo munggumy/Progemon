@@ -30,9 +30,7 @@ public class ScreenComponent extends JComponent {
 		/*g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);*/
 		
-		for (IRenderable object : objectOnScreen) {
-			object.draw();
-		}
+		objectOnScreen.parallelStream().forEach((IRenderable object) -> object.draw());
 	}
 	
 	public static CopyOnWriteArrayList<IRenderable> getObjectOnScreen() {
