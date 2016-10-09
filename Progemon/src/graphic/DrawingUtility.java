@@ -85,7 +85,7 @@ public class DrawingUtility {
 			e.printStackTrace();
 		}
 		ScreenComponent.g2.drawImage(img, null, DialogBox.getX(), DialogBox.getY());
-		ScreenComponent.g2.clipRect(0, 260, 320, 60);
+		ScreenComponent.g2.clipRect(0, 255, 320, 65);
 		ScreenComponent.g2.setColor(Color.BLACK);
 		ScreenComponent.g2.setFont(DialogBox.getFont());
 		int messageHeight = ScreenComponent.g2.getFontMetrics(DialogBox.getFont()).getHeight();
@@ -95,7 +95,7 @@ public class DrawingUtility {
 				DialogBox.getY() + 37 + messageHeight - DialogBox.getyShift());
 		if (DialogBox.getEndLineWidth() != 0) {
 			ScreenComponent.g2.drawImage(sign, DialogBox.getX() + 25 + DialogBox.getEndLineWidth(),
-					DialogBox.getY() + 39, null);
+					DialogBox.getY() + DialogBox.getCurrentLine() * 25 + 14, null);
 		}
 		ScreenComponent.g2.setClip(null);
 	}
@@ -157,8 +157,12 @@ public class DrawingUtility {
 	}
 
 	public static int computeStringWidth(Font font, String str) {
-		return SwingUtilities.computeStringWidth(ScreenComponent.g2.getFontMetrics(font), str);
+		if(str.length() == 0 || ScreenComponent.g2 == null){
+			return 0;
+		}
+		else{
+			return SwingUtilities.computeStringWidth(ScreenComponent.g2.getFontMetrics(font), str);
+		}
 	}
 
 }
->>>>>>> d1bf05863787d6a4ce0fda9b90a55cd52f9e8b7b

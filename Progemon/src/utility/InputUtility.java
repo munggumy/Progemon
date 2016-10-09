@@ -4,6 +4,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class InputUtility {
 
@@ -12,7 +13,10 @@ public class InputUtility {
 	private static ArrayList<InputEvent> inputEvents = new ArrayList<InputEvent>();
 	/** When it gets elements, it clears the history of event. */
 	private static KeyEvent lastKeyEvent;
-
+	private static HashSet<KeyEvent> holdingKeys = new HashSet<KeyEvent>();
+	
+	
+	/** When get element, it clears the history of event. */
 	public static final ArrayList<InputEvent> getInputEvents() {
 		ArrayList<InputEvent> temp = new ArrayList<InputEvent>(inputEvents);
 		inputEvents.clear();
@@ -63,6 +67,18 @@ public class InputUtility {
 	
 	public static void setLastKeyEvent(KeyEvent lastKeyEvent) {
 		InputUtility.lastKeyEvent = lastKeyEvent;
+	}
+	
+	public static void addHoldingKeys(KeyEvent kEvent){
+		holdingKeys.add(kEvent);
+	}
+	
+	public static void removeHoldingKeys(KeyEvent kEvent){
+		holdingKeys.remove(kEvent);
+	}
+	
+	public static HashSet<KeyEvent> getHoldingKeys() {
+		return holdingKeys;
 	}
 
 }
