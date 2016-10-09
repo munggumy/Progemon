@@ -15,8 +15,9 @@ import graphic.IRenderable;
 @SuppressWarnings("unused")
 public class FightTerrain implements IRenderable {
 	private int x, y;
-	private boolean isShadowed, isCursur;
+	private boolean isShadowed, isCursor;
 	private TerrainType type;
+	private BufferedImage terrainImage = null;
 
 	public static enum TerrainType {
 		GRASS, ROCK, WATER, TREE, GROUND;
@@ -34,16 +35,16 @@ public class FightTerrain implements IRenderable {
 			return this.moveCost;
 		}
 		
-		public String getImageName(){
+		public String getDefaultImageName(){
 			return "load\\img\\terrain\\" + this.toString() + ".png";
 		}
 	}
 
 	public FightTerrain(int x, int y, TerrainType type) {
-		// TODO Auto-generated constructor stub
 		this.x = x;
 		this.y = y;
 		this.type = type;
+		loadDefaultTerrainImage();
 	}
 
 	private ArrayList<FightTerrain> toArrayList() {
@@ -73,12 +74,12 @@ public class FightTerrain implements IRenderable {
 		this.isShadowed = isShadowed;
 	}
 	
-	public boolean isCursur() {
-		return isCursur;
+	public boolean isCursor() {
+		return isCursor;
 	}
 	
-	public void setCursur(boolean isCursur) {
-		this.isCursur = isCursur;
+	public void setCursor(boolean isCursor) {
+		this.isCursor = isCursor;
 	}
 
 	public final TerrainType getType() {
@@ -102,6 +103,23 @@ public class FightTerrain implements IRenderable {
 	public void getDepth() {
 		// TODO Auto-generated method stub
 
+	}
+	
+	public final BufferedImage getTerrainImage() {
+		return terrainImage;
+	}
+
+	public final void setTerrainImage(BufferedImage terrainImage) {
+		this.terrainImage = terrainImage;
+	}
+	
+	public final void loadDefaultTerrainImage(){
+		try {
+			terrainImage = ImageIO.read(new File(type.getDefaultImageName()));
+		} catch (IOException e) {
+			System.err.println("Terrain \"" + type + "\" Image not found.");
+			e.printStackTrace();
+		}
 	}
 
 	@Override
