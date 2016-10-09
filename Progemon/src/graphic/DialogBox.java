@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package graphic;
 
 import java.awt.Font;
@@ -145,3 +146,4 @@ public class DialogBox implements IRenderable{
 	}
 
 }
+

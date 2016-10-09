@@ -10,7 +10,6 @@
 <fullyQualifiedTypeName name="utility.FileUtility"/>
 <fullyQualifiedTypeName name="graphic.IRenderable"/>
 <fullyQualifiedTypeName name="logic.terrain.FightMap"/>
-<fullyQualifiedTypeName name="graphic.DrawingUtility"/>
 <fullyQualifiedTypeName name="java.lang.ExceptionInInitializerError"/>
 <fullyQualifiedTypeName name="javax.swing.JFrame"/>
 <fullyQualifiedTypeName name="java.awt.Dimension"/>
@@ -22,7 +21,6 @@
 <fullyQualifiedTypeName name="java.awt.RenderingHints"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="logic.character.Pokemon"/>
-<fullyQualifiedTypeName name="graphic.QueueBox"/>
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="java.nio.file.Paths"/>
 <fullyQualifiedTypeName name="manager.GUIFightGameManager"/>
@@ -30,7 +28,14 @@
 <fullyQualifiedTypeName name="javax.swing.JComponent"/>
 <fullyQualifiedTypeName name="java.awt.Container"/>
 <fullyQualifiedTypeName name="java.awt.event.KeyAdapter"/>
-<fullyQualifiedTypeName name="graphic.DialogBox"/>
 <fullyQualifiedTypeName name="utility.InputUtility"/>
 <fullyQualifiedTypeName name="java.awt.event.KeyEvent"/>
+<fullyQualifiedTypeName name="graphic.QueueBox"/>
+<fullyQualifiedTypeName name="java.awt.Font"/>
+<fullyQualifiedTypeName name="java.lang.System"/>
+<fullyQualifiedTypeName name="java.lang.Thread"/>
+<fullyQualifiedTypeName name="graphic.DrawingUtility"/>
+<fullyQualifiedTypeName name="java.awt.Image"/>
+<fullyQualifiedTypeName name="javax.swing.ImageIcon"/>
+<fullyQualifiedTypeName name="graphic.DialogBox"/>
 </qualifiedTypeNameHistroy>
