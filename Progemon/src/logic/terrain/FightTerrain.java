@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -12,8 +11,10 @@ import graphic.DrawingUtility;
 import graphic.IRenderable;
 
 /** FightTerrain */
-@SuppressWarnings("unused")
 public class FightTerrain implements IRenderable {
+
+	public static final int IMG_SIZE_X = 40, IMG_SIZE_Y = 40;
+
 	private int x, y;
 	private boolean isShadowed, isCursor;
 	private TerrainType type;
@@ -34,8 +35,8 @@ public class FightTerrain implements IRenderable {
 		public int getMoveCost() {
 			return this.moveCost;
 		}
-		
-		public String getDefaultImageName(){
+
+		public String getDefaultImageName() {
 			return "load\\img\\terrain\\" + this.toString() + ".png";
 		}
 	}
@@ -45,12 +46,6 @@ public class FightTerrain implements IRenderable {
 		this.y = y;
 		this.type = type;
 		loadDefaultTerrainImage();
-	}
-
-	private ArrayList<FightTerrain> toArrayList() {
-		ArrayList<FightTerrain> temp = new ArrayList<FightTerrain>();
-		temp.add(this);
-		return temp;
 	}
 
 	@Override
@@ -73,11 +68,11 @@ public class FightTerrain implements IRenderable {
 	public final void setShadowed(boolean isShadowed) {
 		this.isShadowed = isShadowed;
 	}
-	
+
 	public boolean isCursor() {
 		return isCursor;
 	}
-	
+
 	public void setCursor(boolean isCursor) {
 		this.isCursor = isCursor;
 	}
@@ -101,10 +96,9 @@ public class FightTerrain implements IRenderable {
 
 	@Override
 	public void getDepth() {
-		// TODO Auto-generated method stub
 
 	}
-	
+
 	public final BufferedImage getTerrainImage() {
 		return terrainImage;
 	}
@@ -112,8 +106,8 @@ public class FightTerrain implements IRenderable {
 	public final void setTerrainImage(BufferedImage terrainImage) {
 		this.terrainImage = terrainImage;
 	}
-	
-	public final void loadDefaultTerrainImage(){
+
+	public final void loadDefaultTerrainImage() {
 		try {
 			terrainImage = ImageIO.read(new File(type.getDefaultImageName()));
 		} catch (IOException e) {

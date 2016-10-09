@@ -99,8 +99,8 @@ public class FightMap implements IRenderable {
 
 	public void draw() {
 		int x = InputUtility.getMouseX(), y = InputUtility.getMouseY();
-		if (0 <= x && x <= 319 && 0 <= y && y <= 239) {
-			getFightTerrainAt((int) Math.floor(x / 40), (int) Math.floor(y / 40)).setCursor(true);
+		if (0 <= x && x < FightTerrain.IMG_SIZE_X * sizeX && 0 <= y && y <= FightTerrain.IMG_SIZE_Y * sizeY) {
+			getFightTerrainAt((int) Math.floor(x / FightTerrain.IMG_SIZE_X), (int) Math.floor(y / FightTerrain.IMG_SIZE_Y)).setCursor(true);
 		}
 		DrawingUtility.drawFightMap(this);
 	}
