@@ -47,7 +47,7 @@ public class AIPlayer extends Player {
 						+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY() + ").");
 				moveCounter = 1;
 				input = false;
-				setMovephrase(true);
+				setMovePhase(true);
 			}
 			else if(moveDelay == moveDelayCounter){
 				if(nextPath.get(moveCounter) != pokemon.getCurrentFightTerrain()){

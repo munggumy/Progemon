@@ -217,4 +217,3 @@ public class GUIFightGameManager {
 	}
 
 }
->>>>>>> ba12a0317b5466da09896f2948d6fa884eee57e3
