@@ -71,12 +71,13 @@ public abstract class Player {
 
 	/** Checks if this player loses (All pokemons are dead) */
 	public boolean isLose() {
-		for (Pokemon pokemon : pokemons) {
-			if (!pokemon.isDead()) {
-				return false;
-			}
-		}
-		return true;
+		return pokemons.stream().filter((Pokemon pokemon) -> !pokemon.isDead()).count() >= 1;
+//		for (Pokemon pokemon : pokemons) {
+//			if (!pokemon.isDead()) {
+//				return false;
+//			}
+//		}
+//		return true;
 	}
 
 	// Getters
