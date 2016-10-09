@@ -54,7 +54,7 @@ public class FightMap implements IRenderable {
 
 	/** Sort by Speed. Used in calculation of Turn Time and Queue. */
 	public void sortPokemons() {
-		Collections.sort(pokemonsOnMap, Pokemon.getSpeedComparator());
+		Collections.sort(pokemonsOnMap, Pokemon.bySpeed);
 	}
 
 	public FightTerrain[][] getMap() {
@@ -100,7 +100,7 @@ public class FightMap implements IRenderable {
 	public void draw() {
 		int x = InputUtility.getMouseX(), y = InputUtility.getMouseY();
 		if (0 <= x && x <= 319 && 0 <= y && y <= 239) {
-			getFightTerrainAt((int) Math.floor(x / 40), (int) Math.floor(y / 40)).setCursur(true);
+			getFightTerrainAt((int) Math.floor(x / 40), (int) Math.floor(y / 40)).setCursor(true);
 		}
 		DrawingUtility.drawFightMap(this);
 	}
