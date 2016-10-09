@@ -104,6 +104,7 @@ public class FileUtility {
 				new_pokemon.addActiveSkill(activeSkillName);
 			}
 		}
+		new_pokemon.loadImage(new_pokemon.getName() + ".png");
 		Pokedex.addPokemonToList(new_pokemon);
 	}
 

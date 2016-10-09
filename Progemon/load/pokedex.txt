@@ -2,7 +2,7 @@
 002 Ivysaur
 003 Venusaur
 004 Charmander
-005 Chameleon
+005 Charmeleon
 006 Charlizard
 007 Squirtle
 008 Wartortle
