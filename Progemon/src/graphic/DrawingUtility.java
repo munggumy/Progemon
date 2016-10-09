@@ -30,23 +30,24 @@ public class DrawingUtility {
 	}
 
 	public static void drawFightTerrain(FightTerrain fightTerrain) {
-		BufferedImage img = null;
 		BufferedImage shadow = null;
 		BufferedImage cursor = null;
 		try {
-			img = ImageIO.read(new File(fightTerrain.getType().getImageName()));
 			shadow = ImageIO.read(new File("load\\img\\terrain\\shadow20.png"));
 			cursor = ImageIO.read(new File("load\\img\\terrain\\cursur.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		ScreenComponent.g2.drawImage(img, null, fightTerrain.getX() * 40, fightTerrain.getY() * 40);
+		ScreenComponent.g2.drawImage(fightTerrain.getTerrainImage(), null,
+				fightTerrain.getX() * FightTerrain.IMG_SIZE_X, fightTerrain.getY() * FightTerrain.IMG_SIZE_Y);
 		if (fightTerrain.isShadowed()) {
-			ScreenComponent.g2.drawImage(shadow, null, fightTerrain.getX() * 40, fightTerrain.getY() * 40);
+			ScreenComponent.g2.drawImage(shadow, null, fightTerrain.getX() * FightTerrain.IMG_SIZE_X,
+					fightTerrain.getY() * FightTerrain.IMG_SIZE_Y);
 		}
-		if (fightTerrain.isCursur()) {
-			ScreenComponent.g2.drawImage(cursor, null, fightTerrain.getX() * 40, fightTerrain.getY() * 40);
-			fightTerrain.setCursur(false);
+		if (fightTerrain.isCursor()) {
+			ScreenComponent.g2.drawImage(cursor, null, fightTerrain.getX() * FightTerrain.IMG_SIZE_X,
+					fightTerrain.getY() * FightTerrain.IMG_SIZE_Y);
+			fightTerrain.setCursor(false);
 		}
 	}
 
@@ -56,7 +57,7 @@ public class DrawingUtility {
 		}
 		int x = pokemon.getCurrentFightTerrain().getX();
 		int y = pokemon.getCurrentFightTerrain().getY();
-		ScreenComponent.g2.drawImage(pokemon.getBufferedImage(), null, x * 40, y * 40);
+		ScreenComponent.g2.drawImage(pokemon.getBufferedImage(), null, x * FightTerrain.IMG_SIZE_X, y * FightTerrain.IMG_SIZE_Y);
 		/*
 		 * Image img = new ImageIcon(pokemon.getImageName()).getImage();
 		 * ScreenComponent.g2.drawImage(img, pokemon.getX() * 40, pokemon.getY()
@@ -71,13 +72,7 @@ public class DrawingUtility {
 
 	public static void drawDialogBox() {
 		Image sign = new ImageIcon("load\\img\\dialogbox\\Theme1_sign.gif").getImage();
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(new File(DialogBox.DIALOG_BOX_PATH));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		ScreenComponent.g2.drawImage(img, null, DialogBox.getX(), DialogBox.getY());
+		ScreenComponent.g2.drawImage(DialogBox.getDialogBoxImage(), null, DialogBox.getX(), DialogBox.getY());
 		ScreenComponent.g2.clipRect(0, 255, 320, 65);
 		ScreenComponent.g2.setColor(Color.BLACK);
 		ScreenComponent.g2.setFont(DialogBox.getFont());
@@ -106,11 +101,7 @@ public class DrawingUtility {
 		List<Pokemon> pokemonsOnQueue = QueueBox.getPokemonsOnQueue();
 		for (int i = 0; i < pokemonsOnQueue.size(); i++) {
 			img = pokemonsOnQueue.get(i).getBufferedImage();
-			if (pokemonsOnQueue.get(i).getOwner().getName() == "AI 1") {
-				ScreenComponent.g2.setColor(Color.BLUE);
-			} else {
-				ScreenComponent.g2.setColor(Color.RED);
-			}
+			ScreenComponent.g2.setColor(pokemonsOnQueue.get(i).getOwner().getColor());
 			ScreenComponent.g2.fillRect(QueueBox.getOriginX() + QueueBox.getDelta()[i][0] + 6,
 					QueueBox.getOriginY() + QueueBox.getDelta()[i][1] + 2 + i * 40, 6, 36);
 			ScreenComponent.g2.setColor(Color.BLACK);
