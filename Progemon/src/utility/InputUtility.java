@@ -1,7 +1,7 @@
 package utility;
 
-
 import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,8 +9,9 @@ import java.util.HashSet;
 public class InputUtility {
 
 	private static int mouseX, mouseY;
-	private static boolean mouseIsClicked;
+	private static MouseEvent lastMouseClickEvent, lastMouseMoveEvent;
 	private static ArrayList<InputEvent> inputEvents = new ArrayList<InputEvent>();
+	/** When it gets elements, it clears the history of event. */
 	private static KeyEvent lastKeyEvent;
 	private static HashSet<KeyEvent> holdingKeys = new HashSet<KeyEvent>();
 	
@@ -34,10 +35,6 @@ public class InputUtility {
 		return mouseY;
 	}
 
-	public static final boolean isMouseIsClicked() {
-		return mouseIsClicked;
-	}
-
 	public static final void setMouseX(int mouseX) {
 		InputUtility.mouseX = mouseX;
 	}
@@ -46,8 +43,20 @@ public class InputUtility {
 		InputUtility.mouseY = mouseY;
 	}
 
-	public static final void setMouseIsClicked(boolean mouseIsClicked) {
-		InputUtility.mouseIsClicked = mouseIsClicked;
+	public static final MouseEvent getLastMouseClickEvent() {
+		return lastMouseClickEvent;
+	}
+
+	public static final void setLastMouseClickEvent(MouseEvent lastMouseClickEvent) {
+		InputUtility.lastMouseClickEvent = lastMouseClickEvent;
+	}
+
+	public static final MouseEvent getLastMouseMoveEvent() {
+		return lastMouseMoveEvent;
+	}
+
+	public static final void setLastMouseMoveEvent(MouseEvent lastMouseMoveEvent) {
+		InputUtility.lastMouseMoveEvent = lastMouseMoveEvent;
 	}
 	
 	public static KeyEvent getLastKeyEvent() {

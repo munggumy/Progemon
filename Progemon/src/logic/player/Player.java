@@ -9,16 +9,9 @@ import manager.GUIFightGameManager;
 public abstract class Player {
 	private String name;
 	private ArrayList<Pokemon> pokemons;
-	private boolean movephrase = false, attackphrase = false, initial = false;
-
-	public boolean isLose() {
-		for (Pokemon pokemon : pokemons) {
-			if (!pokemon.isDead()) {
-				return false;
-			}
-		}
-		return true;
-	}
+	private boolean movePhase = false, attackPhase = false, initial = false;
+	
+	// Constructor
 
 	public Player(String name) {
 		this.name = name;
@@ -39,6 +32,48 @@ public abstract class Player {
 		}
 
 	}
+	
+	// Run turn
+	
+	/** Each turn calls this. */
+	public final void runTurn(Pokemon pokemon){
+		if(!initial){
+			pokemon.findBlocksAround(pokemon.getMoveRange(), new MoveFilter());
+			pokemon.sortPaths();
+			pokemon.shadowBlocks();
+			initial = true;
+		}
+		else if(!movePhase){
+			pokemonMove(pokemon);
+		}
+		else if(!attackPhase){
+			pokemonAttack(pokemon);
+		}
+		else{
+			initial = false;
+			movePhase = false;
+			attackPhase = false;
+			GUIFightGameManager.setEndturn(true);
+		}
+	}
+	
+	/** Override <code>this</code> in Each Player Type*/
+	public abstract void pokemonMove(Pokemon pokemon);
+	/** Override <code>this</code> in Each Player Type*/
+	public abstract void pokemonAttack(Pokemon pokemon);
+
+	
+	/** Checks if this player loses (All pokemons are dead) */
+	public boolean isLose() {
+		for (Pokemon pokemon : pokemons) {
+			if (!pokemon.isDead()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	// Getters
 
 	public final String getName() {
 		return name;
@@ -48,43 +83,19 @@ public abstract class Player {
 		return pokemons;
 	}
 	
-	public void setAttackphrase(boolean attackphrase) {
-		this.attackphrase = attackphrase;
+	public void setAttackPhase(boolean attackphrase) {
+		this.attackPhase = attackphrase;
 	}
 	
-	public void setMovephrase(boolean movephrase) {
-		this.movephrase = movephrase;
+	public void setMovePhase(boolean movephrase) {
+		this.movePhase = movephrase;
 	}
 	
 	public void addPokemon(Pokemon pokemon){
 		pokemon.setOwner(this);
 		pokemons.add(pokemon);
 	}
-
-	public final void runTurn(Pokemon pokemon){
-		if(!initial){
-			pokemon.findBlocksAround(pokemon.getMoveRange(), new MoveFilter());
-			pokemon.sortPaths();
-			pokemon.shadowBlocks();
-			initial = true;
-		}
-		else if(!movephrase){
-			pokemonMove(pokemon);
-		}
-		else if(!attackphrase){
-			pokemonAttack(pokemon);
-		}
-		else{
-			initial = false;
-			movephrase = false;
-			attackphrase = false;
-			GUIFightGameManager.setEndturn(true);
-		}
-	}
 	
-	/** Override <code>this</code> in Each Player Type*/
-	public abstract void pokemonMove(Pokemon pokemon);
-	/** Override <code>this</code> in Each Player Type*/
-	public abstract void pokemonAttack(Pokemon pokemon);
+	
 	
 }

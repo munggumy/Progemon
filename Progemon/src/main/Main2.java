@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import logic.character.Pokemon;
 import logic.player.AIPlayer;
+import logic.player.HPAIPlayer;
 import logic.player.Player;
 import manager.GUIFightGameManager;
 import utility.FileUtility;
@@ -21,7 +22,7 @@ public class Main2 {
 			e.printStackTrace();
 		}
 		Pokemon charlizard = Pokedex.getPokemon("Charlizard");
-		charlizard.setLevel(40);
+		charlizard.setLevel(38);
 		charlizard.calculateCurrentStats();
 		charlizard.resetHP();
 		Pokemon caterpie = Pokedex.getPokemon("Caterpie");
@@ -38,7 +39,7 @@ public class Main2 {
 		pidgeotto.calculateCurrentStats();
 		pidgeotto.resetHP();
 
-		Player p1 = new AIPlayer("AI 1", charlizard);
+		Player p1 = new HPAIPlayer("AI 1", charlizard);
 		p1.addPokemon(caterpie);
 		Player p2 = new AIPlayer("AI 2", pidgeotto);
 		p2.addPokemon(wartortle);

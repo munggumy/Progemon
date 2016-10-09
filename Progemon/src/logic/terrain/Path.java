@@ -7,14 +7,29 @@ public class Path extends LinkedList<FightTerrain> implements Comparable<Path> {
 
 	private static final long serialVersionUID = 2418393279076119053L;
 
+	public Path(){
+		super();
+	}
 	public Path(FightTerrain paramFT) {
 		super();
 		super.add(paramFT);
+	}
+	
+	public Path(Collection<FightTerrain> c){
+		super(c);
 	}
 
 	public Path(FightTerrain paramFT, Collection<FightTerrain> c) {
 		super(c);
 		super.add(paramFT);
+	}
+
+	/**
+	 * Returns a view of the portion of this list between the specified
+	 * <code>fromIndex</code>, inclusive, and <code>toIndex</code>, exclusive.
+	 */
+	public Path subPath(int fromIndex, int toIndex) {
+		return new Path(super.subList(fromIndex, toIndex));
 	}
 
 	@Override
@@ -29,5 +44,5 @@ public class Path extends LinkedList<FightTerrain> implements Comparable<Path> {
 		}
 		return this.size() - paramPath.size();
 	}
-	
+
 }
