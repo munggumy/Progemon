@@ -2,7 +2,9 @@ package utility;
 
 public class Clock {
 	
+	/** Ticks per second */
 	private static double tps = 60;
+	/** Previous time tick (last round) */
 	private static long time;
 	private static long periodTime = (long) ((1000 / tps) * 1000 * 1000);
 	
