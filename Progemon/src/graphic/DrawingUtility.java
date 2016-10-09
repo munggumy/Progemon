@@ -32,11 +32,11 @@ public class DrawingUtility {
 	public static void drawFightTerrain(FightTerrain fightTerrain) {
 		BufferedImage img = null;
 		BufferedImage shadow = null;
-		BufferedImage cursur = null;
+		BufferedImage cursor = null;
 		try {
 			img = ImageIO.read(new File(fightTerrain.getType().getImageName()));
 			shadow = ImageIO.read(new File("load\\img\\terrain\\shadow20.png"));
-			cursur = ImageIO.read(new File("load\\img\\terrain\\cursur.png"));
+			cursor = ImageIO.read(new File("load\\img\\terrain\\cursur.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -45,7 +45,7 @@ public class DrawingUtility {
 			ScreenComponent.g2.drawImage(shadow, null, fightTerrain.getX() * 40, fightTerrain.getY() * 40);
 		}
 		if (fightTerrain.isCursur()) {
-			ScreenComponent.g2.drawImage(cursur, null, fightTerrain.getX() * 40, fightTerrain.getY() * 40);
+			ScreenComponent.g2.drawImage(cursor, null, fightTerrain.getX() * 40, fightTerrain.getY() * 40);
 			fightTerrain.setCursur(false);
 		}
 	}
@@ -56,14 +56,7 @@ public class DrawingUtility {
 		}
 		int x = pokemon.getCurrentFightTerrain().getX();
 		int y = pokemon.getCurrentFightTerrain().getY();
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(new File(pokemon.getImageName()));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		ScreenComponent.g2.drawImage(img, null, x * 40, y * 40);
+		ScreenComponent.g2.drawImage(pokemon.getBufferedImage(), null, x * 40, y * 40);
 		/*
 		 * Image img = new ImageIcon(pokemon.getImageName()).getImage();
 		 * ScreenComponent.g2.drawImage(img, pokemon.getX() * 40, pokemon.getY()
@@ -112,11 +105,7 @@ public class DrawingUtility {
 		ScreenComponent.g2.clipRect(QueueBox.getOriginX(), QueueBox.getOriginY(), 68, 204);
 		List<Pokemon> pokemonsOnQueue = QueueBox.getPokemonsOnQueue();
 		for (int i = 0; i < pokemonsOnQueue.size(); i++) {
-			try {
-				img = ImageIO.read(new File(pokemonsOnQueue.get(i).getImageName()));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			img = pokemonsOnQueue.get(i).getBufferedImage();
 			if (pokemonsOnQueue.get(i).getOwner().getName() == "AI 1") {
 				ScreenComponent.g2.setColor(Color.BLUE);
 			} else {
