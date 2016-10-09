@@ -4,6 +4,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.time.Clock;
 import java.util.ArrayList;
 
 import graphic.DialogBox;
@@ -117,7 +118,15 @@ public class GUIFightGameManager {
 	}
 
 	private void endFight() {
-		Frame.getGraphicComponent().repaint();
+		while(true){
+			checkInputs();
+			
+			if(DialogBox.hasSentMessage()){
+				break;
+			}
+			QueueBox.update();
+			Frame.getGraphicComponent().repaint();
+		}
 	}
 
 	private void checkInputs() {

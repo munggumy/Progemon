@@ -42,21 +42,7 @@ public class QueueBox implements IRenderable {
 
 	@Override
 	public void draw() {
-		// TODO Auto-generated method stub
-		pokemonsOnMap = GUIFightGameManager.getFightMap().getPokemonsOnMap();
-		boolean equal = true;
-		if (pokemonsOnQueue.size() == pokemonsOnMap.size()) {
-			for (int i = 0; i < pokemonsOnQueue.size(); i++) {
-				if (pokemonsOnQueue.get(i) != pokemonsOnMap.get(i)) {
-					equal = false;
-				}
-			}
-		} else {
-			equal = false;
-		}
-		if (!equal) {
-			update();
-		}
+		
 		DrawingUtility.drawQueueBox();
 	}
 
@@ -65,8 +51,26 @@ public class QueueBox implements IRenderable {
 		// TODO Auto-generated method stub
 
 	}
+	
+	public static void update(){
+		// TODO Auto-generated method stub
+				pokemonsOnMap = GUIFightGameManager.getFightMap().getPokemonsOnMap();
+				boolean equal = true;
+				if (pokemonsOnQueue.size() == pokemonsOnMap.size()) {
+					for (int i = 0; i < pokemonsOnQueue.size(); i++) {
+						if (pokemonsOnQueue.get(i) != pokemonsOnMap.get(i)) {
+							equal = false;
+						}
+					}
+				} else {
+					equal = false;
+				}
+				if (!equal) {
+					animate();
+				}
+	}
 
-	private void update() {
+	private static void animate() {
 		if (!remove) {
 			remove();
 		} else if (!move) {
@@ -90,7 +94,7 @@ public class QueueBox implements IRenderable {
 		}
 	}
 
-	private void remove() {
+	private static void remove() {
 		if (removeTimeCounter == REMOVE_TIME) {
 			removeTimeCounter = 0;
 			remove = true;
@@ -104,7 +108,7 @@ public class QueueBox implements IRenderable {
 		}
 	}
 
-	private void move() {
+	private static void move() {
 		if (moveTimeCounter == MOVE_TIME) {
 			moveTimeCounter = 0;
 			move = true;
