@@ -1,5 +1,6 @@
 package logic.player;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -9,12 +10,12 @@ import logic.terrain.Path;
 
 public class HPAIPlayer extends AIPlayer {
 
-	public HPAIPlayer(String name, Pokemon starter_pokemon) {
-		super(name, starter_pokemon);
+	public HPAIPlayer(String name, Pokemon starter_pokemon, Color color) {
+		super(name, starter_pokemon, color);
 	}
 
-	public HPAIPlayer(String name) {
-		super(name);
+	public HPAIPlayer(String name, Color color) {
+		super(name, color);
 	}
 
 	@Override
@@ -23,7 +24,7 @@ public class HPAIPlayer extends AIPlayer {
 		Pokemon lowestHP = null;
 		// find pokemon with lowest HP
 		ArrayList<Pokemon> sortedList = new ArrayList<Pokemon>(pokemon.getCurrentFightMap().getPokemonsOnMap());
-		Collections.sort(sortedList, Collections.reverseOrder(Pokemon.getHPComparator()));
+		Collections.sort(sortedList, Pokemon.byHP);
 		for (Pokemon other : sortedList) {
 			if (other != null && other.getOwner() != pokemon.getOwner()) {
 				lowestHP = other;

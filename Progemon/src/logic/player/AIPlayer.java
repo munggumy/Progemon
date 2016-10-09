@@ -1,5 +1,7 @@
 package logic.player;
 
+import java.awt.Color;
+
 import logic.character.Pokemon;
 import logic.filters.AttackFilter;
 import logic.filters.MoveFilter;
@@ -17,12 +19,12 @@ public class AIPlayer extends Player {
 
 	// Constructors
 
-	public AIPlayer(String name, Pokemon starter_pokemon) {
-		super(name, starter_pokemon);
+	public AIPlayer(String name, Pokemon starter_pokemon, Color color) {
+		super(name, starter_pokemon, color);
 	}
 
-	public AIPlayer(String name) {
-		super(name);
+	public AIPlayer(String name, Color color) {
+		super(name, color);
 	}
 
 	@Override
