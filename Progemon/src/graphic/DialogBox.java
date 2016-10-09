@@ -2,6 +2,11 @@ package graphic;
 
 import java.awt.Font;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import utility.Clock;
 import utility.InputUtility;
@@ -9,6 +14,8 @@ import utility.InputUtility;
 public class DialogBox implements IRenderable{
 	
 	protected static final String DIALOG_BOX_PATH = "load\\img\\dialogbox\\Theme1.png";
+	
+	private static BufferedImage dialogBoxImage = null;
 	
 	private static final int x = 0, y = 240;
 	private static final Font DEFAULT_FONT = new Font(Font.MONOSPACED, Font.PLAIN, 15);
@@ -89,6 +96,23 @@ public class DialogBox implements IRenderable{
 		}
 		else{
 			newLineDelayCounter++;
+		}
+	}
+	
+	public static BufferedImage getDialogBoxImage() {
+		return dialogBoxImage;
+	}
+
+	public static void setDialogBoxImage(BufferedImage dialogBoxImage) {
+		DialogBox.dialogBoxImage = dialogBoxImage;
+	}
+
+	public static void loadDialogBoxImage(){
+		try {
+			setDialogBoxImage(ImageIO.read(new File(DialogBox.DIALOG_BOX_PATH)));
+		} catch (IOException e) {
+			System.err.println("Dialog Box Image Error");
+			e.printStackTrace();
 		}
 	}
 	
