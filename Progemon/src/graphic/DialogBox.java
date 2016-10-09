@@ -3,6 +3,7 @@ package graphic;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 
+import utility.Clock;
 import utility.InputUtility;
 
 public class DialogBox implements IRenderable{
@@ -22,6 +23,16 @@ public class DialogBox implements IRenderable{
 	@Override
 	public void draw() {
 		// TODO Auto-generated method stub
+		DrawingUtility.drawDialogBox();
+	}
+	
+	@Override
+	public void getDepth() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public static void update(){
 		KeyEvent kEvent = InputUtility.getLastKeyEvent();
 		if (kEvent != null && kEvent.getKeyChar() == 'a'){
 			textDelay = 0;
@@ -59,15 +70,8 @@ public class DialogBox implements IRenderable{
 				hasSentMessage = true;
 		}
 		else{
-			endLineWidth = DrawingUtility.computeStringWidth(font, messageOnScreen[1]);
+			endLineWidth = DrawingUtility.computeStringWidth(font, messageOnScreen[currentLine]);
 		}
-		DrawingUtility.drawDialogBox();
-	}
-	
-	@Override
-	public void getDepth() {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	private static void toNewLine(){
@@ -110,6 +114,7 @@ public class DialogBox implements IRenderable{
 		messageOnScreen[1] = "";
 		currentLine = 0;
 		endLineWidth = 0;
+		textDelay = 5;
 	}
 	
 	public static Font getFont() {
@@ -142,6 +147,10 @@ public class DialogBox implements IRenderable{
 	
 	public static int getEndLineWidth() {
 		return endLineWidth;
+	}
+	
+	public static int getCurrentLine() {
+		return currentLine;
 	}
 
 }

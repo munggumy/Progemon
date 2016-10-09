@@ -51,6 +51,15 @@ public class Frame {
 				// TODO Auto-generated method stub
 				super.keyPressed(e);
 				InputUtility.addInputEvents(e);
+				InputUtility.addHoldingKeys(e);
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+				super.keyReleased(e);
+				InputUtility.addInputEvents(e);
+				InputUtility.removeHoldingKeys(e);
 			}
 
 		});

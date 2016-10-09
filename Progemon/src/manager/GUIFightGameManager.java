@@ -13,6 +13,7 @@ import graphic.ScreenComponent;
 import logic.character.Pokemon;
 import logic.player.Player;
 import logic.terrain.FightMap;
+import utility.Clock;
 import utility.FileUtility;
 import utility.InputUtility;
 import utility.RandomUtility;
@@ -25,7 +26,6 @@ public class GUIFightGameManager {
 	private static Pokemon currentPokemon = null;
 	private static Player winnerPlayer = null;
 	private static boolean endturn = false;
-	int tick = 0;
 
 	public GUIFightGameManager(ArrayList<Player> players) {
 
@@ -49,6 +49,8 @@ public class GUIFightGameManager {
 
 		// Load Graphics
 		new Frame();
+		
+		new Clock();
 
 		startFight();
 		runFight();
@@ -71,34 +73,26 @@ public class GUIFightGameManager {
 
 	private void runFight() {
 		while (true) {
-			tick++;
 
 			checkInputs();
 
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-
 			if (DialogBox.hasSentMessage() && QueueBox.isQueue()) {
 
-				if (tick >= 10) {
-					if (!endturn) {
-						currentPokemon = fightMap.getPokemonsOnMap().get(0);
-						currentPokemon.getOwner().runTurn(currentPokemon);
-					} else {
-						currentPokemon.calculateNextTurnTime();
-						currentPokemon.calculateCurrentStats();
-						endturn = false;
-					}
-					removeDeadPokemons();
-					fightMap.sortPokemons();
-					tick = 0;
+				if (!endturn) {
+					currentPokemon = fightMap.getPokemonsOnMap().get(0);
+					currentPokemon.getOwner().runTurn(currentPokemon);
+				} else {
+					currentPokemon.calculateNextTurnTime();
+					currentPokemon.calculateCurrentStats();
+					endturn = false;
 				}
+				removeDeadPokemons();
+				fightMap.sortPokemons();
 
 			}
-
+			
+			QueueBox.update();
+			DialogBox.update();
 			Frame.getGraphicComponent().repaint();
 
 			if (checkWinner()) {
@@ -107,6 +101,8 @@ public class GUIFightGameManager {
 				System.out.println("The winner is " + winnerPlayer.getName());
 				break;
 			}
+			
+			Clock.tick();
 		}
 
 		System.out.println("END OF FIGHT");
@@ -125,6 +121,14 @@ public class GUIFightGameManager {
 				KeyEvent kEvent = (KeyEvent) inputEvent;
 				InputUtility.setLastKeyEvent(kEvent);
 				System.out.println("KEY    \t" + kEvent);
+				if(kEvent.getKeyChar() == ' '){
+					if(kEvent.getID() == KeyEvent.KEY_PRESSED){
+						Clock.setTps(300);
+					}
+					else if(kEvent.getID() == KeyEvent.KEY_RELEASED){
+						Clock.setTps(60);
+					}
+				}
 			}
 		}
 	}
@@ -132,10 +136,18 @@ public class GUIFightGameManager {
 	private void endFight() {
 
 		while (true) {
+			
+			checkInputs();
+			
 			if (DialogBox.hasSentMessage()) {
 				break;
 			}
+			
+			QueueBox.update();
+			DialogBox.update();
 			Frame.getGraphicComponent().repaint();
+			
+			Clock.tick();
 		}
 
 	}
