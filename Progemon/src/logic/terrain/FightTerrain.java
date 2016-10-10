@@ -3,6 +3,7 @@ package logic.terrain;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -15,7 +16,7 @@ public class FightTerrain implements IRenderable {
 
 	public static final int IMG_SIZE_X = 40, IMG_SIZE_Y = 40;
 
-	private int x, y;
+	private short x, y;
 	private boolean isShadowed, isCursor;
 	private TerrainType type;
 	private BufferedImage terrainImage = null;
@@ -41,10 +42,12 @@ public class FightTerrain implements IRenderable {
 		}
 	}
 
-	public FightTerrain(int x, int y, TerrainType type) {
+	public FightTerrain(short x, short y, TerrainType type) {
 		this.x = x;
 		this.y = y;
 		this.type = type;
+		isShadowed = false;
+		isCursor = false;
 		loadDefaultTerrainImage();
 	}
 
@@ -110,8 +113,10 @@ public class FightTerrain implements IRenderable {
 	public final void loadDefaultTerrainImage() {
 		try {
 			terrainImage = ImageIO.read(new File(type.getDefaultImageName()));
-		} catch (IOException e) {
+		} catch (FileNotFoundException e) {
 			System.err.println("Terrain \"" + type + "\" Image not found.");
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

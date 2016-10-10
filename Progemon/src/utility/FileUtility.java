@@ -169,7 +169,7 @@ public class FileUtility {
 			scanner = new Scanner(bufReader);
 			int widthInBlocks = scanner.nextInt();
 			int heightInBlocks = scanner.nextInt();
-			for (int y = 0; y < heightInBlocks; y++) {
+			for (short y = 0; y < heightInBlocks; y++) {
 				temp_map.add(loadFightMapLine(widthInBlocks, y));
 			}
 
@@ -201,9 +201,9 @@ public class FileUtility {
 
 	// Load Fight Map Private Methods
 
-	private static FightTerrain[] loadFightMapLine(int width, int y) {
+	private static FightTerrain[] loadFightMapLine(int width, short y) {
 		ArrayList<FightTerrain> temp_map_line = new ArrayList<FightTerrain>();
-		for (int x = 0; x < width; x++) {
+		for (short x = 0; x < width; x++) {
 			temp_map_line.add(new FightTerrain(x, y, FightTerrain.toFightTerrainType(scanner.next())));
 		}
 		return toFightTerrainArray(temp_map_line);
