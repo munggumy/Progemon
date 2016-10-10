@@ -15,7 +15,7 @@ import graphic.IRenderable;
 @SuppressWarnings("unused")
 public class FightTerrain implements IRenderable {
 	private int x, y;
-	private boolean isShadowed, isCursur;
+	private boolean isShadowed, isCursur, isPathSign, isHighlight;
 	private TerrainType type;
 
 	public static enum TerrainType {
@@ -79,6 +79,22 @@ public class FightTerrain implements IRenderable {
 	
 	public void setCursur(boolean isCursur) {
 		this.isCursur = isCursur;
+	}
+	
+	public boolean isPathSign() {
+		return isPathSign;
+	}
+	
+	public void setPathSign(boolean isPathSign) {
+		this.isPathSign = isPathSign;
+	}
+	
+	public boolean isHighlight() {
+		return isHighlight;
+	}
+	
+	public void setHighlight(boolean isHighlight) {
+		this.isHighlight = isHighlight;
 	}
 
 	public final TerrainType getType() {

@@ -4,7 +4,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public class InputUtility {
 
@@ -13,8 +12,12 @@ public class InputUtility {
 	private static ArrayList<InputEvent> inputEvents = new ArrayList<InputEvent>();
 	/** When it gets elements, it clears the history of event. */
 	private static KeyEvent lastKeyEvent;
-	private static HashSet<KeyEvent> holdingKeys = new HashSet<KeyEvent>();
+	private static ArrayList<KeyEvent> holdingKeys = new ArrayList<KeyEvent>();
+	private static ArrayList<KeyEvent> typeKeys = new ArrayList<KeyEvent>();
 	
+	public static void clear() {
+		
+	}
 	
 	/** When get element, it clears the history of event. */
 	public static final ArrayList<InputEvent> getInputEvents() {
@@ -70,15 +73,37 @@ public class InputUtility {
 	}
 	
 	public static void addHoldingKeys(KeyEvent kEvent){
-		holdingKeys.add(kEvent);
+		boolean isIn = false;
+		for (KeyEvent holdingKey : holdingKeys) {
+			if (holdingKey.getKeyChar() == kEvent.getKeyChar()){
+				isIn = true;
+			}
+		}
+		if (!isIn) {
+			holdingKeys.add(kEvent);
+		}
 	}
 	
 	public static void removeHoldingKeys(KeyEvent kEvent){
-		holdingKeys.remove(kEvent);
+		for (int i = holdingKeys.size() - 1; i >= 0; i--) {
+			if (holdingKeys.get(i).getKeyChar() == kEvent.getKeyChar()){
+				holdingKeys.remove(holdingKeys.get(i));
+			}
+		}
 	}
 	
-	public static HashSet<KeyEvent> getHoldingKeys() {
+	public static ArrayList<KeyEvent> getHoldingKeys() {
 		return holdingKeys;
+	}
+	
+	public static ArrayList<KeyEvent> getTypeKeys() {
+		ArrayList<KeyEvent> token = new ArrayList<KeyEvent>(typeKeys);
+		typeKeys.clear();
+		return token;
+	}
+	
+	public static void addTypeKeys(KeyEvent kEvent) {
+		typeKeys.add(kEvent);
 	}
 
 }

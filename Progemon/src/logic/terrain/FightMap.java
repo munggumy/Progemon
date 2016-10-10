@@ -159,6 +159,7 @@ public class FightMap implements IRenderable {
 		for (int j = 0; j < sizeY; j++) {
 			for (int i = 0; i < sizeX; i++) {
 				map[j][i].setShadowed(false);
+				map[j][i].setHighlight(false);
 			}
 		}
 	}

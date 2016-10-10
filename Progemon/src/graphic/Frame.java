@@ -52,6 +52,7 @@ public class Frame {
 				super.keyPressed(e);
 				InputUtility.addInputEvents(e);
 				InputUtility.addHoldingKeys(e);
+				InputUtility.setLastKeyEvent(e);
 			}
 			
 			@Override
@@ -60,6 +61,13 @@ public class Frame {
 				super.keyReleased(e);
 				InputUtility.addInputEvents(e);
 				InputUtility.removeHoldingKeys(e);
+			}
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+				super.keyTyped(e);
+				InputUtility.addTypeKeys(e);
 			}
 
 		});

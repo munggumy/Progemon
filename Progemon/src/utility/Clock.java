@@ -1,9 +1,12 @@
 package utility;
 
+import java.awt.event.KeyEvent;
+
 public class Clock {
 	
 	/** Ticks per second */
-	private static double tps = 60;
+	private static final double DEFAULT_TPS = 60;
+	private static double tps = DEFAULT_TPS;
 	/** Previous time tick (last round) */
 	private static long time;
 	private static long periodTime = (long) ((1000 / tps) * 1000 * 1000);
@@ -14,6 +17,23 @@ public class Clock {
 	}
 	
 	public static void tick(){
+		
+		tps = DEFAULT_TPS;
+		
+		for (KeyEvent kEvent : InputUtility.getHoldingKeys()) {
+			if (kEvent.getKeyChar() == ' ') {
+				tps *= 4;
+			}
+		}
+		
+		for (KeyEvent kEvent : InputUtility.getTypeKeys()) {
+			if(kEvent.getKeyChar() == 'p') {
+				pause();
+			}
+		}
+		
+		InputUtility.clear();
+		
 		periodTime = (long) ((1000 / tps) * 1000 * 1000);
 		long currentTime = System.nanoTime();
 		if(currentTime - time < periodTime){
@@ -33,6 +53,20 @@ public class Clock {
 			}
 		}
 		time += periodTime;
+	}
+	
+	private static void pause() {
+		boolean isPause = true;
+		while (isPause) {
+			for (KeyEvent kEvent : InputUtility.getTypeKeys()) {
+				if(kEvent.getKeyChar() == 'p') {
+					isPause = false;
+					break;
+				}
+			}
+			
+			Clock.tick();
+		}
 	}
 	
 	public static double getTps() {
