@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import manager.GUIFightGameManager;
 import utility.Clock;
 import utility.InputUtility;
 
@@ -126,6 +127,12 @@ public class DialogBox implements IRenderable {
 	public static void sentMessage(String message) {
 		DialogBox.message = message;
 		hasSentMessage = false;
+		while (!hasSentMessage) {		
+			update();
+			
+			Frame.getGraphicComponent().repaint();
+			Clock.tick();
+		}
 	}
 
 	public static void clear() {
