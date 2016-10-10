@@ -42,29 +42,27 @@ public class AIPlayer extends Player {
 			} else {
 				thinkDelayCounter++;
 			}
-		}
-		else{
-			if(moveCounter == nextPath.size()){
+		} else {
+			if (moveCounter == nextPath.size()) {
 				System.out.println("Pokemon " + pokemon.getName() + " moved from (" + x + ", " + y + ") to ("
-						+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY() + ").");
+						+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY()
+						+ ").");
 				moveCounter = 1;
 				input = false;
 				setMovePhase(true);
-			}
-			else if(moveDelay == moveDelayCounter){
-				if(nextPath.get(moveCounter) != pokemon.getCurrentFightTerrain()){
+			} else if (moveDelay == moveDelayCounter) {
+				if (nextPath.get(moveCounter) != pokemon.getCurrentFightTerrain()) {
 					pokemon.move(nextPath.get(moveCounter));
 				} else {
 					moveCounter++;
 				}
 				moveDelayCounter = 0;
-			}
-			else{
+			} else {
 				moveDelayCounter++;
 			}
 		}
 	}
-	
+
 	/** This can be overrided by other AIs */
 	protected Path calculateNextPath(Pokemon pokemon) {
 		return pokemon.getPaths().get(0);

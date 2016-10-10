@@ -175,7 +175,7 @@ public class Pokemon implements Cloneable, IRenderable {
 		System.out.printf("%s's HP = %.2f  " + StringUtility.hpBar(p.getCurrentHP() / p.getFullHP()) + "\n",
 				p.getName(), p.getCurrentHP());
 	}
-	
+
 	public Predicate<Pokemon> isEnemy = (Pokemon other) -> !other.getOwner().equals(this.getOwner());
 	public Predicate<Pokemon> isFriendly = (Pokemon other) -> other.getOwner().equals(this.getOwner());
 
@@ -281,9 +281,9 @@ public class Pokemon implements Cloneable, IRenderable {
 	 * method.
 	 */
 	public void shadowBlocks() {
-//		for (FightTerrain available : getAvaliableFightTerrains()) {
-//			available.setShadowed(true);
-//		}
+		// for (FightTerrain available : getAvaliableFightTerrains()) {
+		// available.setShadowed(true);
+		// }
 		getAvaliableFightTerrains().parallelStream().forEach(fightTerrain -> fightTerrain.setShadowed(true));
 	}
 

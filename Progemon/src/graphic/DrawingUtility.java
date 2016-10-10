@@ -38,15 +38,13 @@ public class DrawingUtility {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		ScreenComponent.g2.drawImage(fightTerrain.getTerrainImage(), null,
-				fightTerrain.getX() * FightTerrain.IMG_SIZE_X, fightTerrain.getY() * FightTerrain.IMG_SIZE_Y);
+		ScreenComponent.g2.drawImage(fightTerrain.getTerrainImage(), null, fightTerrain.getX() * 40,
+				fightTerrain.getY() * 40);
 		if (fightTerrain.isShadowed()) {
-			ScreenComponent.g2.drawImage(shadow, null, fightTerrain.getX() * FightTerrain.IMG_SIZE_X,
-					fightTerrain.getY() * FightTerrain.IMG_SIZE_Y);
+			ScreenComponent.g2.drawImage(shadow, null, fightTerrain.getX() * 40, fightTerrain.getY() * 40);
 		}
 		if (fightTerrain.isCursor()) {
-			ScreenComponent.g2.drawImage(cursor, null, fightTerrain.getX() * FightTerrain.IMG_SIZE_X,
-					fightTerrain.getY() * FightTerrain.IMG_SIZE_Y);
+			ScreenComponent.g2.drawImage(cursor, null, fightTerrain.getX() * 40, fightTerrain.getY() * 40);
 			fightTerrain.setCursor(false);
 		}
 	}
@@ -57,7 +55,8 @@ public class DrawingUtility {
 		}
 		int x = pokemon.getCurrentFightTerrain().getX();
 		int y = pokemon.getCurrentFightTerrain().getY();
-		ScreenComponent.g2.drawImage(pokemon.getBufferedImage(), null, x * FightTerrain.IMG_SIZE_X, y * FightTerrain.IMG_SIZE_Y);
+		ScreenComponent.g2.drawImage(pokemon.getBufferedImage(), null, x * FightTerrain.IMG_SIZE_X,
+				y * FightTerrain.IMG_SIZE_Y);
 		/*
 		 * Image img = new ImageIcon(pokemon.getImageName()).getImage();
 		 * ScreenComponent.g2.drawImage(img, pokemon.getX() * 40, pokemon.getY()

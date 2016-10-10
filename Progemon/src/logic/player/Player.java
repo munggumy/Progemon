@@ -27,14 +27,13 @@ public abstract class Player {
 	}
 
 	public Player(String name, Pokemon starter_pokemon, Color color) {
-		this(name);
+		this(name, color);
 		starter_pokemon.setOwner(this);
-		this.color = color;
 		pokemons.add(starter_pokemon);
 	}
 
 	public Player(String name, Pokemon[] pokemon_set, Color color) {
-		this(name);
+		this(name, color);
 		for (Pokemon pokemon : pokemon_set) {
 			pokemon.setOwner(this);
 			pokemons.add(pokemon);
@@ -71,13 +70,13 @@ public abstract class Player {
 
 	/** Checks if this player loses (All pokemons are dead) */
 	public boolean isLose() {
-		return pokemons.stream().filter((Pokemon pokemon) -> !pokemon.isDead()).count() >= 1;
-//		for (Pokemon pokemon : pokemons) {
-//			if (!pokemon.isDead()) {
-//				return false;
-//			}
-//		}
-//		return true;
+		return pokemons.stream().filter((Pokemon pokemon) -> !pokemon.isDead()).count() == 0;
+		// for (Pokemon pokemon : pokemons) {
+		// if (!pokemon.isDead()) {
+		// return false;
+		// }
+		// }
+		// return true;
 	}
 
 	// Getters
@@ -106,7 +105,5 @@ public abstract class Player {
 	public final Color getColor() {
 		return color;
 	}
-	
-	
 
 }
