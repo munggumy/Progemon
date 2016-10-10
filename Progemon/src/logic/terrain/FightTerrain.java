@@ -13,11 +13,8 @@ import graphic.IRenderable;
 
 /** FightTerrain */
 public class FightTerrain implements IRenderable {
-
-	public static final int IMG_SIZE_X = 40, IMG_SIZE_Y = 40;
-
-	private short x, y;
-	private boolean isShadowed, isCursor;
+	private int x, y;
+	private boolean isShadowed, isCursor, isPathSign, isHighlight;
 	private TerrainType type;
 	private BufferedImage terrainImage = null;
 
@@ -78,6 +75,22 @@ public class FightTerrain implements IRenderable {
 
 	public void setCursor(boolean isCursor) {
 		this.isCursor = isCursor;
+	}
+
+	public boolean isPathSign() {
+		return isPathSign;
+	}
+
+	public void setPathSign(boolean isPathSign) {
+		this.isPathSign = isPathSign;
+	}
+
+	public boolean isHighlight() {
+		return isHighlight;
+	}
+
+	public void setHighlight(boolean isHighlight) {
+		this.isHighlight = isHighlight;
 	}
 
 	public final TerrainType getType() {

@@ -32,9 +32,11 @@ public class DrawingUtility {
 	public static void drawFightTerrain(FightTerrain fightTerrain) {
 		BufferedImage shadow = null;
 		BufferedImage cursor = null;
+		BufferedImage highlight = null;
 		try {
 			shadow = ImageIO.read(new File("load\\img\\terrain\\shadow20.png"));
 			cursor = ImageIO.read(new File("load\\img\\terrain\\cursur.png"));
+			highlight = ImageIO.read(new File("load\\img\\terrain\\highlight.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -46,6 +48,9 @@ public class DrawingUtility {
 		if (fightTerrain.isCursor()) {
 			ScreenComponent.g2.drawImage(cursor, null, fightTerrain.getX() * 40, fightTerrain.getY() * 40);
 			fightTerrain.setCursor(false);
+		}
+		if (fightTerrain.isHighlight()) {
+			ScreenComponent.g2.drawImage(highlight, null, fightTerrain.getX() * 40, fightTerrain.getY() * 40);
 		}
 	}
 
