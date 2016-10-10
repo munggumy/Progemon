@@ -25,7 +25,6 @@ public class GUIFightGameManager {
 	private static FightMap fightMap = null;
 	private static Pokemon currentPokemon = null;
 	private static Player winnerPlayer = null;
-	private static boolean endturn = false;
 
 	public GUIFightGameManager(ArrayList<Player> players) {
 
@@ -65,9 +64,10 @@ public class GUIFightGameManager {
 		fightMap.sortPokemons();
 
 		ScreenComponent.addObject(new DialogBox());
-		DialogBox.sentMessage("Press 'a' to start! Press 'a' to start! Press 'a' to start! Press 'a' to start! Press 'a' to start! Press 'a' to start!");
 		ScreenComponent.addObject(new QueueBox());
 		Frame.getGraphicComponent().repaint();
+		
+		DialogBox.sentMessage("Press 'a' to start! Press 'a' to start! Press 'a' to start! Press 'a' to start! Press 'a' to start! Press 'a' to start!");
 	}
 
 	private void runFight() {
@@ -75,23 +75,17 @@ public class GUIFightGameManager {
 
 			checkInputs();
 
-			if (DialogBox.hasSentMessage() && QueueBox.isQueue()) {
 
-				if (!endturn) {
-					currentPokemon = fightMap.getPokemonsOnMap().get(0);
-					currentPokemon.getOwner().runTurn(currentPokemon);
-				} else {
-					currentPokemon.calculateNextTurnTime();
-					currentPokemon.calculateCurrentStats();
-					endturn = false;
-				}
-				removeDeadPokemons();
-				fightMap.sortPokemons();
+			currentPokemon = fightMap.getPokemonsOnMap().get(0);
+			currentPokemon.getOwner().runTurn(currentPokemon);
+			currentPokemon.calculateNextTurnTime();
+			currentPokemon.calculateCurrentStats();
+				
+			removeDeadPokemons();
+			fightMap.sortPokemons();
+			
+			QueueBox.sort();
 
-			}
-
-			QueueBox.update();
-			DialogBox.update();
 			Frame.getGraphicComponent().repaint();
 
 			if (checkWinner()) {
@@ -107,7 +101,7 @@ public class GUIFightGameManager {
 		System.out.println("END OF FIGHT");
 	}
 
-	private void checkInputs() {
+	public static void checkInputs() {
 		for (InputEvent inputEvent : InputUtility.getInputEvents()) {
 			if (inputEvent instanceof MouseEvent) {
 				MouseEvent mEvent = (MouseEvent) inputEvent;
@@ -120,13 +114,6 @@ public class GUIFightGameManager {
 				KeyEvent kEvent = (KeyEvent) inputEvent;
 				InputUtility.setLastKeyEvent(kEvent);
 				System.out.println("KEY    \t" + kEvent);
-				if (kEvent.getKeyChar() == ' ') {
-					if (kEvent.getID() == KeyEvent.KEY_PRESSED) {
-						Clock.setTps(300);
-					} else if (kEvent.getID() == KeyEvent.KEY_RELEASED) {
-						Clock.setTps(60);
-					}
-				}
 			}
 		}
 	}
@@ -208,10 +195,6 @@ public class GUIFightGameManager {
 
 	public static final Player getWinnerPlayer() {
 		return winnerPlayer;
-	}
-
-	public static void setEndturn(boolean endturn) {
-		GUIFightGameManager.endturn = endturn;
 	}
 
 }

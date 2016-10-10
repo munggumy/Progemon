@@ -3,6 +3,7 @@ package graphic;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 
+import manager.GUIFightGameManager;
 import utility.Clock;
 import utility.InputUtility;
 
@@ -107,6 +108,12 @@ public class DialogBox implements IRenderable{
 	public static void sentMessage(String message) {
 		DialogBox.message = message;
 		hasSentMessage = false;
+		while (!hasSentMessage) {		
+			update();
+			
+			Frame.getGraphicComponent().repaint();
+			Clock.tick();
+		}
 	}
 	
 	public static void clear() {

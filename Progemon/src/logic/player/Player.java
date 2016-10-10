@@ -9,7 +9,6 @@ import manager.GUIFightGameManager;
 public abstract class Player {
 	private String name;
 	private ArrayList<Pokemon> pokemons;
-	private boolean movePhase = false, attackPhase = false, initial = false;
 	
 	// Constructor
 
@@ -37,24 +36,9 @@ public abstract class Player {
 	
 	/** Each turn calls this. */
 	public final void runTurn(Pokemon pokemon){
-		if(!initial){
-			pokemon.findBlocksAround(pokemon.getMoveRange(), new MoveFilter());
-			pokemon.sortPaths();
-			pokemon.shadowBlocks();
-			initial = true;
-		}
-		else if(!movePhase){
-			pokemonMove(pokemon);
-		}
-		else if(!attackPhase){
-			pokemonAttack(pokemon);
-		}
-		else{
-			initial = false;
-			movePhase = false;
-			attackPhase = false;
-			GUIFightGameManager.setEndturn(true);
-		}
+
+		pokemonMove(pokemon);
+		pokemonAttack(pokemon);
 	}
 	
 	/** Override <code>this</code> in Each Player Type*/
@@ -81,14 +65,6 @@ public abstract class Player {
 
 	public final ArrayList<Pokemon> getPokemons() {
 		return pokemons;
-	}
-	
-	public void setAttackPhase(boolean attackphrase) {
-		this.attackPhase = attackphrase;
-	}
-	
-	public void setMovePhase(boolean movephrase) {
-		this.movePhase = movephrase;
 	}
 	
 	public void addPokemon(Pokemon pokemon){
