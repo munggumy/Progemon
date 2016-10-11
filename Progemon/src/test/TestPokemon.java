@@ -5,6 +5,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.Color;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,7 +43,7 @@ public class TestPokemon {
 		
 		assertNull(pk1.getOwner());
 		
-		Player p1 = new AIPlayer("John Doe", pk1);
+		Player p1 = new AIPlayer("John Doe", pk1, Color.BLACK);
 		
 		assertNotNull(pk1.getOwner());
 		assertEquals("Owner", p1, pk1.getOwner());

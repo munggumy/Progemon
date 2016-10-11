@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import logic.character.ActiveSkill;
 import logic.character.Pokemon;
 import logic.terrain.FightTerrain;
+import utility.exception.FileWrongFormatException;
 
 public class FileUtility {
 
@@ -51,20 +52,19 @@ public class FileUtility {
 			Matcher matcher = null;
 			while (scanner.hasNextLine()) {
 				matcher = pattern.matcher(scanner.nextLine());
-				if (matcher.find()) {
-					String[] args = { matcher.group(1), matcher.group(2), matcher.group(4), matcher.group(6),
-							matcher.group(8), matcher.group(10), matcher.group(11), matcher.group(12) };
-					if (matcher.group(1).matches("\\d+")) {
-						loadPokemonByID(args, matcher.group(13).split(",[ ]?"));
-					} else if (matcher.group(1).matches("\\w+")) {
-						loadPokemonByName(args, matcher.group(13).split(",[ ]?"));
-					} else {
-						System.err.println("FileUtility.loadPokemons() : Unknown Format");
-					}
-
-				} else {
-					System.err.println("FileUtility.loadPokemons() : Needs at least 8 Parameters per pokemon!");
+				if (!matcher.find()) {
+					throw new FileWrongFormatException("Needs at least 8 parameters per pokemon!");
 				}
+				String[] args = { matcher.group(1), matcher.group(2), matcher.group(4), matcher.group(6),
+						matcher.group(8), matcher.group(10), matcher.group(11), matcher.group(12) };
+				if (matcher.group(1).matches("\\d+")) {
+					loadPokemonByID(args, matcher.group(13).split(",[ ]?"));
+				} else if (matcher.group(1).matches("\\w+")) {
+					loadPokemonByName(args, matcher.group(13).split(",[ ]?"));
+				} else {
+					throw new FileWrongFormatException("Unknown File Format");
+				}
+
 				// args = line.split(" ");
 				// if (args.length != 7) {
 				// System.out.println("Needs 7 parameters per pokemon!");
@@ -78,7 +78,7 @@ public class FileUtility {
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} catch (Exception e) {
+		} catch (FileWrongFormatException e) {
 			e.printStackTrace();
 		} finally {
 			if (reader != null) {
@@ -87,7 +87,7 @@ public class FileUtility {
 			if (scanner != null) {
 				scanner.close();
 			}
-			if (bufReader != null){
+			if (bufReader != null) {
 				bufReader.close();
 			}
 		}
@@ -149,7 +149,7 @@ public class FileUtility {
 			if (reader != null) {
 				reader.close();
 			}
-			if (bufReader != null){
+			if (bufReader != null) {
 				bufReader.close();
 			}
 		}
@@ -169,7 +169,7 @@ public class FileUtility {
 			scanner = new Scanner(bufReader);
 			int widthInBlocks = scanner.nextInt();
 			int heightInBlocks = scanner.nextInt();
-			for (int y = 0; y < heightInBlocks; y++) {
+			for (short y = 0; y < heightInBlocks; y++) {
 				temp_map.add(loadFightMapLine(widthInBlocks, y));
 			}
 
@@ -182,7 +182,7 @@ public class FileUtility {
 			if (scanner != null) {
 				scanner.close();
 			}
-			if (bufReader != null){
+			if (bufReader != null) {
 				bufReader.close();
 			}
 		}
@@ -201,9 +201,9 @@ public class FileUtility {
 
 	// Load Fight Map Private Methods
 
-	private static FightTerrain[] loadFightMapLine(int width, int y) {
+	private static FightTerrain[] loadFightMapLine(int width, short y) {
 		ArrayList<FightTerrain> temp_map_line = new ArrayList<FightTerrain>();
-		for (int x = 0; x < width; x++) {
+		for (short x = 0; x < width; x++) {
 			temp_map_line.add(new FightTerrain(x, y, FightTerrain.toFightTerrainType(scanner.next())));
 		}
 		return toFightTerrainArray(temp_map_line);
@@ -238,7 +238,7 @@ public class FileUtility {
 			int skillPower;
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
-				if (line.matches("^#+.*")) {
+				if (line.matches("^#+.*")) { // comment line ##hey hey heys
 					continue;
 				}
 				matcher = pattern.matcher(line);
@@ -257,7 +257,7 @@ public class FileUtility {
 			if (scanner != null) {
 				scanner.close();
 			}
-			if (bufReader != null){
+			if (bufReader != null) {
 				bufReader.close();
 			}
 		}
