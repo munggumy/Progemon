@@ -50,7 +50,7 @@ public class Pokedex {
 			}
 		}
 		allPokemons.add(pokemon);
-		Collections.sort(allPokemons, Pokemon.getIDComparator());
+		Collections.sort(allPokemons, Pokemon.byID);
 	}
 
 	public static final ArrayList<Pokemon> getAllPokemons() {

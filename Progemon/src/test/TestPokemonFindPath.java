@@ -40,7 +40,7 @@ public class TestPokemonFindPath {
 
 	@Test
 	public void testBasics() {
-		
+
 		System.out.println("Test Basics");
 		assertEquals(1, fearow.getCurrentFightTerrain().getX());
 		assertEquals(1, fearow.getCurrentFightTerrain().getY());
@@ -55,7 +55,7 @@ public class TestPokemonFindPath {
 
 	@Test
 	public void testFindBlocksCaseZero() {
-		
+
 		System.out.println("Test Find Blocks Case Zero");
 
 		// case range = 0
@@ -76,13 +76,13 @@ public class TestPokemonFindPath {
 
 	@Test
 	public void testFindBlocksCenter() {
-		
+
 		System.out.println("Test Find Blocks Center");
 
 		// Set terrains
-		pikachu.getCurrentFightMap().setFightTerrainAt(1, 1, new FightTerrain(1, 1, TerrainType.ROCK));
-		pikachu.getCurrentFightMap().setFightTerrainAt(2, 1, new FightTerrain(2, 1, TerrainType.WATER));
-		pikachu.getCurrentFightMap().setFightTerrainAt(1, 2, new FightTerrain(1, 2, TerrainType.ROCK));
+		pikachu.getCurrentFightMap().setFightTerrainAt(1, 1, new FightTerrain((short) 1, (short) 1, TerrainType.ROCK));
+		pikachu.getCurrentFightMap().setFightTerrainAt(2, 1, new FightTerrain((short) 2, (short) 1, TerrainType.WATER));
+		pikachu.getCurrentFightMap().setFightTerrainAt(1, 2, new FightTerrain((short) 1, (short) 2, TerrainType.ROCK));
 
 		// test terrains
 		fearow.move(1, 1);
@@ -93,9 +93,8 @@ public class TestPokemonFindPath {
 		assertEquals(TerrainType.ROCK, fearow.getCurrentFightTerrain().getType());
 
 		// case range = 0
-		
-		
-		fearow.move(5,5);
+
+		fearow.move(5, 5);
 		fearow.findBlocksAround(0, new MoveFilter());
 		ArrayList<Path> nonNode = new ArrayList<Path>(fearow.getPaths());
 		assertTrue(fearow.getPaths().get(0).getFirst().getX() == 5);
@@ -103,7 +102,7 @@ public class TestPokemonFindPath {
 		assertTrue(fearow.getPaths().get(0).getLast().getX() == 5);
 		assertTrue(fearow.getPaths().get(0).getLast().getY() == 5);
 		assertEquals(nonNode, fearow.getPaths());
-		
+
 		fearow.move(3, 3);
 		fearow.findBlocksAround(0, new MoveFilter());
 		ArrayList<Path> nodeZero = new ArrayList<Path>(fearow.getPaths());
@@ -149,7 +148,7 @@ public class TestPokemonFindPath {
 
 	@Test
 	public void testMapBoundary() {
-		
+
 		System.out.println("Test Map Boundary");
 
 		// case range = 0
@@ -178,7 +177,7 @@ public class TestPokemonFindPath {
 
 	@Test
 	public void testUnmovableTerrains() {
-		
+
 		System.out.println("Test Unmovable Terrains");
 
 		// case range 0 at position (0,1)

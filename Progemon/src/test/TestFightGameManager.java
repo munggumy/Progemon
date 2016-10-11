@@ -1,5 +1,6 @@
 package test;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 import org.junit.Before;
@@ -39,8 +40,8 @@ public class TestFightGameManager {
 		caterpie.addActiveSkill(ActiveSkill.getActiveSkill("Bug Bite"));
 		
 		
-		p1 = new AIPlayer("AI 1", charlizard);
-		p2 = new AIPlayer("AI 2", ivysaur);
+		p1 = new AIPlayer("AI 1", charlizard, Color.RED);
+		p2 = new AIPlayer("AI 2", ivysaur, Color.BLUE);
 		p2.addPokemon(caterpie);
 		
 		players = new ArrayList<Player>();

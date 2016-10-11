@@ -218,10 +218,10 @@ public class TestPokemonFindPathTo {
 		System.out.println("==== 5 Errors Expected =====");
 		System.out.flush();
 		squirtle.move(1, 1);
-		fightMap.setFightTerrainAt(1, 0, new FightTerrain(1, 0, TerrainType.ROCK));
-		fightMap.setFightTerrainAt(2, 1, new FightTerrain(2, 1, TerrainType.ROCK));
-		fightMap.setFightTerrainAt(1, 2, new FightTerrain(1, 2, TerrainType.ROCK));
-		fightMap.setFightTerrainAt(0, 1, new FightTerrain(0, 1, TerrainType.ROCK));
+		fightMap.setFightTerrainAt(1, 0, new FightTerrain((short) 1, (short) 0, TerrainType.ROCK));
+		fightMap.setFightTerrainAt(2, 1, new FightTerrain((short) 2, (short) 1, TerrainType.ROCK));
+		fightMap.setFightTerrainAt(1, 2, new FightTerrain((short) 1, (short) 2, TerrainType.ROCK));
+		fightMap.setFightTerrainAt(0, 1, new FightTerrain((short) 0, (short) 1, TerrainType.ROCK));
 
 		// move from (1, 1) to (3, 1)
 		FightTerrain destination = fightMap.getFightTerrainAt(3, 1);

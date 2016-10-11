@@ -1,5 +1,6 @@
 package main;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -39,9 +40,9 @@ public class Main2 {
 		pidgeotto.calculateCurrentStats();
 		pidgeotto.resetHP();
 
-		Player p1 = new HPAIPlayer("AI 1", charlizard);
+		Player p1 = new HPAIPlayer("AI 1", charlizard, Color.RED);
 		p1.addPokemon(caterpie);
-		Player p2 = new AIPlayer("AI 2", pidgeotto);
+		Player p2 = new AIPlayer("AI 2", pidgeotto, Color.BLUE);
 		p2.addPokemon(wartortle);
 
 		ArrayList<Player> players = new ArrayList<Player>();

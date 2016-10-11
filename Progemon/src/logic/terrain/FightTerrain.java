@@ -3,8 +3,8 @@ package logic.terrain;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -12,11 +12,11 @@ import graphic.DrawingUtility;
 import graphic.IRenderable;
 
 /** FightTerrain */
-@SuppressWarnings("unused")
 public class FightTerrain implements IRenderable {
 	private int x, y;
-	private boolean isShadowed, isCursur, isPathSign, isHighlight;
+	private boolean isShadowed, isCursor, isPathSign, isHighlight;
 	private TerrainType type;
+	private BufferedImage terrainImage = null;
 
 	public static enum TerrainType {
 		GRASS, ROCK, WATER, TREE, GROUND;
@@ -33,23 +33,19 @@ public class FightTerrain implements IRenderable {
 		public int getMoveCost() {
 			return this.moveCost;
 		}
-		
-		public String getImageName(){
+
+		public String getDefaultImageName() {
 			return "load\\img\\terrain\\" + this.toString() + ".png";
 		}
 	}
 
-	public FightTerrain(int x, int y, TerrainType type) {
-		// TODO Auto-generated constructor stub
+	public FightTerrain(short x, short y, TerrainType type) {
 		this.x = x;
 		this.y = y;
 		this.type = type;
-	}
-
-	private ArrayList<FightTerrain> toArrayList() {
-		ArrayList<FightTerrain> temp = new ArrayList<FightTerrain>();
-		temp.add(this);
-		return temp;
+		isShadowed = false;
+		isCursor = false;
+		loadDefaultTerrainImage();
 	}
 
 	@Override
@@ -72,27 +68,27 @@ public class FightTerrain implements IRenderable {
 	public final void setShadowed(boolean isShadowed) {
 		this.isShadowed = isShadowed;
 	}
-	
-	public boolean isCursur() {
-		return isCursur;
+
+	public boolean isCursor() {
+		return isCursor;
 	}
-	
-	public void setCursur(boolean isCursur) {
-		this.isCursur = isCursur;
+
+	public void setCursor(boolean isCursor) {
+		this.isCursor = isCursor;
 	}
-	
+
 	public boolean isPathSign() {
 		return isPathSign;
 	}
-	
+
 	public void setPathSign(boolean isPathSign) {
 		this.isPathSign = isPathSign;
 	}
-	
+
 	public boolean isHighlight() {
 		return isHighlight;
 	}
-	
+
 	public void setHighlight(boolean isHighlight) {
 		this.isHighlight = isHighlight;
 	}
@@ -116,8 +112,26 @@ public class FightTerrain implements IRenderable {
 
 	@Override
 	public void getDepth() {
-		// TODO Auto-generated method stub
 
+	}
+
+	public final BufferedImage getTerrainImage() {
+		return terrainImage;
+	}
+
+	public final void setTerrainImage(BufferedImage terrainImage) {
+		this.terrainImage = terrainImage;
+	}
+
+	public final void loadDefaultTerrainImage() {
+		try {
+			terrainImage = ImageIO.read(new File(type.getDefaultImageName()));
+		} catch (FileNotFoundException e) {
+			System.err.println("Terrain \"" + type + "\" Image not found.");
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

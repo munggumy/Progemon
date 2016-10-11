@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.function.Predicate;
 
 import javax.imageio.ImageIO;
 
@@ -40,7 +41,7 @@ public class Pokemon implements Cloneable, IRenderable {
 	private Stat base = new Stat();
 	private Stat current = new Stat();
 	private String imageFileName;
-	private BufferedImage bufferedImage;
+	private BufferedImage bufferedImage = null;
 	/** Individual value */
 	private double iv = RandomUtility.randomInt(0, 15) + 32;
 
@@ -175,40 +176,48 @@ public class Pokemon implements Cloneable, IRenderable {
 				p.getName(), p.getCurrentHP());
 	}
 
+	public Predicate<Pokemon> isEnemy = (Pokemon other) -> !other.getOwner().equals(this.getOwner());
+	public Predicate<Pokemon> isFriendly = (Pokemon other) -> other.getOwner().equals(this.getOwner());
+
 	// Comparators
 
-	public static Comparator<Pokemon> getSpeedComparator() {
-		return new SpeedComparator();
-	}
+	public static Comparator<Pokemon> bySpeed = (Pokemon p1, Pokemon p2) -> Double.compare(p1.nextTurnTime,
+			p2.nextTurnTime);
+	public static Comparator<Pokemon> byID = (Pokemon p1, Pokemon p2) -> p1.id - p2.id;
+	public static Comparator<Pokemon> byHP = (Pokemon p1, Pokemon p2) -> Double.compare(p1.currentHP, p2.currentHP);
 
-	private static class SpeedComparator implements Comparator<Pokemon> {
-		@Override
-		public int compare(Pokemon o1, Pokemon o2) {
-			return Double.compare(o1.nextTurnTime, o2.nextTurnTime);
-		}
-	}
-
-	public static Comparator<Pokemon> getIDComparator() {
-		return new IDComparator();
-	}
-
-	private static class IDComparator implements Comparator<Pokemon> {
-		@Override
-		public int compare(Pokemon o1, Pokemon o2) {
-			return o1.id - o2.id;
-		}
-	}
-
-	public static Comparator<Pokemon> getHPComparator() {
-		return new HPComparator();
-	}
-
-	private static class HPComparator implements Comparator<Pokemon> {
-		@Override
-		public int compare(Pokemon p1, Pokemon p2) {
-			return Double.compare(p1.currentHP, p2.currentHP);
-		}
-	}
+	// public static Comparator<Pokemon> getSpeedComparator() {
+	// return new SpeedComparator();
+	// }
+	//
+	// private static class SpeedComparator implements Comparator<Pokemon> {
+	// @Override
+	// public int compare(Pokemon o1, Pokemon o2) {
+	// return Double.compare(o1.nextTurnTime, o2.nextTurnTime);
+	// }
+	// }
+	//
+	// public static Comparator<Pokemon> getIDComparator() {
+	// return new IDComparator();
+	// }
+	//
+	// private static class IDComparator implements Comparator<Pokemon> {
+	// @Override
+	// public int compare(Pokemon o1, Pokemon o2) {
+	// return o1.id - o2.id;
+	// }
+	// }
+	//
+	// public static Comparator<Pokemon> getHPComparator() {
+	// return new HPComparator();
+	// }
+	//
+	// private static class HPComparator implements Comparator<Pokemon> {
+	// @Override
+	// public int compare(Pokemon p1, Pokemon p2) {
+	// return Double.compare(p1.currentHP, p2.currentHP);
+	// }
+	// }
 
 	// Clone
 
@@ -272,9 +281,10 @@ public class Pokemon implements Cloneable, IRenderable {
 	 * method.
 	 */
 	public void shadowBlocks() {
-		for (FightTerrain available : getAvaliableFightTerrains()) {
-			available.setShadowed(true);
-		}
+		// for (FightTerrain available : getAvaliableFightTerrains()) {
+		// available.setShadowed(true);
+		// }
+		getAvaliableFightTerrains().parallelStream().forEach(fightTerrain -> fightTerrain.setShadowed(true));
 	}
 
 	public Path findPathTo(FightTerrain destination) {
@@ -328,7 +338,7 @@ public class Pokemon implements Cloneable, IRenderable {
 					nextTerrainCost = nextTerrain.getType().getMoveCost();
 					duplicatePath = false;
 					Iterator<Path> pathIter = paths.iterator();
-					while(pathIter.hasNext()){
+					while (pathIter.hasNext()) {
 						Path existingPath = pathIter.next();
 						PathWithCounter existingPathWithCounter = (PathWithCounter) existingPath;
 						if (existingPath.getLast().equals(nextTerrain)) {
@@ -336,9 +346,8 @@ public class Pokemon implements Cloneable, IRenderable {
 								// There is a duplicate element in paths.
 								duplicatePath = true;
 								break;
-							} 
-							else {
-								//beware concurrent error
+							} else {
+								// beware concurrent error
 								pathIter.remove();
 								break;
 							}
@@ -500,12 +509,12 @@ public class Pokemon implements Cloneable, IRenderable {
 	@Override
 	public void getDepth() {
 	}
-	
-	public void loadImage(String filePath){
+
+	public void loadImage(String filePath) {
 		try {
 			bufferedImage = ImageIO.read(new File(imageFileName));
 		} catch (IOException e) {
-			System.err.println(getName() + " can't find Image \"" + imageFileName + "\"" );
+			System.err.println(getName() + " can't find Image \"" + imageFileName + "\"");
 			e.printStackTrace();
 		}
 	}
@@ -675,6 +684,5 @@ public class Pokemon implements Cloneable, IRenderable {
 	public final double getIv() {
 		return iv;
 	}
-	
-	
+
 }

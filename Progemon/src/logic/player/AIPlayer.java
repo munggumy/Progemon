@@ -1,12 +1,13 @@
 package logic.player;
 
+import java.awt.Color;
+
 import graphic.Frame;
 import logic.character.Pokemon;
 import logic.filters.AttackFilter;
 import logic.filters.MoveFilter;
 import logic.terrain.Path;
 import utility.Clock;
-import utility.InputUtility;
 import utility.RandomUtility;
 
 public class AIPlayer extends Player {
@@ -18,12 +19,12 @@ public class AIPlayer extends Player {
 
 	// Constructors
 
-	public AIPlayer(String name, Pokemon starter_pokemon) {
-		super(name, starter_pokemon);
+	public AIPlayer(String name, Pokemon starter_pokemon, Color color) {
+		super(name, starter_pokemon, color);
 	}
 
-	public AIPlayer(String name) {
-		super(name);
+	public AIPlayer(String name, Color color) {
+		super(name, color);
 	}
 
 	@Override
@@ -35,7 +36,7 @@ public class AIPlayer extends Player {
 		inputMove(pokemon);
 		move(pokemon);
 	}
-	
+
 	protected void inputMove(Pokemon pokemon) {
 		boolean input = false;
 		while (!input) {
@@ -49,49 +50,48 @@ public class AIPlayer extends Player {
 			} else {
 				thinkDelayCounter++;
 			}
-			
+
 			Frame.getGraphicComponent().repaint();
 			Clock.tick();
 		}
 	}
-	
+
 	protected final void move(Pokemon pokemon) {
 		boolean move = false;
 		int x = pokemon.getCurrentFightTerrain().getX();
 		int y = pokemon.getCurrentFightTerrain().getY();
-		
+
 		while (!move) {
-			if(moveCounter == nextPath.size()){
+			if (moveCounter == nextPath.size()) {
 				System.out.println("Pokemon " + pokemon.getName() + " moved from (" + x + ", " + y + ") to ("
-						+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY() + ").");
+						+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY()
+						+ ").");
 				moveCounter = 1;
 				move = true;
-			}
-			else if(moveDelay == moveDelayCounter){
-				if(nextPath.get(moveCounter) != pokemon.getCurrentFightTerrain()){
+			} else if (moveDelay == moveDelayCounter) {
+				if (nextPath.get(moveCounter) != pokemon.getCurrentFightTerrain()) {
 					pokemon.move(nextPath.get(moveCounter));
 				} else {
 					moveCounter++;
 				}
 				moveDelayCounter = 0;
-			}
-			else{
+			} else {
 				moveDelayCounter++;
 			}
-			
+
 			Frame.getGraphicComponent().repaint();
 			Clock.tick();
 		}
-		
+
 		while (moveDelayCounter != moveDelay) {
 			moveDelayCounter++;
 			Frame.getGraphicComponent().repaint();
 			Clock.tick();
 		}
-		
+
 		moveDelayCounter = 0;
 	}
-	
+
 	/** This can be overrided by other AIs */
 	protected Path calculateNextPath(Pokemon pokemon) {
 		return pokemon.getPaths().get(0);
@@ -115,12 +115,12 @@ public class AIPlayer extends Player {
 				other.getCurrentFightTerrain().setHighlight(true);
 			}
 		}
-		
+
 		Pokemon other = inputAttack(attackingPokemon);
 		attack(attackingPokemon, other);
 	}
-	
-	protected Pokemon inputAttack(Pokemon attackingPokemon){
+
+	protected Pokemon inputAttack(Pokemon attackingPokemon) {
 		while (true) {
 			if (thinkDelayCounter == thinkDelay) {
 				for (Pokemon other : attackingPokemon.getCurrentFightMap().getPokemonsOnMap()) {
@@ -135,16 +135,15 @@ public class AIPlayer extends Player {
 				thinkDelayCounter = 0;
 				attackingPokemon.getCurrentFightMap().unshadowAllBlocks();
 				return null;
-			}
-			else {
+			} else {
 				thinkDelayCounter++;
 			}
-			
+
 			Frame.getGraphicComponent().repaint();
 			Clock.tick();
 		}
 	}
-	
+
 	protected final void attack(Pokemon attackingPokemon, Pokemon other) {
 		boolean attack = false;
 		if (other == null) {
@@ -153,7 +152,7 @@ public class AIPlayer extends Player {
 		while (!attack) {
 			attackingPokemon.attack(other, RandomUtility.randomInt(attackingPokemon.getActiveSkills().size() - 1));
 			attack = true;
-			
+
 			Frame.getGraphicComponent().repaint();
 			Clock.tick();
 		}
