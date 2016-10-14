@@ -176,6 +176,16 @@ public class Pokemon implements Cloneable, IRenderable {
 				p.getName(), p.getCurrentHP());
 	}
 
+	public void attack(Pokemon p, ActiveSkill selectedSkill) {
+		int n = activeSkills.indexOf(selectedSkill);
+		if (n != -1) {
+			attack(p, n);
+		}
+		else {
+			System.err.println(getName() + " can't find move \"" + selectedSkill.getName() + "\".");
+		}
+	}
+
 	public Predicate<Pokemon> isEnemy = (Pokemon other) -> !other.getOwner().equals(this.getOwner());
 	public Predicate<Pokemon> isFriendly = (Pokemon other) -> other.getOwner().equals(this.getOwner());
 

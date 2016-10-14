@@ -11,11 +11,13 @@ import graphic.Frame;
 import graphic.QueueBox;
 import graphic.ScreenComponent;
 import logic.character.Pokemon;
+import logic.player.HumanPlayer;
 import logic.player.Player;
 import logic.terrain.FightMap;
 import utility.Clock;
 import utility.FileUtility;
 import utility.InputUtility;
+import utility.Phase;
 import utility.RandomUtility;
 
 public class GUIFightGameManager {
@@ -24,12 +26,15 @@ public class GUIFightGameManager {
 	private static ArrayList<Player> currentPlayers;
 	private static FightMap fightMap = null;
 	private static Pokemon currentPokemon = null;
+	private static Player currentPlayer = null;
 	private static Player winnerPlayer = null;
+	private static Phase currentPhase = null;
 
 	public GUIFightGameManager(ArrayList<Player> players) {
 
 		GUIFightGameManager.players = new ArrayList<Player>(players);
 		currentPlayers = new ArrayList<Player>(players);
+		currentPhase = Phase.initialPhase;
 
 		// try {
 		// FileUtility.loadPokemons();
@@ -58,29 +63,27 @@ public class GUIFightGameManager {
 	}
 
 	private void startFight() {
+
 		ScreenComponent.addObject(fightMap);
 
 		spawnPokemons();
 		fightMap.sortPokemons();
 
 		ScreenComponent.addObject(new DialogBox());
-<<<<<<< HEAD
-		DialogBox.sentMessage("Press 'a' to start!");
-=======
->>>>>>> d5f2d56c3367277c3b2b7566e5d1d922bb73961c
 		ScreenComponent.addObject(new QueueBox());
 		Frame.getGraphicComponent().repaint();
-		
-		DialogBox.sentMessage("Press 'a' to start! Press 'a' to start! Press 'a' to start! Press 'a' to start! Press 'a' to start! Press 'a' to start!");
+
+		DialogBox.sentMessage("Press 'a' to start!");
+		System.out.println("Game loaded without problems.");
 	}
 
 	private void runFight() {
 		while (true) {
 
-			checkInputs();
-
 			currentPokemon = fightMap.getPokemonsOnMap().get(0);
-			currentPokemon.getOwner().runTurn(currentPokemon);
+			currentPlayer = currentPokemon.getOwner();
+			currentPhase = Phase.initialPhase;
+			currentPlayer.runTurn(currentPokemon); // gives control to player
 			currentPokemon.calculateNextTurnTime();
 			currentPokemon.calculateCurrentStats();
 
@@ -92,15 +95,17 @@ public class GUIFightGameManager {
 			Frame.getGraphicComponent().repaint();
 
 			if (checkWinner()) {
-				DialogBox.sentMessage("END OF FIGHT");
 				System.out.println("The fight has ended.");
 				System.out.println("The winner is " + winnerPlayer.getName());
+				DialogBox.sentMessage("END OF FIGHT");
 				break;
 			}
 
-			Clock.tick();
+			for(int i = 1; i <= 30 ; i++){
+				Clock.tick(); // wait between turns
+				
+			}
 		}
-
 		System.out.println("END OF FIGHT");
 	}
 
@@ -113,6 +118,10 @@ public class GUIFightGameManager {
 					System.out.println("MOVE   \t" + mEvent);
 				} else if (mEvent.getID() == MouseEvent.MOUSE_CLICKED && mEvent.getButton() == MouseEvent.BUTTON1) {
 					InputUtility.setLastMouseClickEvent(mEvent);
+					Player currentPlayer = currentPokemon.getOwner();
+					if (currentPlayer instanceof HumanPlayer) {
+						HumanPlayer human = (HumanPlayer) currentPlayer;
+					}
 					System.out.println("CLICKED\t" + mEvent);
 				} // end mouse event
 			} else if (inputEvent instanceof KeyEvent) {
@@ -207,6 +216,14 @@ public class GUIFightGameManager {
 
 	public static final Player getWinnerPlayer() {
 		return winnerPlayer;
+	}
+
+	public static final Phase getCurrentPhase() {
+		return currentPhase;
+	}
+
+	public static final void nextPhase() {
+		currentPhase = currentPhase.nextPhase();
 	}
 
 }
