@@ -180,8 +180,7 @@ public class Pokemon implements Cloneable, IRenderable {
 		int n = activeSkills.indexOf(selectedSkill);
 		if (n != -1) {
 			attack(p, n);
-		}
-		else {
+		} else {
 			System.err.println(getName() + " can't find move \"" + selectedSkill.getName() + "\".");
 		}
 	}
