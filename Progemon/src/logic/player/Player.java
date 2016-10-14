@@ -28,25 +28,25 @@ public abstract class Player {
 
 	// Constructor
 
-	public Player(String name) {
+	protected Player(String name) {
 		this.name = name;
 		color = Color.BLACK; // default
 		pokemons = new ArrayList<Pokemon>();
 	}
 
-	public Player(String name, Color color) {
+	protected Player(String name, Color color) {
 		this.name = name;
 		this.color = color;
 		pokemons = new ArrayList<Pokemon>();
 	}
 
-	public Player(String name, Pokemon starter_pokemon, Color color) {
+	protected Player(String name, Pokemon starter_pokemon, Color color) {
 		this(name, color);
 		starter_pokemon.setOwner(this);
 		pokemons.add(starter_pokemon);
 	}
 
-	public Player(String name, Pokemon[] pokemon_set, Color color) {
+	protected Player(String name, Pokemon[] pokemon_set, Color color) {
 		this(name, color);
 		for (Pokemon pokemon : pokemon_set) {
 			pokemon.setOwner(this);
