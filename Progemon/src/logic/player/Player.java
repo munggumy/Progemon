@@ -25,6 +25,8 @@ public abstract class Player {
 	protected Path nextPath;
 	private int moveCounter = 1;
 	private int moveDelay = 5, moveDelayCounter = 0;
+	
+	private int x, y;
 
 	// Constructor
 
@@ -52,7 +54,6 @@ public abstract class Player {
 			pokemon.setOwner(this);
 			pokemons.add(pokemon);
 		}
-
 	}
 
 	// Run turn
@@ -71,6 +72,8 @@ public abstract class Player {
 					pokemon.findBlocksAround(pokemon.getMoveRange(), new MoveFilter());
 					pokemon.sortPaths();
 					pokemon.shadowBlocks();
+					x = pokemon.getCurrentFightTerrain().getX();
+					y = pokemon.getCurrentFightTerrain().getY();
 					phaseIsFinished = true;
 					break;
 				case inputMovePhase:
@@ -134,8 +137,6 @@ public abstract class Player {
 	protected abstract boolean inputMove(Pokemon pokemon);
 
 	protected final boolean move(Pokemon pokemon) {
-		int x = pokemon.getCurrentFightTerrain().getX();
-		int y = pokemon.getCurrentFightTerrain().getY();
 		if (moveCounter == nextPath.size()) {
 			System.out.println("Pokemon " + pokemon.getName() + " moved from (" + x + ", " + y + ") to ("
 					+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY()

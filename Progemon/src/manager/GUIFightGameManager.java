@@ -45,11 +45,8 @@ public class GUIFightGameManager {
 		// e.printStackTrace();
 		// }
 
-		try {
-			fightMap = new FightMap(FileUtility.loadFightMap());
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+		fightMap = new FightMap(FileUtility.loadFightMap());
+		
 
 		// Load Graphics
 		new Frame();

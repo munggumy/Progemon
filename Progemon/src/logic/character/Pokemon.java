@@ -14,7 +14,6 @@ import javax.imageio.ImageIO;
 import graphic.DrawingUtility;
 import graphic.IRenderable;
 import logic.filters.Filter;
-import logic.filters.MoveFilter;
 import logic.filters.MoveNoOverlapFilter;
 import logic.player.Player;
 import logic.terrain.FightMap;

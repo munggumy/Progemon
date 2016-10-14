@@ -21,11 +21,8 @@ public class DOSFightGameManager {
 	public DOSFightGameManager(ArrayList<Player> players) {
 		DOSFightGameManager.players = new ArrayList<Player>(players);
 		DOSFightGameManager.currentPlayers = new ArrayList<Player>(players);
-		try {
-			field = new FightMap(FileUtility.loadFightMap());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		field = new FightMap(FileUtility.loadFightMap());
+		
 
 		startFight();
 		runFight();
