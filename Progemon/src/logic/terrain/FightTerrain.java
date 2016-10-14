@@ -13,6 +13,8 @@ import graphic.IRenderable;
 
 /** FightTerrain */
 public class FightTerrain implements IRenderable {
+	
+	public final static int IMG_SIZE_X = 40, IMG_SIZE_Y = 40;
 	private int x, y;
 	private boolean isShadowed, isCursor, isPathSign, isHighlight;
 	private TerrainType type;
