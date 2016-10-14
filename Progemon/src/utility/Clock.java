@@ -15,8 +15,12 @@ public class Clock {
 		// TODO Auto-generated constructor stub
 		time = System.nanoTime();
 	}
+	
+	public static void tick(){
+		tick(1);
+	}
 
-	public static void tick() {
+	public static void tick(int n) {
 
 		tps = DEFAULT_TPS;
 
@@ -34,7 +38,7 @@ public class Clock {
 
 		InputUtility.clear();
 
-		periodTime = (long) ((1000 / tps) * 1000 * 1000);
+		periodTime = (long) ((1000 / tps) * 1000 * 1000 * n);
 		long currentTime = System.nanoTime();
 		if (currentTime - time < periodTime) {
 			int waitingTime = (int) (periodTime - currentTime + time);
@@ -50,7 +54,6 @@ public class Clock {
 			try {
 				Thread.sleep((long) (Math.floor(waitingTime / (1000 * 1000))), waitingTime % (1000 * 1000));
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
