@@ -88,16 +88,6 @@ public abstract class Player {
 					pokemon.findBlocksAround(pokemon.getAttackRange(), new AttackFilter());
 					pokemon.sortPaths();
 					pokemon.shadowBlocks();
-					// for (Pokemon other :
-					// pokemon.getCurrentFightMap().getPokemonsOnMap()) {
-					// if (other.getOwner() != this
-					// &&
-					// pokemon.getAvaliableFightTerrains().contains(other.getCurrentFightTerrain()))
-					// {
-					// // If other is enemy and in attack range.
-					// other.getCurrentFightTerrain().setHighlight(true);
-					// }
-					// }
 					pokemon.getCurrentFightMap().getPokemonsOnMap().stream()
 							.filter((Pokemon other) -> !pokemon.getOwner().equals(other.getOwner()))
 							.filter((Pokemon other) -> pokemon.getAvaliableFightTerrains().contains(other.getCurrentFightTerrain()))
@@ -144,7 +134,6 @@ public abstract class Player {
 	protected abstract boolean inputMove(Pokemon pokemon);
 
 	protected final boolean move(Pokemon pokemon) {
-		boolean move = false;
 		int x = pokemon.getCurrentFightTerrain().getX();
 		int y = pokemon.getCurrentFightTerrain().getY();
 		if (moveCounter == nextPath.size()) {
@@ -178,17 +167,11 @@ public abstract class Player {
 		}
 		return true;
 	}
+	
 	/** Checks if this player loses (All pokemons are dead) */
 	public boolean isLose() {
 		return pokemons.stream().allMatch(Pokemon::isDead);
 	}
-	// for (Pokemon pokemon : pokemons) {
-	// if (!pokemon.isDead()) {
-	// return false;
-	// }
-	// }
-	// return true;
-	// }
 
 	// Getters
 
