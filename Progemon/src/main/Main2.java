@@ -15,6 +15,8 @@ import utility.Pokedex;
 public class Main2 {
 
 	public static void main(String[] args) {
+
+		System.out.println("Game loaded without problems.");
 		try {
 			FileUtility.loadActiveSkills();
 			FileUtility.loadPokedex();
@@ -49,6 +51,8 @@ public class Main2 {
 		players.add(p1);
 		players.add(p2);
 
+
+		System.out.println("Game loaded without problems.");
 		@SuppressWarnings("unused")
 		GUIFightGameManager gui = new GUIFightGameManager(players);
 

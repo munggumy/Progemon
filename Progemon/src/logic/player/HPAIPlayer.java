@@ -20,7 +20,6 @@ public class HPAIPlayer extends AIPlayer {
 
 	@Override
 	protected Path calculateNextPath(Pokemon pokemon) {
-		System.out.println("calculateNextPath called by : " + pokemon.getName());
 		Pokemon lowestHP = null;
 		// find pokemon with lowest HP
 		ArrayList<Pokemon> sortedList = new ArrayList<Pokemon>(pokemon.getCurrentFightMap().getPokemonsOnMap());
@@ -34,7 +33,6 @@ public class HPAIPlayer extends AIPlayer {
 		if (lowestHP == null) {
 			return super.calculateNextPath(pokemon);
 		}
-		System.out.println("Lowest HP Pokemon : " + lowestHP.getName());
 		Path wholePath = pokemon.findPathTo(lowestHP.getCurrentFightTerrain(), 1000);
 		if (wholePath == null) {
 			return super.calculateNextPath(pokemon);

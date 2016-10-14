@@ -16,7 +16,7 @@ public class InputUtility {
 	private static ArrayList<KeyEvent> typeKeys = new ArrayList<KeyEvent>();
 	
 	public static void clear() {
-		
+		inputEvents.clear();
 	}
 	
 	/** When get element, it clears the history of event. */

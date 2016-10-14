@@ -1,31 +1,30 @@
 package logic.player;
 
-import java.awt.Color;
-
+import logic.character.ActiveSkill;
 import logic.character.Pokemon;
 
 public class HumanPlayer extends Player {
-
-	/*
-	 * @Override public void runTurn(Pokemon pokemon) { // TODO Auto-generated
-	 * method stub
-	 * 
-	 * }
-	 */
 
 	public HumanPlayer(String name) {
 		super(name);
 	}
 
 	@Override
-	public void pokemonMove(Pokemon pokemon) {
+	protected boolean inputMove(Pokemon pokemon) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
+
+	@Override
+	protected boolean inputAttackPokemon(Pokemon pokemon) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
-	public void pokemonAttack(Pokemon pokemon) {
+	protected boolean inputAttackActiveSkill(Pokemon attackingPokemon) {
 		// TODO Auto-generated method stub
-
+		return false;
 	}
-
 }
