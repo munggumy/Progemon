@@ -6,8 +6,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
@@ -138,7 +141,7 @@ public class Pokemon implements Cloneable, IRenderable {
 	// move and attack
 
 	/**
-	 * Use to relocate <code>this</code> on <code>fightMap</code>.
+	 * Use to relocate this <code>Pokemon</code> on <code>fightMap</code>.
 	 * <code>currentFightTerrain</code> will be automatically generated. Does
 	 * not use <code>Filter.check()</code>.
 	 * 
@@ -272,15 +275,18 @@ public class Pokemon implements Cloneable, IRenderable {
 		}
 	}
 
-	public ArrayList<FightTerrain> getAvaliableFightTerrains() {
-		ArrayList<FightTerrain> out = new ArrayList<FightTerrain>();
-		FightTerrain last;
-		for (Path path : paths) {
-			last = path.getLast();
-			if (last != null && !out.contains(last)) {
-				out.add(last);
-			}
-		}
+	public HashSet<FightTerrain> getAvaliableFightTerrains() {
+		HashSet<FightTerrain> out;
+		// FightTerrain last;
+		// for (Path path : paths) {
+		// last = path.getLast();
+		// if (last != null && !out.contains(last)) {
+		// out.add(last);
+		// }
+		// }
+		Function<Path, FightTerrain> getLast = (Path p) -> p.getLast();
+		out = (HashSet<FightTerrain>) paths.stream().map(getLast).filter((FightTerrain last) -> (last != null))
+				.collect(Collectors.toSet());
 		return out;
 	}
 

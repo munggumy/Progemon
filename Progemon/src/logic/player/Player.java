@@ -58,7 +58,7 @@ public abstract class Player {
 
 	// Run turn
 
-	/** Each turn calls this. */
+	/** Each turn calls this. Finite-State Machine*/
 	public final void runTurn(Pokemon pokemon) {
 		boolean phaseIsFinished = false;
 		try {

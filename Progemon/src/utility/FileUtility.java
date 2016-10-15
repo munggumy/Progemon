@@ -27,7 +27,7 @@ public class FileUtility {
 	private static final String DEFAULT_ACTIVE_SKILLS = DEFAULT_PATH + "/active_skills.txt";
 	private static final String DEFAULT_SW_TABLE = DEFAULT_PATH + "/strengthWeaknessTable.csv";
 
-	public static void loadAllDefaults() throws IOException {
+	public static void loadAllDefaults() {
 		loadActiveSkills();
 		loadPokedex();
 		loadPokemons();
@@ -130,7 +130,7 @@ public class FileUtility {
 		}
 	}
 
-	public static void loadPokedex() throws IOException {
+	public static void loadPokedex() {
 		loadPokedex(DEFAULT_LOAD_POKEDEX);
 	}
 
@@ -233,7 +233,7 @@ public class FileUtility {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void loadStrengthWeaknessTable() {
 		loadStrengthWeaknessTable(DEFAULT_SW_TABLE);
 	}

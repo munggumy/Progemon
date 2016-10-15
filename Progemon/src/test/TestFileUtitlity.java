@@ -3,9 +3,11 @@
  */
 package test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import org.junit.Before;
@@ -16,8 +18,8 @@ import logic.character.Element;
 import logic.character.Element.SW;
 import logic.character.Pokemon;
 import logic.terrain.FightTerrain;
-import utility.Pokedex;
 import utility.FileUtility;
+import utility.Pokedex;
 
 /**
  * @author Kris
@@ -38,11 +40,7 @@ public class TestFileUtitlity {
 	@Test
 	public void testLoadPokedex() {
 
-		try {
-			FileUtility.loadPokedex();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		FileUtility.loadPokedex();
 
 		// Check HashMap properties
 

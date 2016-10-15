@@ -16,18 +16,12 @@ public class Main2 {
 
 	public static void main(String[] args) {
 
-		System.out.println("Game loaded without problems.");
-		try {
-			FileUtility.loadActiveSkills();
-			FileUtility.loadPokedex();
-			FileUtility.loadPokemons();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		FileUtility.loadAllDefaults();
 		Pokemon charlizard = Pokedex.getPokemon("Charlizard");
 		charlizard.setLevel(38);
 		charlizard.calculateCurrentStats();
 		charlizard.resetHP();
+		
 		Pokemon caterpie = Pokedex.getPokemon("Caterpie");
 		caterpie.setLevel(5);
 		caterpie.calculateCurrentStats();
@@ -51,8 +45,6 @@ public class Main2 {
 		players.add(p1);
 		players.add(p2);
 
-
-		System.out.println("Game loaded without problems.");
 		@SuppressWarnings("unused")
 		GUIFightGameManager gui = new GUIFightGameManager(players);
 
