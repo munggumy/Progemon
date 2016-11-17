@@ -1,9 +1,9 @@
 package logic.player;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javafx.scene.paint.Color;
 import logic.character.Pokemon;
 import logic.terrain.FightTerrain;
 import logic.terrain.Path;

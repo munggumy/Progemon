@@ -2,16 +2,24 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="sortPath" key="selection"/>
+		<item value="loadImage" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="sortPath"/>
-			<item value="path"/>
+			<item value="loadImage"/>
+			<item value="getImage"/>
+			<item value="select"/>
+			<item value="draw"/>
+			<item value="InputEvent"/>
+			<item value="stroke"/>
+			<item value="screencomponent.g2"/>
+			<item value="screen"/>
 		</list>
 		<list key="replacehistory">
+			<item value="Event"/>
+			<item value="gc"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">

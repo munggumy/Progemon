@@ -1,11 +1,11 @@
 package test;
 
-import java.awt.Color;
 import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import javafx.scene.paint.Color;
 import logic.character.ActiveSkill;
 import logic.character.Pokemon;
 import logic.player.AIPlayer;
