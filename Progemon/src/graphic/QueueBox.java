@@ -53,7 +53,7 @@ public class QueueBox implements IRenderable {
 		while (!isQueue) {
 			update();
 			
-			Frame.getGraphicComponent().repaint();
+			//MyCanvas.repaint();
 			Clock.tick();
 		}
 	}
