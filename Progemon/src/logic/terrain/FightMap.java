@@ -88,6 +88,10 @@ public class FightMap implements IRenderable {
 		}
 		return null;
 	}
+	
+	public Pokemon getPokemonAt(FightTerrain fightTerrain) {
+		return getPokemonAt(fightTerrain.getX(), fightTerrain.getY());
+	}
 
 	public boolean outOfMap(int x, int y) {
 		if (x < 0 || x >= this.sizeX || y < 0 || y >= this.sizeY) {
@@ -163,4 +167,6 @@ public class FightMap implements IRenderable {
 			}
 		}
 	}
+
+	
 }

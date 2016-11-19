@@ -643,6 +643,14 @@ public class Pokemon implements Cloneable, IRenderable {
 		return secondaryElement;
 	}
 
+	public final void setPrimaryElement(Element element) {
+		primaryElement = element;
+	}
+
+	public final void setSecondaryElement(Element element) {
+		secondaryElement = element;
+	}
+
 	public final FightMap getCurrentFightMap() {
 		return currentFightMap;
 	}

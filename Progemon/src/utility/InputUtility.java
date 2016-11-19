@@ -11,14 +11,14 @@ public class InputUtility {
 	private static MouseEvent lastMouseClickEvent, lastMouseMoveEvent;
 	private static ArrayList<InputEvent> inputEvents = new ArrayList<InputEvent>();
 	/** When it gets elements, it clears the history of event. */
-	private static KeyEvent lastKeyEvent;
+	private static KeyEvent lastKeyEvent, lastTypeKey;
 	private static ArrayList<KeyEvent> holdingKeys = new ArrayList<KeyEvent>();
 	private static ArrayList<KeyEvent> typeKeys = new ArrayList<KeyEvent>();
-	
+
 	public static void clear() {
 		inputEvents.clear();
 	}
-	
+
 	/** When get element, it clears the history of event. */
 	public static final ArrayList<InputEvent> getInputEvents() {
 		ArrayList<InputEvent> temp = new ArrayList<InputEvent>(inputEvents);
@@ -47,7 +47,9 @@ public class InputUtility {
 	}
 
 	public static final MouseEvent getLastMouseClickEvent() {
-		return lastMouseClickEvent;
+		MouseEvent temp = lastMouseClickEvent;
+		lastMouseClickEvent = null;
+		return temp;
 	}
 
 	public static final void setLastMouseClickEvent(MouseEvent lastMouseClickEvent) {
@@ -61,21 +63,21 @@ public class InputUtility {
 	public static final void setLastMouseMoveEvent(MouseEvent lastMouseMoveEvent) {
 		InputUtility.lastMouseMoveEvent = lastMouseMoveEvent;
 	}
-	
+
 	public static KeyEvent getLastKeyEvent() {
 		KeyEvent temp = lastKeyEvent;
 		lastKeyEvent = null;
 		return temp;
 	}
-	
+
 	public static void setLastKeyEvent(KeyEvent lastKeyEvent) {
 		InputUtility.lastKeyEvent = lastKeyEvent;
 	}
-	
-	public static void addHoldingKeys(KeyEvent kEvent){
+
+	public static void addHoldingKeys(KeyEvent kEvent) {
 		boolean isIn = false;
 		for (KeyEvent holdingKey : holdingKeys) {
-			if (holdingKey.getKeyChar() == kEvent.getKeyChar()){
+			if (holdingKey.getKeyChar() == kEvent.getKeyChar()) {
 				isIn = true;
 			}
 		}
@@ -83,27 +85,35 @@ public class InputUtility {
 			holdingKeys.add(kEvent);
 		}
 	}
-	
-	public static void removeHoldingKeys(KeyEvent kEvent){
+
+	public static void removeHoldingKeys(KeyEvent kEvent) {
 		for (int i = holdingKeys.size() - 1; i >= 0; i--) {
-			if (holdingKeys.get(i).getKeyChar() == kEvent.getKeyChar()){
+			if (holdingKeys.get(i).getKeyChar() == kEvent.getKeyChar()) {
 				holdingKeys.remove(holdingKeys.get(i));
 			}
 		}
 	}
-	
+
 	public static ArrayList<KeyEvent> getHoldingKeys() {
 		return holdingKeys;
 	}
-	
+
 	public static ArrayList<KeyEvent> getTypeKeys() {
 		ArrayList<KeyEvent> token = new ArrayList<KeyEvent>(typeKeys);
 		typeKeys.clear();
 		return token;
 	}
-	
+
 	public static void addTypeKeys(KeyEvent kEvent) {
 		typeKeys.add(kEvent);
+	}
+
+	public static KeyEvent getLastTypeKey() {
+		return lastTypeKey;
+	}
+
+	public static void setLastTypeKey(KeyEvent lastTypeKey) {
+		InputUtility.lastTypeKey = lastTypeKey;
 	}
 
 }

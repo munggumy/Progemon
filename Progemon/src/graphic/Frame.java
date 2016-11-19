@@ -11,6 +11,8 @@ import javax.swing.JFrame;
 import utility.InputUtility;
 
 public class Frame {
+	
+	public static final int OFFSET_X = 8, OFFSET_Y = 31;
 
 	private static JFrame frame;
 	private static ScreenComponent graphicComponent;
@@ -39,8 +41,8 @@ public class Frame {
 			public void mouseMoved(MouseEvent e) {
 				super.mouseMoved(e);
 				InputUtility.addInputEvents(e);
-				InputUtility.setMouseX(e.getX() - 8);
-				InputUtility.setMouseY(e.getY() - 31);
+				InputUtility.setMouseX(e.getX() - OFFSET_X);
+				InputUtility.setMouseY(e.getY() - OFFSET_Y);
 			}
 
 		});

@@ -26,7 +26,7 @@ public class AIPlayer extends Player {
 	}
 
 	@Override
-	protected boolean inputMove(Pokemon pokemon) {
+	protected boolean inputNextPath(Pokemon pokemon) {
 		if (thinkDelayCounter == thinkDelay) {
 			super.nextPath = calculateNextPath(pokemon);
 			thinkDelayCounter = 0; // reset counter

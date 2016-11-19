@@ -3,8 +3,8 @@ package manager;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import graphic.DialogBox;
 import graphic.Frame;
@@ -36,27 +36,15 @@ public class GUIFightGameManager {
 		currentPlayers = new ArrayList<Player>(players);
 		currentPhase = Phase.initialPhase;
 
-		// try {
-		// FileUtility.loadPokemons();
-		// FileUtility.loadPokedex();
-		// FileUtility.loadActiveSkills();
-		//
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
-
 		fightMap = new FightMap(FileUtility.loadFightMap());
-		
 
 		// Load Graphics
 		new Frame();
 
 		new Clock();
-
 		startFight();
 		runFight();
 		endFight();
-
 	}
 
 	private void startFight() {
@@ -71,6 +59,7 @@ public class GUIFightGameManager {
 		Frame.getGraphicComponent().repaint();
 
 		DialogBox.sentMessage("Press 'a' to start!");
+
 		System.out.println("Game loaded without problems.");
 	}
 
@@ -98,9 +87,8 @@ public class GUIFightGameManager {
 				break;
 			}
 
-			for(int i = 1; i <= 30 ; i++){
+			for (int i = 1; i <= 30; i++) {
 				Clock.tick(); // wait between turns
-				
 			}
 		}
 		System.out.println("END OF FIGHT");
@@ -115,10 +103,6 @@ public class GUIFightGameManager {
 					System.out.println("MOVE   \t" + mEvent);
 				} else if (mEvent.getID() == MouseEvent.MOUSE_CLICKED && mEvent.getButton() == MouseEvent.BUTTON1) {
 					InputUtility.setLastMouseClickEvent(mEvent);
-					Player currentPlayer = currentPokemon.getOwner();
-					if (currentPlayer instanceof HumanPlayer) {
-						HumanPlayer human = (HumanPlayer) currentPlayer;
-					}
 					System.out.println("CLICKED\t" + mEvent);
 				} // end mouse event
 			} else if (inputEvent instanceof KeyEvent) {
