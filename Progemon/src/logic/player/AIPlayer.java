@@ -1,8 +1,7 @@
 package logic.player;
 
-import java.awt.Color;
-
 import graphic.Frame;
+import javafx.scene.paint.Color;
 import logic.character.ActiveSkill;
 import logic.character.Pokemon;
 import logic.filters.AttackFilter;
@@ -26,7 +25,7 @@ public class AIPlayer extends Player {
 	}
 
 	@Override
-	protected boolean inputMove(Pokemon pokemon) {
+	protected boolean inputNextPath(Pokemon pokemon) {
 		if (thinkDelayCounter == thinkDelay) {
 			super.nextPath = calculateNextPath(pokemon);
 			thinkDelayCounter = 0; // reset counter

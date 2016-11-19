@@ -1,8 +1,8 @@
 package logic.character;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,6 +16,8 @@ import javax.imageio.ImageIO;
 
 import graphic.DrawingUtility;
 import graphic.IRenderable;
+import graphic.MyCanvas;
+import javafx.scene.image.Image;
 import logic.filters.Filter;
 import logic.filters.MoveNoOverlapFilter;
 import logic.player.Player;
@@ -23,6 +25,7 @@ import logic.terrain.FightMap;
 import logic.terrain.FightMap.Direction;
 import logic.terrain.FightTerrain;
 import logic.terrain.Path;
+import utility.Clock;
 import utility.Pokedex;
 import utility.RandomUtility;
 import utility.StringUtility;
@@ -31,7 +34,7 @@ public class Pokemon implements Cloneable, IRenderable {
 
 	// Constants and Variables
 
-	private static final String DEFAULT_IMAGE_FILE_LOCATION = "load\\img\\pokemon";
+	private static final String DEFAULT_IMAGE_FILE_LOCATION = "load/img/pokemon";
 
 	private double currentHP, nextTurnTime;
 	private int moveRange, attackRange, id;
@@ -43,7 +46,7 @@ public class Pokemon implements Cloneable, IRenderable {
 	private Stat base = new Stat();
 	private Stat current = new Stat();
 	private String imageFileName;
-	private BufferedImage bufferedImage = null;
+	private Image image = null;
 	/** Individual value */
 	private double iv = RandomUtility.randomInt(0, 15) + 32;
 
@@ -181,6 +184,14 @@ public class Pokemon implements Cloneable, IRenderable {
 	public void attack(Pokemon p, ActiveSkill selectedSkill) {
 		int n = activeSkills.indexOf(selectedSkill);
 		if (n != -1) {
+			selectedSkill.setAttackTerrain(currentFightTerrain);
+			selectedSkill.setTargetTerrain(p.currentFightTerrain);
+			selectedSkill.play();
+			MyCanvas.addObject(selectedSkill);
+			while(selectedSkill.isPlaying()) {
+				Clock.tick();
+			}
+			MyCanvas.removeObject(selectedSkill);
 			attack(p, n);
 		} else {
 			System.err.println(getName() + " can't find move \"" + selectedSkill.getName() + "\".");
@@ -525,12 +536,8 @@ public class Pokemon implements Cloneable, IRenderable {
 	}
 
 	public void loadImage(String filePath) {
-		try {
-			bufferedImage = ImageIO.read(new File(imageFileName));
-		} catch (IOException e) {
-			System.err.println(getName() + " can't find Image \"" + imageFileName + "\"");
-			e.printStackTrace();
-		}
+		File file = new File(imageFileName);
+		image = new Image(file.toURI().toString());
 	}
 
 	// Getters and Setters
@@ -643,6 +650,14 @@ public class Pokemon implements Cloneable, IRenderable {
 		return secondaryElement;
 	}
 
+	public final void setPrimaryElement(Element element) {
+		primaryElement = element;
+	}
+
+	public final void setSecondaryElement(Element element) {
+		secondaryElement = element;
+	}
+
 	public final FightMap getCurrentFightMap() {
 		return currentFightMap;
 	}
@@ -676,7 +691,7 @@ public class Pokemon implements Cloneable, IRenderable {
 	}
 
 	public void setImageFileLocation() {
-		setImageFileLocation(DEFAULT_IMAGE_FILE_LOCATION + "\\" + this.getName() + ".png");
+		setImageFileLocation(DEFAULT_IMAGE_FILE_LOCATION + "/" + this.getName() + ".png");
 	}
 
 	public static final String getDefaultImageFileLocation() {
@@ -691,8 +706,8 @@ public class Pokemon implements Cloneable, IRenderable {
 		return imageFileName;
 	}
 
-	public final BufferedImage getBufferedImage() {
-		return bufferedImage;
+	public final Image getImage() {
+		return image;
 	}
 
 	public final double getIv() {

@@ -1,15 +1,25 @@
 package manager;
 
+<<<<<<< HEAD
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+=======
 import java.io.IOException;
+>>>>>>> 568bada80f9cfbe97bd4e374df501a6a2b400cf2
 import java.util.ArrayList;
+import java.util.List;
 
 import graphic.DialogBox;
 import graphic.Frame;
+import graphic.MyCanvas;
+import graphic.MyStage;
 import graphic.QueueBox;
 import graphic.ScreenComponent;
+import javafx.event.Event;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import logic.character.Pokemon;
 import logic.player.HumanPlayer;
 import logic.player.Player;
@@ -36,41 +46,27 @@ public class GUIFightGameManager {
 		currentPlayers = new ArrayList<Player>(players);
 		currentPhase = Phase.initialPhase;
 
-		// try {
-		// FileUtility.loadPokemons();
-		// FileUtility.loadPokedex();
-		// FileUtility.loadActiveSkills();
-		//
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
-
 		fightMap = new FightMap(FileUtility.loadFightMap());
-		
 
 		// Load Graphics
-		new Frame();
-
 		new Clock();
-
 		startFight();
 		runFight();
 		endFight();
-
 	}
 
 	private void startFight() {
 
-		ScreenComponent.addObject(fightMap);
+		MyCanvas.addObject(fightMap);
 
 		spawnPokemons();
 		fightMap.sortPokemons();
 
-		ScreenComponent.addObject(new DialogBox());
-		ScreenComponent.addObject(new QueueBox());
-		Frame.getGraphicComponent().repaint();
+		MyCanvas.addObject(new DialogBox());
+		MyCanvas.addObject(new QueueBox());
 
 		DialogBox.sentMessage("Press 'a' to start!");
+
 		System.out.println("Game loaded without problems.");
 	}
 
@@ -89,8 +85,6 @@ public class GUIFightGameManager {
 
 			QueueBox.sort();
 
-			Frame.getGraphicComponent().repaint();
-
 			if (checkWinner()) {
 				System.out.println("The fight has ended.");
 				System.out.println("The winner is " + winnerPlayer.getName());
@@ -98,37 +92,32 @@ public class GUIFightGameManager {
 				break;
 			}
 
-			for(int i = 1; i <= 30 ; i++){
+			for (int i = 1; i <= 30; i++) {
 				Clock.tick(); // wait between turns
-				
 			}
 		}
 		System.out.println("END OF FIGHT");
 	}
 
 	public static void checkInputs() {
-		for (InputEvent inputEvent : InputUtility.getInputEvents()) {
-			if (inputEvent instanceof MouseEvent) {
-				MouseEvent mEvent = (MouseEvent) inputEvent;
-				if (mEvent.getID() == MouseEvent.MOUSE_MOVED) {
+		for (Event event : InputUtility.getEvents()) {
+			if (event instanceof MouseEvent) {
+				MouseEvent mEvent = (MouseEvent) event;
+				if (mEvent.getEventType() == MouseEvent.MOUSE_MOVED) {
 					InputUtility.setLastMouseMoveEvent(mEvent);
 					System.out.println("MOVE   \t" + mEvent);
-				} else if (mEvent.getID() == MouseEvent.MOUSE_CLICKED && mEvent.getButton() == MouseEvent.BUTTON1) {
+				} else if (mEvent.getEventType() == MouseEvent.MOUSE_CLICKED && mEvent.getButton() == MouseButton.PRIMARY) {
 					InputUtility.setLastMouseClickEvent(mEvent);
-					Player currentPlayer = currentPokemon.getOwner();
-					if (currentPlayer instanceof HumanPlayer) {
-						HumanPlayer human = (HumanPlayer) currentPlayer;
-					}
 					System.out.println("CLICKED\t" + mEvent);
 				} // end mouse event
-			} else if (inputEvent instanceof KeyEvent) {
-				KeyEvent kEvent = (KeyEvent) inputEvent;
+			} else if (event instanceof KeyEvent) {
+				KeyEvent kEvent = (KeyEvent) event;
 				InputUtility.setLastKeyEvent(kEvent);
 				System.out.println("KEY    \t" + kEvent);
-				if (kEvent.getKeyChar() == ' ') {
-					if (kEvent.getID() == KeyEvent.KEY_PRESSED) {
+				if (kEvent.getText().equals(" ")) {
+					if (kEvent.getEventType() == KeyEvent.KEY_PRESSED) {
 						Clock.setTps(300);
-					} else if (kEvent.getID() == KeyEvent.KEY_RELEASED) {
+					} else if (kEvent.getEventType() == KeyEvent.KEY_RELEASED) {
 						Clock.setTps(60);
 					}
 				} // end key event
@@ -146,9 +135,8 @@ public class GUIFightGameManager {
 				break;
 			}
 
-			QueueBox.update();
+			QueueBox.sort();
 			DialogBox.update();
-			Frame.getGraphicComponent().repaint();
 
 			Clock.tick();
 		}

@@ -1,23 +1,32 @@
 package logic.character;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import graphic.Animation;
+import graphic.DrawingUtility;
+import graphic.IRenderable;
+import javafx.scene.image.Image;
+import logic.terrain.FightTerrain;
 import utility.StringUtility;
 
-public class ActiveSkill {
+public class ActiveSkill extends Animation implements IRenderable {
 	private static final double DEFAULT_POWER = 50;
 	private double power;
 	private String name;
 	// TODO type of active skill?
 	private static ArrayList<ActiveSkill> allActiveSkills = new ArrayList<ActiveSkill>();
+	private FightTerrain attackTerrain, targetTerrain;
 
 	private ActiveSkill(String skillName, double skillPower) {
+		super();
 		setName(skillName);
 		setPower(skillPower);
 		allActiveSkills.add(this);
+		loadImage("load/img/skill/Flamethrower/all.png");
 	}
 
 	public static ActiveSkill getActiveSkill(String skillName) {
@@ -73,6 +82,34 @@ public class ActiveSkill {
 			name = StringUtility.toTitleCase(name);
 		}
 		this.name = name;
+	}
+
+	@Override
+	public void draw() {
+		// TODO Auto-generated method stub
+		DrawingUtility.drawSkill(this);
+	}
+
+	@Override
+	public void getDepth() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void setAttackTerrain(FightTerrain attackTerrain) {
+		this.attackTerrain = attackTerrain;
+	}
+	
+	public void setTargetTerrain(FightTerrain targetTerrain) {
+		this.targetTerrain = targetTerrain;
+	}
+	
+	public FightTerrain getAttackTerrain() {
+		return attackTerrain;
+	}
+	
+	public FightTerrain getTargetTerrain() {
+		return targetTerrain;
 	}
 
 }

@@ -1,6 +1,8 @@
 package utility;
 
-import java.awt.event.KeyEvent;
+import graphic.Animation;
+import graphic.AnimationHolder;
+import javafx.scene.input.KeyEvent;
 
 public class Clock {
 
@@ -10,6 +12,7 @@ public class Clock {
 	/** Previous time tick (last round) */
 	private static long time;
 	private static long periodTime = (long) ((1000 / tps) * 1000 * 1000);
+	private static boolean pause = false;
 
 	public Clock() {
 		// TODO Auto-generated constructor stub
@@ -25,14 +28,20 @@ public class Clock {
 		tps = DEFAULT_TPS;
 
 		for (KeyEvent kEvent : InputUtility.getHoldingKeys()) {
-			if (kEvent.getKeyChar() == ' ') {
+			if (kEvent.getText().equals(" ")) {
 				tps *= 4;
 			}
 		}
 
 		for (KeyEvent kEvent : InputUtility.getTypeKeys()) {
-			if (kEvent.getKeyChar() == 'p') {
+			if (kEvent.getText().equals("p")) {
 				pause();
+			}
+		}
+		
+		if (! pause) {
+			for (Animation animation : AnimationHolder.getPlayingAnimations()) {
+				animation.update();
 			}
 		}
 
@@ -61,11 +70,11 @@ public class Clock {
 	}
 
 	private static void pause() {
-		boolean isPause = true;
-		while (isPause) {
+		pause = true;
+		while (pause) {
 			for (KeyEvent kEvent : InputUtility.getTypeKeys()) {
-				if (kEvent.getKeyChar() == 'p') {
-					isPause = false;
+				if (kEvent.getText().equals("p")) {
+					pause = false;
 					break;
 				}
 			}

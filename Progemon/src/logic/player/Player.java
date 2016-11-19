@@ -1,9 +1,10 @@
 package logic.player;
 
-import java.awt.Color;
 import java.util.ArrayList;
 
 import graphic.Frame;
+import graphic.MyCanvas;
+import javafx.scene.paint.Color;
 import logic.character.ActiveSkill;
 import logic.character.Pokemon;
 import logic.filters.AttackFilter;
@@ -11,6 +12,7 @@ import logic.filters.MoveFilter;
 import logic.terrain.Path;
 import manager.GUIFightGameManager;
 import utility.Clock;
+import utility.InputUtility;
 import utility.Phase;
 import utility.exception.UnknownPhaseException;
 
@@ -18,14 +20,14 @@ public abstract class Player {
 	private String name;
 	private Color color;
 	private ArrayList<Pokemon> pokemons;
-	
+
 	protected Pokemon nextAttackedPokemon;
 	protected ActiveSkill nextAttackSkill;
-	
+
 	protected Path nextPath;
 	private int moveCounter = 1;
 	private int moveDelay = 5, moveDelayCounter = 0;
-	
+
 	private int x, y;
 
 	// Constructor
@@ -58,13 +60,16 @@ public abstract class Player {
 
 	// Run turn
 
-	/** Each turn calls this. Finite-State Machine*/
+	/** Each turn calls this. Finite-State Machine */
 	public final void runTurn(Pokemon pokemon) {
 		boolean phaseIsFinished = false;
 		try {
 			while (GUIFightGameManager.getCurrentPhase() != Phase.endPhase) {
 				switch (GUIFightGameManager.getCurrentPhase()) {
 				case initialPhase:
+					nextPath = null;
+					nextAttackedPokemon = null;
+					nextAttackSkill = null;
 					phaseIsFinished = true;
 					break;
 
@@ -77,7 +82,8 @@ public abstract class Player {
 					phaseIsFinished = true;
 					break;
 				case inputMovePhase:
-					phaseIsFinished = inputMove(pokemon);
+					GUIFightGameManager.checkInputs();
+					phaseIsFinished = inputNextPath(pokemon);
 					break;
 				case movePhase:
 					phaseIsFinished = move(pokemon);
@@ -93,12 +99,16 @@ public abstract class Player {
 					pokemon.shadowBlocks();
 					pokemon.getCurrentFightMap().getPokemonsOnMap().stream()
 							.filter((Pokemon other) -> !pokemon.getOwner().equals(other.getOwner()))
-							.filter((Pokemon other) -> pokemon.getAvaliableFightTerrains().contains(other.getCurrentFightTerrain()))
+							.filter((Pokemon other) -> pokemon.getAvaliableFightTerrains()
+									.contains(other.getCurrentFightTerrain()))
 							.forEach((Pokemon other) -> other.getCurrentFightTerrain().setHighlight(true));
 					phaseIsFinished = true;
 					break;
 				case inputAttackPhase:
-					phaseIsFinished = inputAttackPokemon(pokemon) && inputAttackActiveSkill(pokemon);
+					GUIFightGameManager.checkInputs();
+					boolean check1 = inputAttackPokemon(pokemon);
+					boolean check2 = inputAttackActiveSkill(pokemon);
+					phaseIsFinished = check1 && check2;
 					break;
 				case attackPhase:
 					phaseIsFinished = attack(pokemon, nextAttackedPokemon, nextAttackSkill);
@@ -115,11 +125,11 @@ public abstract class Player {
 					throw new UnknownPhaseException("Unknown Phase in Player.java[" + this.name + "].");
 				}
 
-				Frame.getGraphicComponent().repaint();
 				Clock.tick();
 
 				if (phaseIsFinished) {
 					GUIFightGameManager.nextPhase();
+					System.out.println(GUIFightGameManager.getCurrentPhase());
 					phaseIsFinished = false;
 				}
 			}
@@ -129,18 +139,18 @@ public abstract class Player {
 			nextAttackedPokemon = null;
 			nextAttackSkill = null;
 		}
+		System.out.println("WTF");
 
 		// pokemonMove(pokemon);
 		// pokemonAttack(pokemon);
 	}
 
-	protected abstract boolean inputMove(Pokemon pokemon);
+	protected abstract boolean inputNextPath(Pokemon pokemon);
 
 	protected final boolean move(Pokemon pokemon) {
 		if (moveCounter == nextPath.size()) {
 			System.out.println("Pokemon " + pokemon.getName() + " moved from (" + x + ", " + y + ") to ("
-					+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY()
-					+ ").");
+					+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY() + ").");
 			moveCounter = 1;
 			moveDelayCounter = 0;
 			return true;
@@ -159,7 +169,7 @@ public abstract class Player {
 	}
 
 	protected abstract boolean inputAttackPokemon(Pokemon pokemon);
-	
+
 	protected abstract boolean inputAttackActiveSkill(Pokemon attackingPokemon);
 
 	protected final boolean attack(Pokemon attackingPokemon, Pokemon other, ActiveSkill activeSkill) {
@@ -168,7 +178,7 @@ public abstract class Player {
 		}
 		return true;
 	}
-	
+
 	/** Checks if this player loses (All pokemons are dead) */
 	public boolean isLose() {
 		return pokemons.stream().allMatch(Pokemon::isDead);

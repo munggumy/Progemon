@@ -5,11 +5,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.Color;
-
 import org.junit.Before;
 import org.junit.Test;
 
+import javafx.scene.paint.Color;
 import logic.character.Pokemon;
 import logic.character.Pokemon.MoveType;
 import logic.player.AIPlayer;

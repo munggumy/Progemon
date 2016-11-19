@@ -1,13 +1,13 @@
 package graphic;
 
-import java.awt.Font;
-import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Font;
 import manager.GUIFightGameManager;
 import utility.Clock;
 import utility.InputUtility;
@@ -16,10 +16,11 @@ public class DialogBox implements IRenderable {
 
 	protected static final String DIALOG_BOX_PATH = "load\\img\\dialogbox\\Theme1.png";
 
-	private static BufferedImage dialogBoxImage = null;
+	private static Image dialogBoxImage = null;
 
 	private static final int x = 0, y = 240;
-	private static final Font DEFAULT_FONT = new Font(Font.MONOSPACED, Font.PLAIN, 15);
+	//private static final Font DEFAULT_FONT = new Font(Font.MONOSPACED, Font.PLAIN, 15);
+	private static final Font DEFAULT_FONT = new Font("Monospaced", 15);
 	private static String message = "", nextWord = "";
 	private static String[] messageOnScreen = { "", "" };
 	private static Font font = DEFAULT_FONT;
@@ -42,7 +43,7 @@ public class DialogBox implements IRenderable {
 
 	public static void update() {
 		KeyEvent kEvent = InputUtility.getLastKeyEvent();
-		if (kEvent != null && kEvent.getKeyChar() == 'a') {
+		if (kEvent != null && kEvent.getText().equals("a")) {
 			textDelay = 0;
 		}
 		if (nextWord.length() > 0) {
@@ -54,7 +55,7 @@ public class DialogBox implements IRenderable {
 				textDelayCounter++;
 			}
 		} else if (message.length() > 0) {
-			if (DrawingUtility.computeStringWidth(font, (messageOnScreen[currentLine] + message.split(" ")[0])) > 280) {
+			if (DrawingUtility.computeStringWidth(messageOnScreen[currentLine] + message.split(" ")[0], font) > 280) {
 				if (currentLine < 1) {
 					currentLine += 1;
 				} else {
@@ -66,13 +67,13 @@ public class DialogBox implements IRenderable {
 				if (message.split(" ").length > 0 && message.length() > 0) {
 					message = message.substring(1, message.length());
 					nextWord += " ";
-				}
+				} 
 			}
-		} else if (kEvent != null && kEvent.getKeyChar() == 'a') {
+		} else if (kEvent != null && kEvent.getText().equals("a")) {
 			clear();
 			hasSentMessage = true;
-		} else {
-			endLineWidth = DrawingUtility.computeStringWidth(font, messageOnScreen[currentLine]);
+		} else if (endLineWidth == 0){
+			endLineWidth = (int) DrawingUtility.computeStringWidth(messageOnScreen[currentLine], font);
 		}
 	}
 
@@ -92,24 +93,20 @@ public class DialogBox implements IRenderable {
 		}
 	}
 
-	public static BufferedImage getDialogBoxImage() {
+	public static Image getDialogBoxImage() {
 		if (dialogBoxImage == null) {
 			loadDialogBoxImage();
 		}
 		return dialogBoxImage;
 	}
 
-	public static void setDialogBoxImage(BufferedImage dialogBoxImage) {
+	public static void setDialogBoxImage(Image dialogBoxImage) {
 		DialogBox.dialogBoxImage = dialogBoxImage;
 	}
 
 	public static void loadDialogBoxImage() {
-		try {
-			setDialogBoxImage(ImageIO.read(new File(DialogBox.DIALOG_BOX_PATH)));
-		} catch (IOException e) {
-			System.err.println("Dialog Box Image Error");
-			e.printStackTrace();
-		}
+		File file = new File(DialogBox.DIALOG_BOX_PATH);
+		dialogBoxImage = new Image(file.toURI().toString());
 	}
 
 	public static int getX() {
@@ -129,8 +126,8 @@ public class DialogBox implements IRenderable {
 		hasSentMessage = false;
 		while (!hasSentMessage) {		
 			update();
-			
-			Frame.getGraphicComponent().repaint();
+
+			//MyCanvas.repaint();
 			Clock.tick();
 		}
 	}
