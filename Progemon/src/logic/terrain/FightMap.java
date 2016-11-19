@@ -65,11 +65,13 @@ public class FightMap implements IRenderable {
 		this.map = map;
 	}
 
-	public FightTerrain getFightTerrainAt(int x, int y) {
-		if (outOfMap(x, y)) {
+	public <T extends Number> FightTerrain getFightTerrainAt(T x, T y) {
+		int ix = (int) x;
+		int iy = (int) y;
+		if (outOfMap(ix, iy)) {
 			return null;
 		}
-		return map[y][x];
+		return map[iy][ix];
 	}
 
 	public FightTerrain getFightTerrainAt(FightTerrain paramFT, Direction d) {
@@ -88,7 +90,7 @@ public class FightMap implements IRenderable {
 		}
 		return null;
 	}
-	
+
 	public Pokemon getPokemonAt(FightTerrain fightTerrain) {
 		return getPokemonAt(fightTerrain.getX(), fightTerrain.getY());
 	}
@@ -168,5 +170,4 @@ public class FightMap implements IRenderable {
 		}
 	}
 
-	
 }

@@ -11,7 +11,6 @@ public class InputUtility {
 	private static int mouseX, mouseY;
 	private static MouseEvent lastMouseClickEvent, lastMouseMoveEvent;
 	private static ArrayList<Event> events = new ArrayList<Event>();
-	/** When it gets elements, it clears the history of event. */
 	private static KeyEvent lastKeyEvent, lastTypeKey;
 	private static ArrayList<KeyEvent> holdingKeys = new ArrayList<KeyEvent>();
 	private static ArrayList<KeyEvent> typeKeys = new ArrayList<KeyEvent>();
@@ -74,19 +73,11 @@ public class InputUtility {
 	public static void setLastKeyEvent(KeyEvent lastKeyEvent) {
 		InputUtility.lastKeyEvent = lastKeyEvent;
 	}
-<<<<<<< HEAD
 
-	public static void addHoldingKeys(KeyEvent kEvent) {
+	public static void addKeys(KeyEvent kEvent) {
 		boolean isIn = false;
 		for (KeyEvent holdingKey : holdingKeys) {
-			if (holdingKey.getKeyChar() == kEvent.getKeyChar()) {
-=======
-	
-	public static void addKeys(KeyEvent kEvent){
-		boolean isIn = false;
-		for (KeyEvent holdingKey : holdingKeys) {
-			if (holdingKey.getCode() == kEvent.getCode()){
->>>>>>> 568bada80f9cfbe97bd4e374df501a6a2b400cf2
+			if (holdingKey.getCode() == kEvent.getCode()) {
 				isIn = true;
 				break;
 			}
@@ -99,14 +90,9 @@ public class InputUtility {
 
 	public static void removeHoldingKeys(KeyEvent kEvent) {
 		for (int i = holdingKeys.size() - 1; i >= 0; i--) {
-<<<<<<< HEAD
-			if (holdingKeys.get(i).getKeyChar() == kEvent.getKeyChar()) {
-				holdingKeys.remove(holdingKeys.get(i));
-=======
-			if (holdingKeys.get(i).getCode() == kEvent.getCode()){
+			if (holdingKeys.get(i).getCode() == kEvent.getCode()) {
 				holdingKeys.remove(i);
 				break;
->>>>>>> 568bada80f9cfbe97bd4e374df501a6a2b400cf2
 			}
 		}
 	}
@@ -120,21 +106,5 @@ public class InputUtility {
 		typeKeys.clear();
 		return token;
 	}
-<<<<<<< HEAD
 
-	public static void addTypeKeys(KeyEvent kEvent) {
-		typeKeys.add(kEvent);
-	}
-
-	public static KeyEvent getLastTypeKey() {
-		return lastTypeKey;
-	}
-
-	public static void setLastTypeKey(KeyEvent lastTypeKey) {
-		InputUtility.lastTypeKey = lastTypeKey;
-	}
-
-=======
-	
->>>>>>> 568bada80f9cfbe97bd4e374df501a6a2b400cf2
 }

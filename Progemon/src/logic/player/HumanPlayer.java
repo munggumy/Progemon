@@ -1,10 +1,9 @@
 package logic.player;
 
-import java.awt.Color;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-
 import graphic.Frame;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import logic.character.Pokemon;
 import logic.terrain.FightTerrain;
 import utility.InputUtility;
@@ -54,9 +53,9 @@ public class HumanPlayer extends Player {
 			super.nextAttackedPokemon = null;
 			return false;
 		} else {
+			@Deprecated
 			FightTerrain destination = pokemon.getCurrentFightMap().getFightTerrainAt(
-					(mEvent.getX() - Frame.OFFSET_X) / FightTerrain.IMG_SIZE_X,
-					(mEvent.getY() - Frame.OFFSET_Y) / FightTerrain.IMG_SIZE_Y);
+					(mEvent.getX()) / FightTerrain.IMG_SIZE_X, (mEvent.getY()) / FightTerrain.IMG_SIZE_Y);
 			Pokemon otherPokemon = pokemon.getCurrentFightMap().getPokemonAt(destination);
 			if (otherPokemon != null && otherPokemon.getOwner() != pokemon.getOwner()) {
 				super.nextAttackedPokemon = otherPokemon;

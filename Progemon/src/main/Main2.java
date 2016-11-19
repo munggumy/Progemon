@@ -28,7 +28,7 @@ public class Main2 extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		FileUtility.loadAllDefaults();
-		
+
 		Pokemon charlizard = Pokedex.getPokemon("Charlizard");
 		charlizard.setLevel(38);
 		charlizard.calculateCurrentStats();
@@ -57,36 +57,30 @@ public class Main2 extends Application {
 		ArrayList<Player> players = new ArrayList<Player>();
 		players.add(p1);
 		players.add(p2);
-		
+
 		new DrawingUtility();
-		
-		//@SuppressWarnings("unused")
-		
-		/*Thread t = new Thread(() -> {
-			GUIFightGameManager gui = new GUIFightGameManager(players);
-	    });
-	    t.start();*/
-	    
-	    /*(this.updateUIThread = new Thread(() -> {
-            GUIFightGameManager gui = new GUIFightGameManager(players);
-        })).start();*/
-		
-		new Thread(new Task<Void>(){
 
-<<<<<<< HEAD
-		@SuppressWarnings("unused")
-		GUIFightGameManager gui = new GUIFightGameManager(players);
+		// @SuppressWarnings("unused")
 
-=======
+		/*
+		 * Thread t = new Thread(() -> { GUIFightGameManager gui = new
+		 * GUIFightGameManager(players); }); t.start();
+		 */
+
+		/*
+		 * (this.updateUIThread = new Thread(() -> { GUIFightGameManager gui =
+		 * new GUIFightGameManager(players); })).start();
+		 */
+
+		new Thread(new Task<Void>() {
+
 			@Override
 			protected Void call() throws Exception {
-				// TODO Auto-generated method stub
 				new GUIFightGameManager(players);
 				return null;
 			}
-			
+
 		}).start();
->>>>>>> 568bada80f9cfbe97bd4e374df501a6a2b400cf2
 	}
 
 }

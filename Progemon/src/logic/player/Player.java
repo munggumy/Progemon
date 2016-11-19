@@ -3,7 +3,7 @@ package logic.player;
 import java.util.ArrayList;
 
 import graphic.Frame;
-import graphic.MyCanvas;
+import graphic.GameScreen;
 import javafx.scene.paint.Color;
 import logic.character.ActiveSkill;
 import logic.character.Pokemon;

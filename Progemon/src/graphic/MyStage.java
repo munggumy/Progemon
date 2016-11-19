@@ -1,10 +1,7 @@
 package graphic;
 
 import javafx.animation.AnimationTimer;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -15,10 +12,10 @@ public class MyStage extends Stage {
 	public MyStage() {
 		super();
 		setTitle("Progemon");
-		MyCanvas canvas = new MyCanvas();
+		GameScreen canvas = new GameScreen();
 		Pane root = new Pane();
 		root.getChildren().add(canvas);
-		Scene scene = new Scene(root, 800, 600, Color.DARKGRAY);
+		Scene scene = new Scene(root, GameScreen.WIDTH, GameScreen.HEIGHT, Color.DARKGRAY);
 		setScene(scene);
 		addListener(scene);
 		setX(0);
@@ -27,7 +24,7 @@ public class MyStage extends Stage {
 
 			@Override
 			public void handle(long now) {
-				MyCanvas.repaint();
+				GameScreen.repaint();
 			}
 		}.start();
 		show();

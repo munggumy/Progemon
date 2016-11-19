@@ -1,8 +1,6 @@
 package logic.character;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,11 +10,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.imageio.ImageIO;
-
 import graphic.DrawingUtility;
+import graphic.GameScreen;
 import graphic.IRenderable;
-import graphic.MyCanvas;
 import javafx.scene.image.Image;
 import logic.filters.Filter;
 import logic.filters.MoveNoOverlapFilter;
@@ -187,11 +183,11 @@ public class Pokemon implements Cloneable, IRenderable {
 			selectedSkill.setAttackTerrain(currentFightTerrain);
 			selectedSkill.setTargetTerrain(p.currentFightTerrain);
 			selectedSkill.play();
-			MyCanvas.addObject(selectedSkill);
-			while(selectedSkill.isPlaying()) {
+			GameScreen.addObject(selectedSkill);
+			while (selectedSkill.isPlaying()) {
 				Clock.tick();
 			}
-			MyCanvas.removeObject(selectedSkill);
+			GameScreen.removeObject(selectedSkill);
 			attack(p, n);
 		} else {
 			System.err.println(getName() + " can't find move \"" + selectedSkill.getName() + "\".");
