@@ -1,9 +1,10 @@
 package logic.player;
 
-import java.awt.Color;
 import java.util.ArrayList;
 
 import graphic.Frame;
+import graphic.MyCanvas;
+import javafx.scene.paint.Color;
 import logic.character.ActiveSkill;
 import logic.character.Pokemon;
 import logic.filters.AttackFilter;
@@ -124,7 +125,6 @@ public abstract class Player {
 					throw new UnknownPhaseException("Unknown Phase in Player.java[" + this.name + "].");
 				}
 
-				Frame.getGraphicComponent().repaint();
 				Clock.tick();
 
 				if (phaseIsFinished) {

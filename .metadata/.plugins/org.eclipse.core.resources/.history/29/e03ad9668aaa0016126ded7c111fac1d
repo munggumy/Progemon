@@ -1,0 +1,59 @@
+package graphic;
+
+import java.util.ArrayList;
+
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
+
+public class Animation {
+	
+	/** Image used for animation. Must be consisted of 5 frames per row */
+	private Image image;
+	private int frameNumber, frameDelay, currentFrame, delayCounter;
+	private boolean playing;
+	
+	public Animation(Image image, int frameNumber) {
+		// TODO Auto-generated constructor stub
+		this.image = image;
+		this.frameNumber = frameNumber;
+		frameDelay = 0;
+	}
+	
+	public void play() {
+		playing = true;
+		delayCounter = 0;
+		currentFrame = 0;
+	}
+	
+	public void update() {
+		if(!playing) {
+			return;
+		}
+		if(frameDelay > delayCounter) {
+			delayCounter++;
+		}
+		else if(frameNumber > currentFrame) {
+			currentFrame++;
+			delayCounter = 0;
+		}
+		else{
+			stop();
+		}
+	}
+	
+	public void stop() {
+		playing = false;
+		delayCounter = 0;
+		currentFrame = 0;
+	}
+	
+	public Image getCurrentImage() {
+		WritableImage wimg = new WritableImage(image.getPixelReader(), currentFrame % 5 * 160, (int) (Math.floor(currentFrame / 5) * 80), 160, 80);
+		return wimg;
+	}
+	
+	public boolean isPlaying() {
+		return playing;
+	}
+
+}

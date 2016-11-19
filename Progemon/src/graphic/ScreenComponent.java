@@ -12,7 +12,7 @@ import javax.swing.JComponent;
 public class ScreenComponent extends JComponent {
 
 	private static CopyOnWriteArrayList<IRenderable> objectOnScreen = new CopyOnWriteArrayList<IRenderable>();
-	protected static Graphics2D g2;
+	public static Graphics2D g2;
 
 	public ScreenComponent() {
 		// TODO Auto-generated constructor stub

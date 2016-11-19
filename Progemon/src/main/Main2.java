@@ -1,8 +1,14 @@
 package main;
 
-import java.awt.Color;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import graphic.DrawingUtility;
+import graphic.MyStage;
+import javafx.application.Application;
+import javafx.concurrent.Task;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import logic.character.Pokemon;
 import logic.player.HPAIPlayer;
 import logic.player.HumanPlayer;
@@ -11,12 +17,18 @@ import manager.GUIFightGameManager;
 import utility.FileUtility;
 import utility.Pokedex;
 
-public class Main2 {
+public class Main2 extends Application {
 
 	public static void main(String[] args) {
+		launch(args);
+	}
 
+	private static Thread updateUIThread;
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
 		FileUtility.loadAllDefaults();
-
+		
 		Pokemon charlizard = Pokedex.getPokemon("Charlizard");
 		charlizard.setLevel(38);
 		charlizard.calculateCurrentStats();
@@ -45,10 +57,36 @@ public class Main2 {
 		ArrayList<Player> players = new ArrayList<Player>();
 		players.add(p1);
 		players.add(p2);
+		
+		new DrawingUtility();
+		
+		//@SuppressWarnings("unused")
+		
+		/*Thread t = new Thread(() -> {
+			GUIFightGameManager gui = new GUIFightGameManager(players);
+	    });
+	    t.start();*/
+	    
+	    /*(this.updateUIThread = new Thread(() -> {
+            GUIFightGameManager gui = new GUIFightGameManager(players);
+        })).start();*/
+		
+		new Thread(new Task<Void>(){
 
+<<<<<<< HEAD
 		@SuppressWarnings("unused")
 		GUIFightGameManager gui = new GUIFightGameManager(players);
 
+=======
+			@Override
+			protected Void call() throws Exception {
+				// TODO Auto-generated method stub
+				new GUIFightGameManager(players);
+				return null;
+			}
+			
+		}).start();
+>>>>>>> 568bada80f9cfbe97bd4e374df501a6a2b400cf2
 	}
 
 }

@@ -15,8 +15,8 @@ public class HumanPlayer extends Player {
 		super(name);
 	}
 
-	public HumanPlayer(String name, Pokemon starter_pokemon, Color color) {
-		super(name, starter_pokemon, color);
+	public HumanPlayer(String name, Pokemon starter_pokemon, javafx.scene.paint.Color blue) {
+		super(name, starter_pokemon, blue);
 	}
 
 	public HumanPlayer(String name, Color color) {

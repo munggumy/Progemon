@@ -1,6 +1,5 @@
 package logic.terrain;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -9,6 +8,7 @@ import javax.imageio.ImageIO;
 
 import graphic.DrawingUtility;
 import graphic.IRenderable;
+import javafx.scene.image.Image;
 
 /** FightTerrain */
 public class FightTerrain implements IRenderable {
@@ -17,7 +17,7 @@ public class FightTerrain implements IRenderable {
 	private short x, y;
 	private boolean isShadowed, isCursor, isPathSign, isHighlight;
 	private TerrainType type;
-	private BufferedImage terrainImage = null;
+	private Image terrainImage = null;
 
 	public static enum TerrainType {
 		GRASS, ROCK, WATER, TREE, GROUND;
@@ -116,23 +116,17 @@ public class FightTerrain implements IRenderable {
 
 	}
 
-	public final BufferedImage getTerrainImage() {
+	public final Image getTerrainImage() {
 		return terrainImage;
 	}
 
-	public final void setTerrainImage(BufferedImage terrainImage) {
+	public final void setTerrainImage(Image terrainImage) {
 		this.terrainImage = terrainImage;
 	}
 
 	public final void loadDefaultTerrainImage() {
-		try {
-			terrainImage = ImageIO.read(new File(type.getDefaultImageName()));
-		} catch (FileNotFoundException e) {
-			System.err.println("Terrain \"" + type + "\" Image not found.");
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		File file = new File(type.getDefaultImageName());
+		terrainImage = new Image(file.toURI().toString());
 	}
 
 	@Override

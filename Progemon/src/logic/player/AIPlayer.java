@@ -1,8 +1,7 @@
 package logic.player;
 
-import java.awt.Color;
-
 import graphic.Frame;
+import javafx.scene.paint.Color;
 import logic.character.ActiveSkill;
 import logic.character.Pokemon;
 import logic.filters.AttackFilter;
