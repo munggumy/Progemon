@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -129,7 +130,7 @@ public class Pokemon implements Cloneable, IRenderable {
 		this.base.fullHP = Double.parseDouble(args[4]);
 		this.moveRange = Integer.parseInt(args[5]);
 		this.attackRange = Integer.parseInt(args[6]);
-		this.moveType = toMoveType(args[7]);
+		this.moveType = toMoveType(args[7]).orElse(MoveType.WALK);
 		nextTurnTime = 0;
 		calculateCurrentStats();
 		calculateNextTurnTime();
@@ -511,13 +512,13 @@ public class Pokemon implements Cloneable, IRenderable {
 		Collections.reverse(paths);
 	}
 
-	public static MoveType toMoveType(String moveTypeString) {
+	public static Optional<MoveType> toMoveType(String moveTypeString) {
 		for (MoveType mt : MoveType.values()) {
 			if (mt.toString().equalsIgnoreCase(moveTypeString)) {
-				return mt;
+				return Optional.of(mt);
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	// Graphics

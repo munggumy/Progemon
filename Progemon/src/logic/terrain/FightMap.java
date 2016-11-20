@@ -3,6 +3,7 @@ package logic.terrain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import graphic.DrawingUtility;
 import graphic.IRenderable;
@@ -82,16 +83,16 @@ public class FightMap implements IRenderable {
 		map[y][x] = fightTerrain;
 	}
 
-	public Pokemon getPokemonAt(int x, int y) {
+	public Optional<Pokemon> getPokemonAt(int x, int y) {
 		for (Pokemon pokemon : pokemonsOnMap) {
 			if (pokemon.getCurrentFightTerrain().getX() == x && pokemon.getCurrentFightTerrain().getY() == y) {
-				return pokemon;
+				return Optional.of(pokemon);
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
-	public Pokemon getPokemonAt(FightTerrain fightTerrain) {
+	public Optional<Pokemon> getPokemonAt(FightTerrain fightTerrain) {
 		return getPokemonAt(fightTerrain.getX(), fightTerrain.getY());
 	}
 
