@@ -1,27 +1,15 @@
 package manager;
 
-<<<<<<< HEAD
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-=======
-import java.io.IOException;
->>>>>>> 568bada80f9cfbe97bd4e374df501a6a2b400cf2
 import java.util.ArrayList;
-import java.util.List;
 
 import graphic.DialogBox;
-import graphic.Frame;
-import graphic.MyCanvas;
-import graphic.MyStage;
+import graphic.GameScreen;
 import graphic.QueueBox;
-import graphic.ScreenComponent;
 import javafx.event.Event;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import logic.character.Pokemon;
-import logic.player.HumanPlayer;
 import logic.player.Player;
 import logic.terrain.FightMap;
 import utility.Clock;
@@ -57,13 +45,13 @@ public class GUIFightGameManager {
 
 	private void startFight() {
 
-		MyCanvas.addObject(fightMap);
+		GameScreen.addObject(fightMap);
 
 		spawnPokemons();
 		fightMap.sortPokemons();
 
-		MyCanvas.addObject(new DialogBox());
-		MyCanvas.addObject(new QueueBox());
+		GameScreen.addObject(new DialogBox());
+		GameScreen.addObject(new QueueBox());
 
 		DialogBox.sentMessage("Press 'a' to start!");
 
@@ -106,7 +94,8 @@ public class GUIFightGameManager {
 				if (mEvent.getEventType() == MouseEvent.MOUSE_MOVED) {
 					InputUtility.setLastMouseMoveEvent(mEvent);
 					System.out.println("MOVE   \t" + mEvent);
-				} else if (mEvent.getEventType() == MouseEvent.MOUSE_CLICKED && mEvent.getButton() == MouseButton.PRIMARY) {
+				} else if (mEvent.getEventType() == MouseEvent.MOUSE_CLICKED
+						&& mEvent.getButton() == MouseButton.PRIMARY) {
 					InputUtility.setLastMouseClickEvent(mEvent);
 					System.out.println("CLICKED\t" + mEvent);
 				} // end mouse event
