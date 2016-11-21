@@ -1,82 +1,78 @@
 package graphic;
 
+import java.awt.event.MouseEvent;
+
 import javafx.animation.AnimationTimer;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import utility.InputUtility;
 
 public class MyStage extends Stage {
-	
+
 	public MyStage() {
-		// TODO Auto-generated constructor stub
 		super();
 		setTitle("Progemon");
-		MyCanvas canvas = new MyCanvas();
+		GameScreen canvas = new GameScreen();
 		Pane root = new Pane();
 		root.getChildren().add(canvas);
-		Scene scene = new Scene(root, 800, 600, Color.DARKGRAY);
+		Scene scene = new Scene(root, GameScreen.WIDTH, GameScreen.HEIGHT, Color.DARKGRAY);
 		setScene(scene);
 		addListener(scene);
 		setX(0);
 		setY(0);
 		new AnimationTimer() {
-			
+
 			@Override
 			public void handle(long now) {
-				// TODO Auto-generated method stub
-				MyCanvas.repaint();
+				GameScreen.repaint();
 			}
 		}.start();
 		show();
 	}
-	
-	public void addListener(Scene scene){
-		scene.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
-			@Override
-			public void handle(MouseEvent mEvent) {
-				// TODO Auto-generated method stub
-				InputUtility.setLastMouseClickEvent(mEvent);
+	public void addListener(Scene scene) {
+		scene.setOnMousePressed(mEvent -> {
+			if (mEvent.getButton().equals(MouseButton.PRIMARY)) {
+				InputUtility.setMouseLeftDown(true);
+			} else if (mEvent.getButton().equals(MouseButton.SECONDARY)) {
+				InputUtility.setMouseRightDown(true);
 			}
 		});
-		
-		scene.setOnMouseMoved(new EventHandler<MouseEvent>() {
 
-			@Override
-			public void handle(MouseEvent mEvent) {
-				// TODO Auto-generated method stub
-				InputUtility.setLastMouseMoveEvent(mEvent);
-				InputUtility.setMouseX((int) mEvent.getX());
-				InputUtility.setMouseY((int) mEvent.getY());
+		scene.setOnMouseReleased(mEvent -> {
+			if (mEvent.getButton().equals(MouseButton.PRIMARY)) {
+				InputUtility.setMouseLeftDown(false);
+			} else if (mEvent.getButton().equals(MouseButton.SECONDARY)) {
+				InputUtility.setMouseRightDown(false);
 			}
 		});
-		
-		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
-			@Override
-			public void handle(KeyEvent kEvent) {
-				// TODO Auto-generated method stub
-				InputUtility.addEvents(kEvent);
-				InputUtility.addKeys(kEvent);
-				InputUtility.setLastKeyEvent(kEvent);
-			}
+		scene.setOnMouseEntered(mEvent -> {
+			InputUtility.setMouseOnScreen(true);
 		});
-		
-		scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
 
-			@Override
-			public void handle(KeyEvent kEvent) {
-				// TODO Auto-generated method stub
-				InputUtility.addEvents(kEvent);
-				InputUtility.removeHoldingKeys(kEvent);
-				InputUtility.setLastKeyEvent(kEvent);
-			}
+		scene.setOnMouseExited(mEvent -> {
+			InputUtility.setMouseOnScreen(false);
 		});
+
+		scene.setOnMouseMoved(mEvent -> {
+			InputUtility.setMouseX((int) mEvent.getX());
+			InputUtility.setMouseY((int) mEvent.getY());
+		});
+
+		scene.setOnKeyPressed(kEvent -> {
+			InputUtility.setKeyPressed(kEvent.getCode(), true);
+			InputUtility.setKeyTriggered(kEvent.getCode(), true);
+		});
+
+		scene.setOnKeyReleased(kEvent -> {
+			InputUtility.setKeyPressed(kEvent.getCode(), false);
+			InputUtility.setKeyTriggered(kEvent.getCode(), false);
+		});
+		System.out.println("Stage Finished Adding Listener");
 	}
 
 }

@@ -12,6 +12,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import logic.character.ActiveSkill;
+import logic.character.Element;
+import logic.character.Element.SW;
 import logic.character.Pokemon;
 import logic.terrain.FightTerrain;
 import utility.exception.FileWrongFormatException;
@@ -20,17 +22,16 @@ public class FileUtility {
 
 	private static final String DEFAULT_PATH = "load";
 	private static final String DEFAULT_LOAD_POKEMON = DEFAULT_PATH + "/pokemon_list.txt";
-	private static final String DEFAULT_LOAD_POKEDEX = DEFAULT_PATH + "/pokedex.txt";
+	private static final String DEFAULT_LOAD_POKEDEX = DEFAULT_PATH + "/pokedex.csv";
 	private static final String DEFAULT_LOAD_FIGHT_MAP = DEFAULT_PATH + "/fight_map.txt";
 	private static final String DEFAULT_ACTIVE_SKILLS = DEFAULT_PATH + "/active_skills.txt";
-	private static FileReader reader;
-	private static BufferedReader bufReader;
-	private static Scanner scanner;
+	private static final String DEFAULT_SW_TABLE = DEFAULT_PATH + "/strengthWeaknessTable.csv";
 
-	public static void loadAllDefaults() throws IOException {
+	public static void loadAllDefaults() {
 		loadActiveSkills();
 		loadPokedex();
 		loadPokemons();
+		loadStrengthWeaknessTable();
 	}
 
 	/**
@@ -38,18 +39,15 @@ public class FileUtility {
 	 * 
 	 * @throws IOException
 	 */
-	public static void loadPokemons(String filePath) throws IOException {
-		try {
-			reader = new FileReader(filePath);
-			bufReader = new BufferedReader(reader);
-			scanner = new Scanner(bufReader);
+	public static void loadPokemons(String filePath) {
+		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(filePath)))) {
 			Pattern pattern = Pattern.compile(
 					/*
 					 * id/name attack defence speed hp mRange aRange mType
 					 * attackMoves
 					 */
 					"(\\d+|\\w+)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d+)\\s(\\d+)\\s(\\w+)\\s?([\\w ,]*)");
-			Matcher matcher = null;
+			Matcher matcher;
 			while (scanner.hasNextLine()) {
 				matcher = pattern.matcher(scanner.nextLine());
 				if (!matcher.find()) {
@@ -80,20 +78,10 @@ public class FileUtility {
 			e.printStackTrace();
 		} catch (FileWrongFormatException e) {
 			e.printStackTrace();
-		} finally {
-			if (reader != null) {
-				reader.close();
-			}
-			if (scanner != null) {
-				scanner.close();
-			}
-			if (bufReader != null) {
-				bufReader.close();
-			}
 		}
 	}
 
-	public static void loadPokemons() throws IOException {
+	public static void loadPokemons() {
 		loadPokemons(DEFAULT_LOAD_POKEMON);
 	}
 
@@ -122,12 +110,9 @@ public class FileUtility {
 	 * 
 	 * @throws IOException
 	 */
-	public static void loadPokedex(String filePath) throws IOException {
-		try {
-			reader = new FileReader(filePath);
-			bufReader = new BufferedReader(reader);
-			scanner = new Scanner(bufReader);
-			Pattern pattern = Pattern.compile("(\\d+)\\s([\\w\\s]+)");
+	public static void loadPokedex(String filePath) {
+		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(filePath)))) {
+			Pattern pattern = Pattern.compile("(\\d+),([\\w\\s]+)");
 			Matcher matcher;
 			int temp_id;
 			String temp_name;
@@ -137,54 +122,30 @@ public class FileUtility {
 				if (matcher.find()) {
 					temp_id = Integer.parseInt(matcher.group(1));
 					temp_name = matcher.group(2);
-					utility.Pokedex.addPokemonToPokedex(temp_id, temp_name);
+					Pokedex.addPokemonToPokedex(temp_id, temp_name);
 				}
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} finally {
-			if (scanner != null) {
-				scanner.close();
-			}
-			if (reader != null) {
-				reader.close();
-			}
-			if (bufReader != null) {
-				bufReader.close();
-			}
 		}
 	}
 
-	public static void loadPokedex() throws IOException {
+	public static void loadPokedex() {
 		loadPokedex(DEFAULT_LOAD_POKEDEX);
 	}
 
 	// Load Fight Map
 	/** Fightmap fm = new Fightmap(loadFightMap()); */
-	public static FightTerrain[][] loadFightMap(String filePath) throws IOException {
+	public static FightTerrain[][] loadFightMap(String filePath) {
 		ArrayList<FightTerrain[]> temp_map = new ArrayList<FightTerrain[]>();
-		try {
-			reader = new FileReader(filePath);
-			bufReader = new BufferedReader(reader);
-			scanner = new Scanner(bufReader);
+		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(filePath)))) {
 			int widthInBlocks = scanner.nextInt();
 			int heightInBlocks = scanner.nextInt();
 			for (short y = 0; y < heightInBlocks; y++) {
-				temp_map.add(loadFightMapLine(widthInBlocks, y));
+				temp_map.add(loadFightMapLine(widthInBlocks, y, scanner));
 			}
-
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} finally {
-			if (reader != null) {
-				reader.close();
-			}
-			if (scanner != null) {
-				scanner.close();
-			}
-			if (bufReader != null) {
-				bufReader.close();
-			}
 		}
 
 		if (temp_map.isEmpty()) {
@@ -195,13 +156,13 @@ public class FileUtility {
 
 	}
 
-	public static FightTerrain[][] loadFightMap() throws IOException {
+	public static FightTerrain[][] loadFightMap() {
 		return loadFightMap(DEFAULT_LOAD_FIGHT_MAP);
 	}
 
 	// Load Fight Map Private Methods
 
-	private static FightTerrain[] loadFightMapLine(int width, short y) {
+	private static FightTerrain[] loadFightMapLine(int width, short y, Scanner scanner) {
 		ArrayList<FightTerrain> temp_map_line = new ArrayList<FightTerrain>();
 		for (short x = 0; x < width; x++) {
 			temp_map_line.add(new FightTerrain(x, y, FightTerrain.toFightTerrainType(scanner.next())));
@@ -227,11 +188,8 @@ public class FileUtility {
 
 	// Load Active Skills
 
-	public static void loadActiveSkills(String filePath) throws IOException {
-		try {
-			reader = new FileReader(filePath);
-			bufReader = new BufferedReader(reader);
-			scanner = new Scanner(bufReader);
+	public static void loadActiveSkills(String filePath) {
+		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(filePath)))) {
 			Pattern pattern = Pattern.compile("([\\w\\s]+)\\s(\\d+)");
 			Matcher matcher;
 			String skillName;
@@ -250,21 +208,34 @@ public class FileUtility {
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} finally {
-			if (reader != null) {
-				reader.close();
-			}
-			if (scanner != null) {
-				scanner.close();
-			}
-			if (bufReader != null) {
-				bufReader.close();
-			}
 		}
 	}
 
-	public static void loadActiveSkills() throws IOException {
+	public static void loadActiveSkills() {
 		loadActiveSkills(DEFAULT_ACTIVE_SKILLS);
+	}
+
+	public static void loadStrengthWeaknessTable(String filePath) {
+		final int NUM_ELEMENTS = Element.values().length;
+		Element.SWFactor = new SW[NUM_ELEMENTS][NUM_ELEMENTS];
+		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(filePath)))) {
+			for (int i = 0; i < NUM_ELEMENTS; i++) {
+				String[] line = scanner.nextLine().split("\\s*,\\s*");
+				for (int j = 0; j < NUM_ELEMENTS; j++) {
+					if (line[j].equals("")) {
+						Element.SWFactor[i][j] = Element.SW.N;
+					} else {
+						Element.SWFactor[i][j] = Element.SW.valueOf(line[j]);
+					}
+				}
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void loadStrengthWeaknessTable() {
+		loadStrengthWeaknessTable(DEFAULT_SW_TABLE);
 	}
 
 }

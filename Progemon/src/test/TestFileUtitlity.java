@@ -5,26 +5,29 @@ package test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import logic.character.ActiveSkill;
+import logic.character.Element;
+import logic.character.Element.SW;
 import logic.character.Pokemon;
 import logic.terrain.FightTerrain;
-import utility.Pokedex;
 import utility.FileUtility;
+import utility.Pokedex;
 
 /**
  * @author Kris
  *
  */
 public class TestFileUtitlity {
+
+	public static final double EPSILON = 1e-15;
 
 	/**
 	 * @throws java.lang.Exception
@@ -36,11 +39,8 @@ public class TestFileUtitlity {
 
 	@Test
 	public void testLoadPokedex() {
-		try {
-			FileUtility.loadPokedex();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
+		FileUtility.loadPokedex();
 
 		// Check HashMap properties
 
@@ -71,12 +71,7 @@ public class TestFileUtitlity {
 	@Test
 	public void testLoadFightMap() {
 		FightTerrain[][] fightMap = null;
-		try {
-			fightMap = FileUtility.loadFightMap();
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail();
-		}
+		fightMap = FileUtility.loadFightMap();
 
 		assertFalse("Fightmap != null", fightMap == null);
 		assertEquals("Width = 8", 8, fightMap[0].length);
@@ -102,30 +97,22 @@ public class TestFileUtitlity {
 
 	@Test
 	public void testLoadPokemonList() {
-		try {
-			FileUtility.loadActiveSkills();
-			FileUtility.loadPokemons();
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail("Can't Load Pokemon File");
-		}
+		FileUtility.loadActiveSkills();
+		FileUtility.loadPokemons();
 
-		assertEquals("All Pokemons = 10", 10, Pokedex.getAllPokemons().size());
+		assertEquals("All Pokemons = 18", 18, Pokedex.getAllPokemons().size());
 
-		String[] args = "001 49 49 45 45 3 1 WALK".split(" ");
+		String[] args = "001 49 49 45 45 1 1 WALK".split(" ");
 		Pokemon testFirstPokemon = new Pokemon(args);
 		Pokemon firstPokemon = Pokedex.getAllPokemons().get(0);
-
-		assertTrue("First Pokemon Stats",
-				Double.compare(testFirstPokemon.getBase().attackStat, firstPokemon.getBase().attackStat) == 0);
-		assertTrue("First Pokemon Stats",
-				Double.compare(testFirstPokemon.getBase().defenceStat, firstPokemon.getBase().defenceStat) == 0);
-		assertTrue("First Pokemon Stats",
-				Double.compare(testFirstPokemon.getMoveRange(), firstPokemon.getMoveRange()) == 0);
-		assertTrue("First Pokemon Stats",
-				Double.compare(testFirstPokemon.getBase().speed, firstPokemon.getBase().speed) == 0);
-		assertTrue("First Pokemon Stats",
-				Double.compare(testFirstPokemon.getBase().fullHP, firstPokemon.getBase().fullHP) == 0);
+		
+		assertEquals("First Pokemon Stats", testFirstPokemon.getBase().attackStat, firstPokemon.getBase().attackStat,
+				EPSILON);
+		assertEquals("First Pokemon Stats DEF", testFirstPokemon.getBase().defenceStat, firstPokemon.getBase().defenceStat,
+				EPSILON);
+		assertEquals("First Pokemon Stats", testFirstPokemon.getMoveRange(), firstPokemon.getMoveRange(), EPSILON);
+		assertEquals("First Pokemon Stats", testFirstPokemon.getBase().speed, firstPokemon.getBase().speed, EPSILON);
+		assertEquals("First Pokemon Stats", testFirstPokemon.getBase().fullHP, firstPokemon.getBase().fullHP, EPSILON);
 		assertEquals("First Pokemon Moves", 2, firstPokemon.getActiveSkills().size());
 
 		// Ivysaur Moves = 2
@@ -139,11 +126,8 @@ public class TestFileUtitlity {
 	@Test
 	public void testLoadActiveSkills() {
 		ActiveSkill.clearAllActiveSkills();
-		try {
-			FileUtility.loadActiveSkills();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
+		FileUtility.loadActiveSkills();
 
 		ArrayList<ActiveSkill> aSkills = new ArrayList<ActiveSkill>(ActiveSkill.getAllActiveSkills());
 
@@ -157,11 +141,8 @@ public class TestFileUtitlity {
 	public void testLoadActiveSkills2() {
 		ActiveSkill.clearAllActiveSkills();
 		String customFilePath = "test/test1loadActiveSkills.txt";
-		try {
-			FileUtility.loadActiveSkills(customFilePath);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
+		FileUtility.loadActiveSkills(customFilePath);
 
 		ArrayList<ActiveSkill> aSkills = new ArrayList<ActiveSkill>(ActiveSkill.getAllActiveSkills());
 
@@ -171,6 +152,20 @@ public class TestFileUtitlity {
 		assertTrue("First Move : Hello WORLD", Double.compare(13, aSkills.get(0).getPower()) == 0);
 		assertEquals("Second Move : Utit Mo Ko", "Utit Mo Ko", aSkills.get(1).getName());
 		assertTrue("Second Move : Utit Mo Ko", Double.compare(91, aSkills.get(1).getPower()) == 0);
+	}
+
+	@Test
+	public void testLoadSWTable() {
+		FileUtility.loadStrengthWeaknessTable();
+		SW[][] table = Element.SWFactor;
+		assertNotNull(table);
+		assertEquals(17, table.length);
+		assertEquals(17, table[0].length);
+		assertEquals(Element.SW.N, table[0][0]);
+		assertEquals(Element.SW.W, table[1][1]);
+		assertEquals(Element.SW.S, table[2][1]);
+		assertEquals(Element.SW.W, table[1][2]);
+		assertEquals(Element.SW.N, table[5][0]);
 	}
 
 }

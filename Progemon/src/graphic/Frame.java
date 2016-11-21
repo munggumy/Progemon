@@ -10,7 +10,10 @@ import javax.swing.JFrame;
 
 import utility.InputUtility;
 
+@Deprecated
 public class Frame {
+
+	public static final int OFFSET_X = 8, OFFSET_Y = 31;
 
 	private static JFrame frame;
 	private static ScreenComponent graphicComponent;
@@ -29,7 +32,7 @@ public class Frame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				super.mouseClicked(e);
-				InputUtility.addInputEvents(e);
+				// InputUtility.addInputEvents(e);
 			}
 
 		});
@@ -38,9 +41,9 @@ public class Frame {
 			@Override
 			public void mouseMoved(MouseEvent e) {
 				super.mouseMoved(e);
-				InputUtility.addInputEvents(e);
-				InputUtility.setMouseX(e.getX() - 8);
-				InputUtility.setMouseY(e.getY() - 31);
+				// InputUtility.addInputEvents(e);
+				InputUtility.setMouseX(e.getX() - OFFSET_X);
+				InputUtility.setMouseY(e.getY() - OFFSET_Y);
 			}
 
 		});
@@ -50,24 +53,24 @@ public class Frame {
 			public void keyPressed(KeyEvent e) {
 				// TODO Auto-generated method stub
 				super.keyPressed(e);
-				InputUtility.addInputEvents(e);
-				InputUtility.addHoldingKeys(e);
-				InputUtility.setLastKeyEvent(e);
+				// InputUtility.addInputEvents(e);
+				// InputUtility.addHoldingKeys(e);
+				// InputUtility.setLastKeyEvent(e);
 			}
-			
+
 			@Override
 			public void keyReleased(KeyEvent e) {
 				// TODO Auto-generated method stub
 				super.keyReleased(e);
-				InputUtility.addInputEvents(e);
-				InputUtility.removeHoldingKeys(e);
+				// InputUtility.addInputEvents(e);
+				// InputUtility.removeHoldingKeys(e);
 			}
-			
+
 			@Override
 			public void keyTyped(KeyEvent e) {
 				// TODO Auto-generated method stub
 				super.keyTyped(e);
-				InputUtility.addTypeKeys(e);
+				// InputUtility.addTypeKeys(e);
 			}
 
 		});

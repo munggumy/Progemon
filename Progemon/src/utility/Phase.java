@@ -1,5 +1,6 @@
 package utility;
 
+/** State in Finite State Machine */
 public enum Phase {
 	initialPhase {
 	},

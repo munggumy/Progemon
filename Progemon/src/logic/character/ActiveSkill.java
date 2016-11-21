@@ -1,6 +1,5 @@
 package logic.character;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -9,7 +8,6 @@ import java.util.List;
 import graphic.Animation;
 import graphic.DrawingUtility;
 import graphic.IRenderable;
-import javafx.scene.image.Image;
 import logic.terrain.FightTerrain;
 import utility.StringUtility;
 
@@ -32,8 +30,8 @@ public class ActiveSkill extends Animation implements IRenderable {
 	public static ActiveSkill getActiveSkill(String skillName) {
 		return getActiveSkill(skillName, DEFAULT_POWER, true);
 	}
-	
-	public static ActiveSkill getActiveSkill(String skillName, double powerIfNotCreated){
+
+	public static ActiveSkill getActiveSkill(String skillName, double powerIfNotCreated) {
 		return getActiveSkill(skillName, powerIfNotCreated, true);
 	}
 
@@ -56,8 +54,8 @@ public class ActiveSkill extends Animation implements IRenderable {
 	public static List<ActiveSkill> getAllActiveSkills() {
 		return Collections.unmodifiableList(allActiveSkills);
 	}
-	
-	public static void clearAllActiveSkills(){
+
+	public static void clearAllActiveSkills() {
 		allActiveSkills.clear();
 	}
 
@@ -93,21 +91,21 @@ public class ActiveSkill extends Animation implements IRenderable {
 	@Override
 	public void getDepth() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	public void setAttackTerrain(FightTerrain attackTerrain) {
 		this.attackTerrain = attackTerrain;
 	}
-	
+
 	public void setTargetTerrain(FightTerrain targetTerrain) {
 		this.targetTerrain = targetTerrain;
 	}
-	
+
 	public FightTerrain getAttackTerrain() {
 		return attackTerrain;
 	}
-	
+
 	public FightTerrain getTargetTerrain() {
 		return targetTerrain;
 	}
