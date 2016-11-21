@@ -1,22 +1,21 @@
 package logic.character;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
-
-import javax.imageio.ImageIO;
+import java.util.stream.Collectors;
 
 import graphic.DrawingUtility;
+import graphic.GameScreen;
 import graphic.IRenderable;
-import graphic.MyCanvas;
 import javafx.scene.image.Image;
 import logic.filters.Filter;
-import logic.filters.MoveFilter;
 import logic.filters.MoveNoOverlapFilter;
 import logic.player.Player;
 import logic.terrain.FightMap;
@@ -131,7 +130,7 @@ public class Pokemon implements Cloneable, IRenderable {
 		this.base.fullHP = Double.parseDouble(args[4]);
 		this.moveRange = Integer.parseInt(args[5]);
 		this.attackRange = Integer.parseInt(args[6]);
-		this.moveType = toMoveType(args[7]);
+		this.moveType = toMoveType(args[7]).orElse(MoveType.WALK);
 		nextTurnTime = 0;
 		calculateCurrentStats();
 		calculateNextTurnTime();
@@ -142,7 +141,7 @@ public class Pokemon implements Cloneable, IRenderable {
 	// move and attack
 
 	/**
-	 * Use to relocate <code>this</code> on <code>fightMap</code>.
+	 * Use to relocate this <code>Pokemon</code> on <code>fightMap</code>.
 	 * <code>currentFightTerrain</code> will be automatically generated. Does
 	 * not use <code>Filter.check()</code>.
 	 * 
@@ -185,11 +184,11 @@ public class Pokemon implements Cloneable, IRenderable {
 			selectedSkill.setAttackTerrain(currentFightTerrain);
 			selectedSkill.setTargetTerrain(p.currentFightTerrain);
 			selectedSkill.play();
-			MyCanvas.addObject(selectedSkill);
-			while(selectedSkill.isPlaying()) {
+			GameScreen.addObject(selectedSkill);
+			while (selectedSkill.isPlaying()) {
 				Clock.tick();
 			}
-			MyCanvas.removeObject(selectedSkill);
+			GameScreen.removeObject(selectedSkill);
 			attack(p, n);
 		} else {
 			System.err.println(getName() + " can't find move \"" + selectedSkill.getName() + "\".");
@@ -284,15 +283,18 @@ public class Pokemon implements Cloneable, IRenderable {
 		}
 	}
 
-	public ArrayList<FightTerrain> getAvaliableFightTerrains() {
-		ArrayList<FightTerrain> out = new ArrayList<FightTerrain>();
-		FightTerrain last;
-		for (Path path : paths) {
-			last = path.getLast();
-			if (last != null && !out.contains(last)) {
-				out.add(last);
-			}
-		}
+	public HashSet<FightTerrain> getAvaliableFightTerrains() {
+		HashSet<FightTerrain> out;
+		// FightTerrain last;
+		// for (Path path : paths) {
+		// last = path.getLast();
+		// if (last != null && !out.contains(last)) {
+		// out.add(last);
+		// }
+		// }
+		Function<Path, FightTerrain> getLast = (Path p) -> p.getLast();
+		out = (HashSet<FightTerrain>) paths.stream().map(getLast).filter((FightTerrain last) -> (last != null))
+				.collect(Collectors.toSet());
 		return out;
 	}
 
@@ -510,13 +512,13 @@ public class Pokemon implements Cloneable, IRenderable {
 		Collections.reverse(paths);
 	}
 
-	public static MoveType toMoveType(String moveTypeString) {
+	public static Optional<MoveType> toMoveType(String moveTypeString) {
 		for (MoveType mt : MoveType.values()) {
 			if (mt.toString().equalsIgnoreCase(moveTypeString)) {
-				return mt;
+				return Optional.of(mt);
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	// Graphics
@@ -643,6 +645,14 @@ public class Pokemon implements Cloneable, IRenderable {
 
 	public final Element getSecondaryElement() {
 		return secondaryElement;
+	}
+
+	public final void setPrimaryElement(Element element) {
+		primaryElement = element;
+	}
+
+	public final void setSecondaryElement(Element element) {
+		secondaryElement = element;
 	}
 
 	public final FightMap getCurrentFightMap() {

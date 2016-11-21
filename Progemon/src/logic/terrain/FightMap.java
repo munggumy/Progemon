@@ -3,6 +3,7 @@ package logic.terrain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import graphic.DrawingUtility;
 import graphic.IRenderable;
@@ -80,13 +81,17 @@ public class FightMap implements IRenderable {
 		map[y][x] = fightTerrain;
 	}
 
-	public Pokemon getPokemonAt(int x, int y) {
+	public Optional<Pokemon> getPokemonAt(int x, int y) {
 		for (Pokemon pokemon : pokemonsOnMap) {
 			if (pokemon.getCurrentFightTerrain().getX() == x && pokemon.getCurrentFightTerrain().getY() == y) {
-				return pokemon;
+				return Optional.of(pokemon);
 			}
 		}
-		return null;
+		return Optional.empty();
+	}
+
+	public Optional<Pokemon> getPokemonAt(FightTerrain fightTerrain) {
+		return getPokemonAt(fightTerrain.getX(), fightTerrain.getY());
 	}
 
 	public boolean outOfMap(int x, int y) {
@@ -98,9 +103,11 @@ public class FightMap implements IRenderable {
 	}
 
 	public void draw() {
-		int x = InputUtility.getMouseX(), y = InputUtility.getMouseY();
-		if (0 <= x && x <= 319 && 0 <= y && y <= 239) {
-			getFightTerrainAt((int) Math.floor(x / 40), (int) Math.floor(y / 40)).setCursor(true);
+		double x = InputUtility.getMouseX(), y = InputUtility.getMouseY();
+		if (0 <= x && x <= 319 && 0 <= y && y <= 239)
+		{
+			getFightTerrainAt((int) Math.floor(x / FightTerrain.IMG_SIZE_X),
+					(int) Math.floor(y / FightTerrain.IMG_SIZE_Y)).setCursor(true);
 		}
 		DrawingUtility.drawFightMap(this);
 	}
@@ -130,7 +137,7 @@ public class FightMap implements IRenderable {
 	public boolean addPokemonToMap(int x, int y, Pokemon pokemon) {
 		Filter canBePlacedFilter = new MoveFilter();
 		if (!outOfMap(x, y) && pokemon != null && canBePlacedFilter.check(pokemon, this, map[y][x])
-				&& this.getPokemonAt(x, y) == null) {
+				&& !this.getPokemonAt(x, y).isPresent()) {
 			// Can be Added!
 			pokemon.setCurrentFightMap(this);
 			pokemon.move(x, y);
@@ -163,4 +170,5 @@ public class FightMap implements IRenderable {
 			}
 		}
 	}
+
 }

@@ -6,6 +6,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import manager.GUIFightGameManager;
@@ -15,11 +16,11 @@ import utility.InputUtility;
 public class DialogBox implements IRenderable {
 
 	protected static final String DIALOG_BOX_PATH = "load\\img\\dialogbox\\Theme1.png";
-
 	private static Image dialogBoxImage = null;
 
 	private static final int x = 0, y = 240;
-	//private static final Font DEFAULT_FONT = new Font(Font.MONOSPACED, Font.PLAIN, 15);
+	// private static final Font DEFAULT_FONT = new Font(Font.MONOSPACED,
+	// Font.PLAIN, 15);
 	private static final Font DEFAULT_FONT = new Font("Monospaced", 15);
 	private static String message = "", nextWord = "";
 	private static String[] messageOnScreen = { "", "" };
@@ -28,6 +29,8 @@ public class DialogBox implements IRenderable {
 	private static int yShift = 0;
 	private static boolean hasSentMessage = true;
 	private static int endLineWidth;
+
+	public static final KeyCode advancingKey = KeyCode.A;
 
 	@Override
 	public void draw() {
@@ -42,8 +45,11 @@ public class DialogBox implements IRenderable {
 	}
 
 	public static void update() {
-		KeyEvent kEvent = InputUtility.getLastKeyEvent();
-		if (kEvent != null && kEvent.getText().equals("a")) {
+		// KeyEvent kEvent = InputUtility.getLastKeyEvent();
+		// if (kEvent != null && kEvent.getCode().equals(advancingKey)) {
+		// textDelay = 0;
+		// }
+		if (InputUtility.getKeyTriggered(advancingKey)) {
 			textDelay = 0;
 		}
 		if (nextWord.length() > 0) {
@@ -67,12 +73,14 @@ public class DialogBox implements IRenderable {
 				if (message.split(" ").length > 0 && message.length() > 0) {
 					message = message.substring(1, message.length());
 					nextWord += " ";
-				} 
+				}
 			}
-		} else if (kEvent != null && kEvent.getText().equals("a")) {
+			// } else if (kEvent != null &&
+			// kEvent.getCode().equals(advancingKey)) {
+		} else if (InputUtility.getKeyTriggered(advancingKey)) {
 			clear();
 			hasSentMessage = true;
-		} else if (endLineWidth == 0){
+		} else if (endLineWidth == 0) {
 			endLineWidth = (int) DrawingUtility.computeStringWidth(messageOnScreen[currentLine], font);
 		}
 	}
@@ -124,10 +132,9 @@ public class DialogBox implements IRenderable {
 	public static void sentMessage(String message) {
 		DialogBox.message = message;
 		hasSentMessage = false;
-		while (!hasSentMessage) {		
+		while (!hasSentMessage) {
 			update();
-
-			//MyCanvas.repaint();
+			// MyCanvas.repaint();
 			Clock.tick();
 		}
 	}

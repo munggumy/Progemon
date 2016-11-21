@@ -1,6 +1,5 @@
 package main;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import graphic.DrawingUtility;
@@ -16,10 +15,12 @@ import logic.player.Player;
 import manager.GUIFightGameManager;
 import utility.FileUtility;
 import utility.Pokedex;
+import utility.ThreadUtility;
 
-public class Main2 extends Application{
+public class Main2 extends Application {
 
 	public static void main(String[] args) {
+		Thread.setDefaultUncaughtExceptionHandler(ThreadUtility::showError);
 		launch(args);
 	}
 
@@ -27,19 +28,15 @@ public class Main2 extends Application{
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		// TODO Auto-generated method stub
+		Thread.setDefaultUncaughtExceptionHandler(ThreadUtility::showError);
 		new MyStage();
-		try {
-			FileUtility.loadActiveSkills();
-			FileUtility.loadPokedex();
-			FileUtility.loadPokemons();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		FileUtility.loadAllDefaults();
+
 		Pokemon charlizard = Pokedex.getPokemon("Charlizard");
 		charlizard.setLevel(38);
 		charlizard.calculateCurrentStats();
 		charlizard.resetHP();
+
 		Pokemon caterpie = Pokedex.getPokemon("Caterpie");
 		caterpie.setLevel(5);
 		caterpie.calculateCurrentStats();
@@ -51,6 +48,7 @@ public class Main2 extends Application{
 		wartortle.resetHP();
 		Pokemon pidgeotto = Pokedex.getPokemon("Pidgeotto");
 		pidgeotto.setLevel(30);
+		pidgeotto.setMoveRange(8);
 		pidgeotto.calculateCurrentStats();
 		pidgeotto.resetHP();
 
@@ -62,30 +60,31 @@ public class Main2 extends Application{
 		ArrayList<Player> players = new ArrayList<Player>();
 		players.add(p1);
 		players.add(p2);
-		
+
 		new DrawingUtility();
-		
-		//@SuppressWarnings("unused")
-		
-		/*Thread t = new Thread(() -> {
-			GUIFightGameManager gui = new GUIFightGameManager(players);
-	    });
-	    t.start();*/
-	    
-	    /*(this.updateUIThread = new Thread(() -> {
-            GUIFightGameManager gui = new GUIFightGameManager(players);
-        })).start();*/
-		
-		new Thread(new Task<Void>(){
+
+		// @SuppressWarnings("unused")
+
+		/*
+		 * Thread t = new Thread(() -> { GUIFightGameManager gui = new
+		 * GUIFightGameManager(players); }); t.start();
+		 */
+
+		/*
+		 * (this.updateUIThread = new Thread(() -> { GUIFightGameManager gui =
+		 * new GUIFightGameManager(players); })).start();
+		 */
+		Thread logic = new Thread(new Task<Void>() {
 
 			@Override
 			protected Void call() throws Exception {
-				// TODO Auto-generated method stub
 				new GUIFightGameManager(players);
 				return null;
 			}
-			
-		}).start();
+
+		});
+		logic.setName("Logic Thread");
+		logic.start();
 	}
 
 }
