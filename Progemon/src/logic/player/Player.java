@@ -92,6 +92,8 @@ public abstract class Player {
 					break;
 
 				case preAttackPhase:
+					nextAttackedPokemon = Optional.empty();
+					nextAttackSkill = Optional.empty();
 					pokemon.findBlocksAround(pokemon.getAttackRange(), new AttackFilter());
 					pokemon.sortPaths();
 					pokemon.shadowBlocks();

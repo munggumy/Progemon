@@ -1,10 +1,6 @@
 package logic.terrain;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import graphic.DrawingUtility;
 import graphic.IRenderable;

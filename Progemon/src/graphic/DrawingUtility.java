@@ -1,6 +1,7 @@
 package graphic;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 import com.sun.javafx.tk.Toolkit;
@@ -47,14 +48,17 @@ public class DrawingUtility {
 	}
 
 	public static void drawFightMap(FightMap fightMap) {
-		for (FightTerrain[] fightTerrains : fightMap.getMap()) {
-			for (FightTerrain fightTerrain : fightTerrains) {
-				fightTerrain.draw();
-			}
-		}
-		for (int i = 0; i < fightMap.getPokemonsOnMap().size(); i++) {
-			fightMap.getPokemonsOnMap().get(i).draw();
-		}
+		// for (FightTerrain[] fightTerrains : fightMap.getMap()) {
+		// for (FightTerrain fightTerrain : fightTerrains) {
+		// fightTerrain.draw();
+		// }
+		// }
+		Arrays.asList(fightMap.getMap()).stream().flatMap((FightTerrain[] ft) -> Arrays.asList(ft).stream())
+				.forEach(ft -> ft.draw());
+		fightMap.getPokemonsOnMap().forEach(p -> p.draw());
+//		for (int i = 0; i < fightMap.getPokemonsOnMap().size(); i++) {
+//			fightMap.getPokemonsOnMap().get(i).draw();
+//		}
 	}
 
 	public static void drawFightTerrain(FightTerrain fightTerrain) {

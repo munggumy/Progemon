@@ -1,18 +1,13 @@
 package utility;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import main.Main;
 
 public class ThreadUtility {
 

@@ -1,11 +1,8 @@
 package utility;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 
 public class InputUtility {
 
@@ -100,6 +97,7 @@ public class InputUtility {
 		}
 	}
 
+	/** Update Trigger Mechanism at end of Clock.tick()*/
 	public static void postUpdate() {
 		setMouseLeftLastDown(false);
 		setMouseRightLastDown(false);

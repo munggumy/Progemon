@@ -3,7 +3,6 @@ package utility;
 import graphic.Animation;
 import graphic.AnimationHolder;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 
 public class Clock {
 

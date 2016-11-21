@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.character.Pokemon;
-import logic.terrain.FightMap;
 import manager.GUIFightGameManager;
 import utility.Clock;
 

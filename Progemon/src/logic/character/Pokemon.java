@@ -310,7 +310,7 @@ public class Pokemon implements Cloneable, IRenderable {
 	}
 
 	public Path findPathTo(FightTerrain destination) {
-		return findPathTo(destination, 20);
+		return findPathTo(destination, 40);
 	}
 
 	public Path findPathTo(FightTerrain destination, int limit) {
@@ -332,6 +332,10 @@ public class Pokemon implements Cloneable, IRenderable {
 				super(nextFightTerrain, currentPath);
 				this.totalCost = counter;
 			}
+		}
+		
+		if(getCurrentFightTerrain().equals(destination)){
+			return new Path(destination);
 		}
 
 		paths.clear();

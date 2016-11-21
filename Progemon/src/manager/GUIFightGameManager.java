@@ -21,7 +21,7 @@ public class GUIFightGameManager {
 	private static Pokemon currentPokemon = null;
 	private static Player currentPlayer = null;
 	private static Player winnerPlayer = null;
-	private static Phase currentPhase = null;
+	private static Phase currentPhase;
 
 	public GUIFightGameManager(ArrayList<Player> players) {
 
@@ -33,7 +33,6 @@ public class GUIFightGameManager {
 			System.out.println("Player : " + player.getName());
 			return player.getPokemons().stream();
 		}).map(p -> p.getName()).forEach(System.out::println);
-		;
 
 		fightMap = new FightMap(FileUtility.loadFightMap());
 		// Load Graphics
@@ -47,6 +46,7 @@ public class GUIFightGameManager {
 		GameScreen.addObject(fightMap);
 		spawnPokemons();
 		fightMap.sortPokemons();
+		System.out.println("Finish Spawning Pokemons");
 
 		GameScreen.addObject(new DialogBox());
 		GameScreen.addObject(new QueueBox());
@@ -74,7 +74,7 @@ public class GUIFightGameManager {
 			if (checkWinner()) {
 				System.out.println("The fight has ended.");
 				System.out.println("The winner is " + winnerPlayer.getName());
-				DialogBox.sentMessage("END OF FIGHT");
+				DialogBox.sentMessage("The winner is " + winnerPlayer.getName());
 				break;
 			}
 
@@ -128,7 +128,7 @@ public class GUIFightGameManager {
 
 			Clock.tick();
 		}
-
+		
 	}
 
 	private static void spawnPokemons() {
