@@ -10,25 +10,25 @@ public class InputUtility {
 
 	private static int mouseX, mouseY;
 	private static MouseEvent lastMouseClickEvent, lastMouseMoveEvent;
-	private static ArrayList<Event> events = new ArrayList<Event>();
+//	private static ArrayList<Event> events = new ArrayList<Event>();
 	private static KeyEvent lastKeyEvent, lastTypeKey;
 	private static ArrayList<KeyEvent> holdingKeys = new ArrayList<KeyEvent>();
 	private static ArrayList<KeyEvent> typeKeys = new ArrayList<KeyEvent>();
 
-	public static void clear() {
-		events.clear();
-	}
-
-	/** When get element, it clears the history of event. */
-	public static final ArrayList<Event> getEvents() {
-		ArrayList<Event> temp = new ArrayList<Event>(events);
-		events.clear();
-		return temp;
-	}
-
-	public static final void addEvents(Event event) {
-		events.add(event);
-	}
+//	public static void clear() {
+//		events.clear();
+//	}
+//
+//	/** When get element, it clears the history of event. */
+//	public static final ArrayList<Event> getEvents() {
+//		ArrayList<Event> temp = new ArrayList<Event>(events);
+//		events.clear();
+//		return temp;
+//	}
+//
+//	public static final void addEvents(Event event) {
+//		events.add(event);
+//	}
 
 	public static final int getMouseX() {
 		return mouseX;

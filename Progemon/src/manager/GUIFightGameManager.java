@@ -34,8 +34,13 @@ public class GUIFightGameManager {
 		currentPlayers = new ArrayList<Player>(players);
 		currentPhase = Phase.initialPhase;
 
-		fightMap = new FightMap(FileUtility.loadFightMap());
+		players.stream().flatMap(player -> {
+			System.out.println("Player : " + player.getName());
+			return player.getPokemons().stream();
+		}).map(p -> p.getName()).forEach(System.out::println);
+		;
 
+		fightMap = new FightMap(FileUtility.loadFightMap());
 		// Load Graphics
 		new Clock();
 		startFight();
@@ -44,14 +49,15 @@ public class GUIFightGameManager {
 	}
 
 	private void startFight() {
+		System.out.println("Hello");
 
 		GameScreen.addObject(fightMap);
-
 		spawnPokemons();
 		fightMap.sortPokemons();
 
 		GameScreen.addObject(new DialogBox());
 		GameScreen.addObject(new QueueBox());
+		System.out.println("FLAG " + "[GUIFightGameManager.java].startFight()");
 
 		DialogBox.sentMessage("Press 'a' to start!");
 
@@ -135,13 +141,16 @@ public class GUIFightGameManager {
 	private static void spawnPokemons() {
 		int nextX, nextY;
 		for (Player player : players) {
+			System.out.println(player.getName());
 			for (Pokemon pokemon : player.getPokemons()) {
 				do {
 					nextX = RandomUtility.randomInt(fightMap.getSizeX() - 1);
 					nextY = RandomUtility.randomInt(fightMap.getSizeY() - 1);
+					System.out.println(pokemon.getName() + " " + nextX + " " + nextY);
 				} while (pokemon != null && !fightMap.addPokemonToMap(nextX, nextY, pokemon));
 			}
 		}
+		System.out.println("Finish Spawning");
 	}
 
 	private static boolean checkWinner() {

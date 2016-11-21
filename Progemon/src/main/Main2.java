@@ -10,6 +10,7 @@ import javafx.concurrent.Task;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import logic.character.Pokemon;
+import logic.player.AIPlayer;
 import logic.player.HPAIPlayer;
 import logic.player.HumanPlayer;
 import logic.player.Player;
@@ -27,6 +28,7 @@ public class Main2 extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		new MyStage();
 		FileUtility.loadAllDefaults();
 
 		Pokemon charlizard = Pokedex.getPokemon("Charlizard");
@@ -51,7 +53,7 @@ public class Main2 extends Application {
 
 		Player p1 = new HPAIPlayer("AI 1", charlizard, Color.RED);
 		p1.addPokemon(caterpie);
-		Player p2 = new HumanPlayer("AI 2", pidgeotto, Color.BLUE);
+		Player p2 = new AIPlayer("AI 2", pidgeotto, Color.BLUE);
 		p2.addPokemon(wartortle);
 
 		ArrayList<Player> players = new ArrayList<Player>();
@@ -71,7 +73,6 @@ public class Main2 extends Application {
 		 * (this.updateUIThread = new Thread(() -> { GUIFightGameManager gui =
 		 * new GUIFightGameManager(players); })).start();
 		 */
-
 		new Thread(new Task<Void>() {
 
 			@Override

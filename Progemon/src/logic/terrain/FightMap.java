@@ -107,7 +107,8 @@ public class FightMap implements IRenderable {
 	public void draw() {
 		int x = InputUtility.getMouseX(), y = InputUtility.getMouseY();
 		if (0 <= x && x <= 319 && 0 <= y && y <= 239) {
-			getFightTerrainAt((int) Math.floor(x / 40), (int) Math.floor(y / 40)).setCursor(true);
+			getFightTerrainAt(Math.floor(x / FightTerrain.IMG_SIZE_X), Math.floor(y / FightTerrain.IMG_SIZE_Y))
+					.setCursor(true);
 		}
 		DrawingUtility.drawFightMap(this);
 	}
@@ -137,7 +138,7 @@ public class FightMap implements IRenderable {
 	public boolean addPokemonToMap(int x, int y, Pokemon pokemon) {
 		Filter canBePlacedFilter = new MoveFilter();
 		if (!outOfMap(x, y) && pokemon != null && canBePlacedFilter.check(pokemon, this, map[y][x])
-				&& this.getPokemonAt(x, y) == null) {
+				&& !this.getPokemonAt(x, y).isPresent()) {
 			// Can be Added!
 			pokemon.setCurrentFightMap(this);
 			pokemon.move(x, y);
