@@ -1,7 +1,10 @@
 package graphic;
 
+import java.awt.event.MouseEvent;
+
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -31,28 +34,45 @@ public class MyStage extends Stage {
 	}
 
 	public void addListener(Scene scene) {
-		scene.setOnMouseClicked(mEvent -> {
-			InputUtility.setLastMouseClickEvent(mEvent);
+		scene.setOnMousePressed(mEvent -> {
+			if (mEvent.getButton().equals(MouseButton.PRIMARY)) {
+				InputUtility.setMouseLeftDown(true);
+			} else if (mEvent.getButton().equals(MouseButton.SECONDARY)) {
+				InputUtility.setMouseRightDown(true);
+			}
+		});
+
+		scene.setOnMouseReleased(mEvent -> {
+			if (mEvent.getButton().equals(MouseButton.PRIMARY)) {
+				InputUtility.setMouseLeftDown(false);
+			} else if (mEvent.getButton().equals(MouseButton.SECONDARY)) {
+				InputUtility.setMouseRightDown(false);
+			}
+		});
+
+		scene.setOnMouseEntered(mEvent -> {
+			InputUtility.setMouseOnScreen(true);
+		});
+
+		scene.setOnMouseExited(mEvent -> {
+			InputUtility.setMouseOnScreen(false);
 		});
 
 		scene.setOnMouseMoved(mEvent -> {
-			InputUtility.setLastMouseMoveEvent(mEvent);
 			InputUtility.setMouseX((int) mEvent.getX());
 			InputUtility.setMouseY((int) mEvent.getY());
 		});
 
 		scene.setOnKeyPressed(kEvent -> {
-			InputUtility.addEvents(kEvent);
-			InputUtility.addKeys(kEvent);
-			InputUtility.setLastKeyEvent(kEvent);
+			InputUtility.setKeyPressed(kEvent.getCode(), true);
+			InputUtility.setKeyTriggered(kEvent.getCode(), true);
 		});
 
 		scene.setOnKeyReleased(kEvent -> {
-			InputUtility.addEvents(kEvent);
-			InputUtility.removeHoldingKeys(kEvent);
-			InputUtility.setLastKeyEvent(kEvent);
-
+			InputUtility.setKeyPressed(kEvent.getCode(), false);
+			InputUtility.setKeyTriggered(kEvent.getCode(), false);
 		});
+		System.out.println("Stage Finished Adding Listener");
 	}
 
 }

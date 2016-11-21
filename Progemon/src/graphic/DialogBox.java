@@ -45,8 +45,11 @@ public class DialogBox implements IRenderable {
 	}
 
 	public static void update() {
-		KeyEvent kEvent = InputUtility.getLastKeyEvent();
-		if (kEvent != null && kEvent.getCode().equals(advancingKey)) {
+		// KeyEvent kEvent = InputUtility.getLastKeyEvent();
+		// if (kEvent != null && kEvent.getCode().equals(advancingKey)) {
+		// textDelay = 0;
+		// }
+		if (InputUtility.getKeyTriggered(advancingKey)) {
 			textDelay = 0;
 		}
 		if (nextWord.length() > 0) {
@@ -72,7 +75,9 @@ public class DialogBox implements IRenderable {
 					nextWord += " ";
 				}
 			}
-		} else if (kEvent != null && kEvent.getCode().equals(advancingKey)) {
+			// } else if (kEvent != null &&
+			// kEvent.getCode().equals(advancingKey)) {
+		} else if (InputUtility.getKeyTriggered(advancingKey)) {
 			clear();
 			hasSentMessage = true;
 		} else if (endLineWidth == 0) {
@@ -129,7 +134,6 @@ public class DialogBox implements IRenderable {
 		hasSentMessage = false;
 		while (!hasSentMessage) {
 			update();
-
 			// MyCanvas.repaint();
 			Clock.tick();
 		}

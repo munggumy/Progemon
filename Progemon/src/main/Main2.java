@@ -1,6 +1,5 @@
 package main;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import graphic.DrawingUtility;
@@ -12,15 +11,16 @@ import javafx.stage.Stage;
 import logic.character.Pokemon;
 import logic.player.AIPlayer;
 import logic.player.HPAIPlayer;
-import logic.player.HumanPlayer;
 import logic.player.Player;
 import manager.GUIFightGameManager;
 import utility.FileUtility;
 import utility.Pokedex;
+import utility.ThreadUtility;
 
 public class Main2 extends Application {
 
 	public static void main(String[] args) {
+		Thread.setDefaultUncaughtExceptionHandler(ThreadUtility::showError);
 		launch(args);
 	}
 
@@ -28,6 +28,7 @@ public class Main2 extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		Thread.setDefaultUncaughtExceptionHandler(ThreadUtility::showError);
 		new MyStage();
 		FileUtility.loadAllDefaults();
 
@@ -73,7 +74,7 @@ public class Main2 extends Application {
 		 * (this.updateUIThread = new Thread(() -> { GUIFightGameManager gui =
 		 * new GUIFightGameManager(players); })).start();
 		 */
-		new Thread(new Task<Void>() {
+		Thread logic = new Thread(new Task<Void>() {
 
 			@Override
 			protected Void call() throws Exception {
@@ -81,7 +82,9 @@ public class Main2 extends Application {
 				return null;
 			}
 
-		}).start();
+		});
+		logic.setName("Logic Thread");
+		logic.start();
 	}
 
 }

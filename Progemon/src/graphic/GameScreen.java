@@ -17,7 +17,7 @@ public class GameScreen extends Canvas {
 
 	public static void repaint() {
 		DrawingUtility.getGC().clearRect(0, 0, WIDTH, HEIGHT);
-		objectOnScreen.stream().forEach(object -> object.draw());
+		objectOnScreen.stream().forEach(renderable -> renderable.draw());
 	}
 
 	public static CopyOnWriteArrayList<IRenderable> getObjectOnScreen() {

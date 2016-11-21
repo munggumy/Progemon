@@ -1,9 +1,8 @@
 package logic.player;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
-import graphic.Frame;
-import graphic.GameScreen;
 import javafx.scene.paint.Color;
 import logic.character.ActiveSkill;
 import logic.character.Pokemon;
@@ -12,7 +11,6 @@ import logic.filters.MoveFilter;
 import logic.terrain.Path;
 import manager.GUIFightGameManager;
 import utility.Clock;
-import utility.InputUtility;
 import utility.Phase;
 import utility.exception.UnknownPhaseException;
 
@@ -21,8 +19,8 @@ public abstract class Player {
 	private Color color;
 	private ArrayList<Pokemon> pokemons;
 
-	protected Pokemon nextAttackedPokemon;
-	protected ActiveSkill nextAttackSkill;
+	protected Optional<Pokemon> nextAttackedPokemon;
+	protected Optional<ActiveSkill> nextAttackSkill;
 
 	protected Path nextPath;
 	private int moveCounter = 1;
@@ -82,7 +80,7 @@ public abstract class Player {
 					phaseIsFinished = true;
 					break;
 				case inputMovePhase:
-					GUIFightGameManager.checkInputs();
+					// GUIFightGameManager.checkInputs();
 					phaseIsFinished = inputNextPath(pokemon);
 					break;
 				case movePhase:
@@ -105,7 +103,7 @@ public abstract class Player {
 					phaseIsFinished = true;
 					break;
 				case inputAttackPhase:
-					GUIFightGameManager.checkInputs();
+					// GUIFightGameManager.checkInputs();
 					boolean check1 = inputAttackPokemon(pokemon);
 					boolean check2 = inputAttackActiveSkill(pokemon);
 					phaseIsFinished = check1 && check2;
@@ -172,9 +170,11 @@ public abstract class Player {
 
 	protected abstract boolean inputAttackActiveSkill(Pokemon attackingPokemon);
 
-	protected final boolean attack(Pokemon attackingPokemon, Pokemon other, ActiveSkill activeSkill) {
-		if (other != null && activeSkill != null) {
-			attackingPokemon.attack(other, activeSkill);
+	protected final boolean attack(Pokemon attackingPokemon, Optional<Pokemon> other,
+			Optional<ActiveSkill> activeSkill) {
+		System.out.println("Player.attack()");
+		if (other.isPresent() && activeSkill.isPresent()) {
+			attackingPokemon.attack(other.get(), activeSkill.get());
 		}
 		return true;
 	}

@@ -5,16 +5,11 @@ import java.util.ArrayList;
 import graphic.DialogBox;
 import graphic.GameScreen;
 import graphic.QueueBox;
-import javafx.event.Event;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import logic.character.Pokemon;
 import logic.player.Player;
 import logic.terrain.FightMap;
 import utility.Clock;
 import utility.FileUtility;
-import utility.InputUtility;
 import utility.Phase;
 import utility.RandomUtility;
 
@@ -49,17 +44,14 @@ public class GUIFightGameManager {
 	}
 
 	private void startFight() {
-		System.out.println("Hello");
-
 		GameScreen.addObject(fightMap);
 		spawnPokemons();
 		fightMap.sortPokemons();
 
 		GameScreen.addObject(new DialogBox());
 		GameScreen.addObject(new QueueBox());
-		System.out.println("FLAG " + "[GUIFightGameManager.java].startFight()");
-
-		DialogBox.sentMessage("Press 'a' to start!");
+		System.out.println("Added DialogBox and QueueBox");
+		DialogBox.sentMessage("Press '" + DialogBox.advancingKey.toString() + "' to start!");
 
 		System.out.println("Game loaded without problems.");
 	}
@@ -89,42 +81,43 @@ public class GUIFightGameManager {
 			for (int i = 1; i <= 30; i++) {
 				Clock.tick(); // wait between turns
 			}
+
 		}
 		System.out.println("END OF FIGHT");
 	}
 
-	public static void checkInputs() {
-		for (Event event : InputUtility.getEvents()) {
-			if (event instanceof MouseEvent) {
-				MouseEvent mEvent = (MouseEvent) event;
-				if (mEvent.getEventType() == MouseEvent.MOUSE_MOVED) {
-					InputUtility.setLastMouseMoveEvent(mEvent);
-					System.out.println("MOVE   \t" + mEvent);
-				} else if (mEvent.getEventType() == MouseEvent.MOUSE_CLICKED
-						&& mEvent.getButton() == MouseButton.PRIMARY) {
-					InputUtility.setLastMouseClickEvent(mEvent);
-					System.out.println("CLICKED\t" + mEvent);
-				} // end mouse event
-			} else if (event instanceof KeyEvent) {
-				KeyEvent kEvent = (KeyEvent) event;
-				InputUtility.setLastKeyEvent(kEvent);
-				System.out.println("KEY    \t" + kEvent);
-				if (kEvent.getText().equals(" ")) {
-					if (kEvent.getEventType() == KeyEvent.KEY_PRESSED) {
-						Clock.setTps(300);
-					} else if (kEvent.getEventType() == KeyEvent.KEY_RELEASED) {
-						Clock.setTps(60);
-					}
-				} // end key event
-			}
-		}
-	}
+	// public static void checkInputs() {
+	// for (Event event : InputUtility.getEvents()) {
+	// if (event instanceof MouseEvent) {
+	// MouseEvent mEvent = (MouseEvent) event;
+	// if (mEvent.getEventType() == MouseEvent.MOUSE_MOVED) {
+	// InputUtility.setLastMouseMoveEvent(mEvent);
+	// System.out.println("MOVE \t" + mEvent);
+	// } else if (mEvent.getEventType() == MouseEvent.MOUSE_CLICKED
+	// && mEvent.getButton() == MouseButton.PRIMARY) {
+	// InputUtility.setLastMouseClickEvent(mEvent);
+	// System.out.println("CLICKED\t" + mEvent);
+	// } // end mouse event
+	// } else if (event instanceof KeyEvent) {
+	// KeyEvent kEvent = (KeyEvent) event;
+	// InputUtility.setLastKeyEvent(kEvent);
+	// System.out.println("KEY \t" + kEvent);
+	// if (kEvent.getText().equals(" ")) {
+	// if (kEvent.getEventType() == KeyEvent.KEY_PRESSED) {
+	// Clock.setTps(300);
+	// } else if (kEvent.getEventType() == KeyEvent.KEY_RELEASED) {
+	// Clock.setTps(60);
+	// }
+	// } // end key event
+	// }
+	// }
+	// }
 
 	private void endFight() {
 
 		while (true) {
 
-			checkInputs();
+			// checkInputs();
 
 			if (DialogBox.hasSentMessage()) {
 				break;

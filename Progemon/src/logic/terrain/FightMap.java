@@ -66,13 +66,11 @@ public class FightMap implements IRenderable {
 		this.map = map;
 	}
 
-	public <T extends Number> FightTerrain getFightTerrainAt(T x, T y) {
-		int ix = (int) x;
-		int iy = (int) y;
-		if (outOfMap(ix, iy)) {
+	public FightTerrain getFightTerrainAt(int x, int y) {
+		if (outOfMap(x, y)) {
 			return null;
 		}
-		return map[iy][ix];
+		return map[y][x];
 	}
 
 	public FightTerrain getFightTerrainAt(FightTerrain paramFT, Direction d) {
@@ -105,10 +103,11 @@ public class FightMap implements IRenderable {
 	}
 
 	public void draw() {
-		int x = InputUtility.getMouseX(), y = InputUtility.getMouseY();
-		if (0 <= x && x <= 319 && 0 <= y && y <= 239) {
-			getFightTerrainAt(Math.floor(x / FightTerrain.IMG_SIZE_X), Math.floor(y / FightTerrain.IMG_SIZE_Y))
-					.setCursor(true);
+		double x = InputUtility.getMouseX(), y = InputUtility.getMouseY();
+		if (0 <= x && x <= 319 && 0 <= y && y <= 239)
+		{
+			getFightTerrainAt((int) Math.floor(x / FightTerrain.IMG_SIZE_X),
+					(int) Math.floor(y / FightTerrain.IMG_SIZE_Y)).setCursor(true);
 		}
 		DrawingUtility.drawFightMap(this);
 	}

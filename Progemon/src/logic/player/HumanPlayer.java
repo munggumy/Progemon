@@ -14,7 +14,7 @@ public class HumanPlayer extends Player {
 		super(name);
 	}
 
-	public HumanPlayer(String name, Pokemon starter_pokemon, javafx.scene.paint.Color blue) {
+	public HumanPlayer(String name, Pokemon starter_pokemon, Color blue) {
 		super(name, starter_pokemon, blue);
 	}
 
@@ -53,7 +53,6 @@ public class HumanPlayer extends Player {
 			super.nextAttackedPokemon = null;
 			return false;
 		} else {
-			@Deprecated
 			FightTerrain destination = pokemon.getCurrentFightMap().getFightTerrainAt(
 					(mEvent.getX()) / FightTerrain.IMG_SIZE_X, (mEvent.getY()) / FightTerrain.IMG_SIZE_Y);
 			Pokemon otherPokemon = pokemon.getCurrentFightMap().getPokemonAt(destination);

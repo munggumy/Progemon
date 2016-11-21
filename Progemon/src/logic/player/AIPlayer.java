@@ -1,13 +1,11 @@
 package logic.player;
 
-import graphic.Frame;
+import java.util.Optional;
+
 import javafx.scene.paint.Color;
 import logic.character.ActiveSkill;
 import logic.character.Pokemon;
-import logic.filters.AttackFilter;
-import logic.filters.MoveFilter;
 import logic.terrain.Path;
-import utility.Clock;
 import utility.RandomUtility;
 
 public class AIPlayer extends Player {
@@ -35,7 +33,7 @@ public class AIPlayer extends Player {
 			return false;
 		}
 	}
-	
+
 	/** This can be overrided by other AIs */
 	protected Path calculateNextPath(Pokemon pokemon) {
 		return pokemon.getPaths().get(0);
@@ -43,13 +41,13 @@ public class AIPlayer extends Player {
 
 	@Override
 	protected boolean inputAttackPokemon(Pokemon attackingPokemon) {
-		nextAttackedPokemon = null;
+		nextAttackedPokemon = Optional.empty();
 		if (thinkDelayCounter == thinkDelay) {
 			for (Pokemon other : attackingPokemon.getCurrentFightMap().getPokemonsOnMap()) {
 				if (other.getOwner() != this
 						&& attackingPokemon.getAvaliableFightTerrains().contains(other.getCurrentFightTerrain())) {
 					// If other is enemy and in attack range.
-					nextAttackedPokemon = other;
+					nextAttackedPokemon = Optional.of(other);
 					break;
 				}
 			}
@@ -63,10 +61,8 @@ public class AIPlayer extends Player {
 
 	@Override
 	protected boolean inputAttackActiveSkill(Pokemon attackingPokemon) {
-		nextAttackSkill = (ActiveSkill) RandomUtility.randomElement(attackingPokemon.getActiveSkills());
+		nextAttackSkill = Optional.of((ActiveSkill) RandomUtility.randomElement(attackingPokemon.getActiveSkills()));
 		return true;
 	}
-
-	
 
 }
