@@ -3,10 +3,15 @@ package utility;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import logic.character.Pokemon;
 import logic.player.Player;
+import utility.exception.DuplicatePokemonException;
+import utility.exception.UnknownPokemonException;
 
 public class Pokedex {
 	private static HashMap<Integer, String> pokedex = new HashMap<Integer, String>();
@@ -44,9 +49,8 @@ public class Pokedex {
 
 	public static final void addPokemonToList(Pokemon pokemon) {
 		for (Pokemon p : allPokemons) {
-			if (p.getID() == pokemon.getID()){
-				System.err.println("Pokedex : Duplicate Pokemon");
-				return;
+			if (p.getID() == pokemon.getID()) {
+				throw new DuplicatePokemonException("Pokedex : Duplicate Pokemon : " + pokemon.getName());
 			}
 		}
 		allPokemons.add(pokemon);
@@ -58,8 +62,8 @@ public class Pokedex {
 	}
 
 	// get Pokemon methods
-	
-	/** main <code>getPokemon()</code> method. gets a clone*/
+
+	/** main <code>getPokemon()</code> method. gets a clone */
 	public static final Pokemon getPokemon(int pokemon_id) {
 		for (Pokemon pokemon : allPokemons) {
 			if (pokemon.getID() == pokemon_id) {
@@ -72,37 +76,46 @@ public class Pokedex {
 				}
 			}
 		}
-		System.err.println("Pokedex : Can't Find Pokemon[id = " + pokemon_id + "].");
+		List<Pokemon> results = allPokemons.stream().filter(pokemon -> (pokemon.getID() == pokemon_id))
+				.collect(Collectors.toList());
+		if (results.size() == 1) {
+			return results.get(0);
+		}
+		if (results.size() > 1) {
+			throw new DuplicatePokemonException("More than one pokemon found for id = " + pokemon_id);
+		} else if (results.isEmpty()) {
+			throw new UnknownPokemonException("Unknown Pokemon id =  " + pokemon_id);
+		}
 		return null;
 	}
 
 	public static final Pokemon getPokemon(String pokemon_name) {
 		return getPokemon(getPokemonID(pokemon_name));
 	}
-	
-	public static final Pokemon getPokemon(int pokemon_id, Player owner){
+
+	public static final Pokemon getPokemon(int pokemon_id, Player owner) {
 		Pokemon out = getPokemon(pokemon_id);
 		out.setOwner(owner);
 		return out;
 	}
-	
-	public static final Pokemon getPokemon(String pokemon_name, Player owner){
+
+	public static final Pokemon getPokemon(String pokemon_name, Player owner) {
 		Pokemon out = getPokemon(pokemon_name);
 		out.setOwner(owner);
 		return out;
 	}
-	
-	public static final void printPokedex(){
-		for(Map.Entry<Integer, String> entry : pokedex.entrySet()){
+
+	public static final void printPokedex() {
+		for (Map.Entry<Integer, String> entry : pokedex.entrySet()) {
 			System.out.println("ID " + entry.getKey() + " = " + entry.getValue());
 		}
 	}
-	
-	public static final void clearPokedex(){
+
+	public static final void clearPokedex() {
 		pokedex.clear();
 	}
-	
-	public static final void clearAllPokemons(){
+
+	public static final void clearAllPokemons() {
 		allPokemons.clear();
 	}
 
