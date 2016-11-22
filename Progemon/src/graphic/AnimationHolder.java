@@ -11,13 +11,13 @@ public class AnimationHolder {
 	}
 	
 	public static void addPlayingAnimations(Animation animation) {
-		if (! playingAnimations.contains(animation)) {
+		if (!playingAnimations.contains(animation)) {
 			playingAnimations.add(animation);
 		}
 	}
 	
 	public static void removePlayingAnimations(Animation animation) {
-		if (! playingAnimations.contains(animation)) {
+		if (playingAnimations.contains(animation)) {
 			playingAnimations.remove(animation);
 		}
 	}
