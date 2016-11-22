@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import graphic.DrawingUtility;
 import graphic.GameScreen;
@@ -138,6 +139,11 @@ public class Pokemon implements Cloneable, IRenderable {
 		setImageFileLocation();
 	}
 
+	@Override
+	public String toString() {
+		return "Pokemon " + this.getName() + " LV." + this.getLevel();
+	}
+
 	// move and attack
 
 	/**
@@ -200,43 +206,9 @@ public class Pokemon implements Cloneable, IRenderable {
 
 	// Comparators
 
-	public static Comparator<Pokemon> bySpeed = (Pokemon p1, Pokemon p2) -> Double.compare(p1.nextTurnTime,
-			p2.nextTurnTime);
-	public static Comparator<Pokemon> byID = (Pokemon p1, Pokemon p2) -> p1.id - p2.id;
-	public static Comparator<Pokemon> byHP = (Pokemon p1, Pokemon p2) -> Double.compare(p1.currentHP, p2.currentHP);
-
-	// public static Comparator<Pokemon> getSpeedComparator() {
-	// return new SpeedComparator();
-	// }
-	//
-	// private static class SpeedComparator implements Comparator<Pokemon> {
-	// @Override
-	// public int compare(Pokemon o1, Pokemon o2) {
-	// return Double.compare(o1.nextTurnTime, o2.nextTurnTime);
-	// }
-	// }
-	//
-	// public static Comparator<Pokemon> getIDComparator() {
-	// return new IDComparator();
-	// }
-	//
-	// private static class IDComparator implements Comparator<Pokemon> {
-	// @Override
-	// public int compare(Pokemon o1, Pokemon o2) {
-	// return o1.id - o2.id;
-	// }
-	// }
-	//
-	// public static Comparator<Pokemon> getHPComparator() {
-	// return new HPComparator();
-	// }
-	//
-	// private static class HPComparator implements Comparator<Pokemon> {
-	// @Override
-	// public int compare(Pokemon p1, Pokemon p2) {
-	// return Double.compare(p1.currentHP, p2.currentHP);
-	// }
-	// }
+	public static Comparator<Pokemon> bySpeed = (p1, p2) -> Double.compare(p1.nextTurnTime, p2.nextTurnTime);
+	public static Comparator<Pokemon> byID = (p1, p2) -> p1.id - p2.id;
+	public static Comparator<Pokemon> byHP = (p1, p2) -> Double.compare(p1.currentHP, p2.currentHP);
 
 	// Clone
 
@@ -333,8 +305,8 @@ public class Pokemon implements Cloneable, IRenderable {
 				this.totalCost = counter;
 			}
 		}
-		
-		if(getCurrentFightTerrain().equals(destination)){
+
+		if (getCurrentFightTerrain().equals(destination)) {
 			return new Path(destination);
 		}
 
@@ -517,12 +489,13 @@ public class Pokemon implements Cloneable, IRenderable {
 	}
 
 	public static Optional<MoveType> toMoveType(String moveTypeString) {
-		for (MoveType mt : MoveType.values()) {
-			if (mt.toString().equalsIgnoreCase(moveTypeString)) {
-				return Optional.of(mt);
-			}
-		}
-		return Optional.empty();
+		return Stream.of(MoveType.values()).filter(mt -> mt.toString().equalsIgnoreCase(moveTypeString)).findAny();
+		// for (MoveType mt : MoveType.values()) {
+		// if (mt.toString().equalsIgnoreCase(moveTypeString)) {
+		// return Optional.of(mt);
+		// }
+		// }
+		// return Optional.empty();
 	}
 
 	// Graphics

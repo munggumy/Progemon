@@ -27,6 +27,11 @@ public class ActiveSkill extends Animation implements IRenderable {
 		loadImage("load/img/skill/Flamethrower/all.png");
 	}
 
+	@Override
+	public String toString() {
+		return "ActiveSkill " + name + " POWER:" + power;
+	}
+
 	public static ActiveSkill getActiveSkill(String skillName) {
 		return getActiveSkill(skillName, DEFAULT_POWER, true);
 	}
