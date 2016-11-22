@@ -40,13 +40,16 @@ public class FileUtility {
 	 * @throws IOException
 	 */
 	public static void loadPokemons(String filePath) {
+		String delimiter = " ";
 		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(filePath)))) {
 			Pattern pattern = Pattern.compile(
 					/*
 					 * id/name attack defence speed hp mRange aRange mType
 					 * attackMoves
 					 */
-					"(\\d+|\\w+)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d+(\\.\\d*)?)\\s(\\d+)\\s(\\d+)\\s(\\w+)\\s?([\\w ,]*)");
+					"(\\d+|\\w+)" + delimiter + "(\\d+(\\.\\d*)?)" + delimiter + "(\\d+(\\.\\d*)?)" + delimiter
+							+ "(\\d+(\\.\\d*)?)" + delimiter + "(\\d+(\\.\\d*)?)" + delimiter + "(\\d+)" + delimiter
+							+ "(\\d+)" + delimiter + "(\\w+)" + delimiter + "([\\w ,]*)");
 			Matcher matcher;
 			while (scanner.hasNextLine()) {
 				matcher = pattern.matcher(scanner.nextLine());
