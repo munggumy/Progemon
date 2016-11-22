@@ -66,8 +66,8 @@ public abstract class Player {
 				switch (GUIFightGameManager.getCurrentPhase()) {
 				case initialPhase:
 					nextPath = null;
-					nextAttackedPokemon = null;
-					nextAttackSkill = null;
+					nextAttackedPokemon = Optional.empty();
+					nextAttackSkill = Optional.empty();
 					phaseIsFinished = true;
 					break;
 
@@ -92,8 +92,6 @@ public abstract class Player {
 					break;
 
 				case preAttackPhase:
-					nextAttackedPokemon = Optional.empty();
-					nextAttackSkill = Optional.empty();
 					pokemon.findBlocksAround(pokemon.getAttackRange(), new AttackFilter());
 					pokemon.sortPaths();
 					pokemon.shadowBlocks();
