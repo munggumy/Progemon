@@ -43,6 +43,7 @@ public class Clock {
 		}
 
 		if (InputUtility.getKeyTriggered(KeyCode.P)) {
+			InputUtility.postUpdate();
 			pause();
 		}
 
@@ -88,6 +89,7 @@ public class Clock {
 			// }
 
 			if (InputUtility.getKeyTriggered(KeyCode.P)) {
+				pause = false;
 				break;
 			}
 
