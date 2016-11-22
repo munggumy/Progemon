@@ -1,8 +1,10 @@
 package logic.player;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -14,7 +16,8 @@ import utility.InputUtility;
 
 public class HumanPlayer extends Player {
 
-	List<KeyCode> attackingKeys = Arrays.asList(KeyCode.DIGIT1, KeyCode.DIGIT2, KeyCode.DIGIT3, KeyCode.DIGIT4);
+	Set<KeyCode> attackingKeys = new HashSet<KeyCode>(
+			Arrays.asList(KeyCode.DIGIT1, KeyCode.DIGIT2, KeyCode.DIGIT3, KeyCode.DIGIT4));
 
 	public HumanPlayer(String name) {
 		super(name);
