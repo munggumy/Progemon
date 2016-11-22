@@ -1,6 +1,7 @@
 package main;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import graphic.DrawingUtility;
 import graphic.GameStage;
@@ -18,10 +19,14 @@ import utility.Pokedex;
 import utility.ThreadUtility;
 
 public class Main2 extends Application {
+	
+	static{
+		Thread.setDefaultUncaughtExceptionHandler(ThreadUtility::showError);
+	}
 
 	public static void main(String[] args) {
 		Thread.setDefaultUncaughtExceptionHandler(ThreadUtility::showError);
-		launch(args);
+			launch(args);
 	}
 
 	private static Thread updateUIThread;
@@ -29,36 +34,28 @@ public class Main2 extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		Thread.setDefaultUncaughtExceptionHandler(ThreadUtility::showError);
-		
 		new GameStage();
 		FileUtility.loadAllDefaults();
 
 		Pokemon charlizard = Pokedex.getPokemon("Charlizard");
-		charlizard.setLevel(38);
-		charlizard.calculateCurrentStats();
-		charlizard.resetHP();
-
+		charlizard.setLevel(40);
+		
 		Pokemon caterpie = Pokedex.getPokemon("Caterpie");
 		caterpie.setLevel(5);
-		caterpie.calculateCurrentStats();
-		caterpie.resetHP();
 
-		Pokemon wartortle = Pokedex.getPokemon("Wartortle");
-		wartortle.setLevel(34);
-		wartortle.calculateCurrentStats();
-		wartortle.resetHP();
+		Pokemon blastoise = Pokedex.getPokemon("Blastoise");
+		blastoise.setLevel(50);
+
 		Pokemon pidgeotto = Pokedex.getPokemon("Pidgeotto");
 		pidgeotto.setLevel(30);
 		pidgeotto.setMoveRange(8);
-		pidgeotto.calculateCurrentStats();
-		pidgeotto.resetHP();
-
+		
 		Player p1 = new HPAIPlayer("AI 1", charlizard, Color.RED);
 		p1.addPokemon(caterpie);
-		Player p2 = new HumanPlayer("AI 2", pidgeotto, Color.BLUE);
-		p2.addPokemon(wartortle);
+		Player p2 = new HumanPlayer("Kris", pidgeotto, Color.BLUE);
+		p2.addPokemon(blastoise);
 
-		ArrayList<Player> players = new ArrayList<Player>();
+		Set<Player> players = new HashSet<Player>();
 		players.add(p1);
 		players.add(p2);
 
