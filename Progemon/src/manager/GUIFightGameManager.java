@@ -1,6 +1,7 @@
 package manager;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import graphic.DialogBox;
 import graphic.GameScreen;
@@ -23,7 +24,7 @@ public class GUIFightGameManager {
 	private static Player winnerPlayer = null;
 	private static Phase currentPhase;
 
-	public GUIFightGameManager(ArrayList<Player> players) {
+	public GUIFightGameManager(Set<Player> players) {
 
 		GUIFightGameManager.players = new ArrayList<Player>(players);
 		currentPlayers = new ArrayList<Player>(players);
