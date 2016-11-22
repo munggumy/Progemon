@@ -38,16 +38,21 @@ public class HPAIPlayer extends AIPlayer {
 			return super.calculateNextPath(pokemon);
 		}
 		Path subPath = wholePath.subPath(0, Math.min(wholePath.size(), pokemon.getMoveRange() + 1));
-		
+
 		// clear overlap issues
 		Path out = new Path();
 		boolean overlap = false;
 		for (FightTerrain fightTerrain : subPath) {
-			for (Pokemon otherPokemon : pokemon.getCurrentFightMap().getPokemonsOnMap()) {
-				if (otherPokemon != pokemon && otherPokemon.getCurrentFightTerrain().equals(fightTerrain)) {
-					overlap = true;
-				}
-			}
+			// for (Pokemon otherPokemon :
+			// pokemon.getCurrentFightMap().getPokemonsOnMap()) {
+			// if (otherPokemon != pokemon &&
+			// otherPokemon.getCurrentFightTerrain().equals(fightTerrain)) {
+			// overlap = true;
+			// }
+			// }
+			overlap = pokemon.getCurrentFightMap().getPokemonsOnMap().stream().anyMatch(other -> {
+				return other != pokemon && other.getCurrentFightTerrain().equals(fightTerrain);
+			});
 			if (overlap) {
 				break;
 			} else {
