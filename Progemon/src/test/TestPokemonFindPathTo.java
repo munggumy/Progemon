@@ -47,7 +47,7 @@ public class TestPokemonFindPathTo {
 		fearow.move(1, 1);
 
 		FightTerrain destination = fightMap.getFightTerrainAt(1, 0);
-		Path out = fearow.findPathTo(destination, 10);
+		Path out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
@@ -57,7 +57,7 @@ public class TestPokemonFindPathTo {
 		fearow.move(3, 4);
 
 		destination = fightMap.getFightTerrainAt(2, 4);
-		out = fearow.findPathTo(destination, 10);
+		out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
@@ -66,7 +66,7 @@ public class TestPokemonFindPathTo {
 
 		fearow.move(5, 2);
 		destination = fightMap.getFightTerrainAt(5, 3);
-		out = fearow.findPathTo(destination, 10);
+		out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
@@ -76,7 +76,7 @@ public class TestPokemonFindPathTo {
 		fearow.move(6, 4);
 
 		destination = fightMap.getFightTerrainAt(7, 4);
-		out = fearow.findPathTo(destination, 10);
+		out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
@@ -91,19 +91,19 @@ public class TestPokemonFindPathTo {
 		fearow.move(3, 0);
 
 		FightTerrain destination = fightMap.getFightTerrainAt(2, 0);
-		Path out = fearow.findPathTo(destination, 10);
+		Path out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
 
 		destination = fightMap.getFightTerrainAt(4, 0);
-		out = fearow.findPathTo(destination, 10);
+		out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
 
 		destination = fightMap.getFightTerrainAt(3, 1);
-		out = fearow.findPathTo(destination, 10);
+		out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
@@ -113,19 +113,19 @@ public class TestPokemonFindPathTo {
 		fearow.move(0, 3);
 
 		destination = fightMap.getFightTerrainAt(0, 4);
-		out = fearow.findPathTo(destination, 10);
+		out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
 
 		destination = fightMap.getFightTerrainAt(0, 2);
-		out = fearow.findPathTo(destination, 10);
+		out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
 
 		destination = fightMap.getFightTerrainAt(1, 3);
-		out = fearow.findPathTo(destination, 10);
+		out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
@@ -135,19 +135,19 @@ public class TestPokemonFindPathTo {
 		fearow.move(3, 5);
 
 		destination = fightMap.getFightTerrainAt(2, 5);
-		out = fearow.findPathTo(destination, 10);
+		out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
 
 		destination = fightMap.getFightTerrainAt(4, 5);
-		out = fearow.findPathTo(destination, 10);
+		out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
 
 		destination = fightMap.getFightTerrainAt(3, 4);
-		out = fearow.findPathTo(destination, 10);
+		out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
@@ -157,19 +157,19 @@ public class TestPokemonFindPathTo {
 		fearow.move(7, 3);
 
 		destination = fightMap.getFightTerrainAt(7, 2);
-		out = fearow.findPathTo(destination, 10);
+		out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
 
 		destination = fightMap.getFightTerrainAt(7, 4);
-		out = fearow.findPathTo(destination, 10);
+		out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
 
 		destination = fightMap.getFightTerrainAt(6, 3);
-		out = fearow.findPathTo(destination, 10);
+		out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
@@ -179,13 +179,13 @@ public class TestPokemonFindPathTo {
 		fearow.move(0, 0);
 
 		destination = fightMap.getFightTerrainAt(0, 1);
-		out = fearow.findPathTo(destination, 10);
+		out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
 
 		destination = fightMap.getFightTerrainAt(1, 0);
-		out = fearow.findPathTo(destination, 10);
+		out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
@@ -195,13 +195,13 @@ public class TestPokemonFindPathTo {
 		fearow.move(0, 5);
 
 		destination = fightMap.getFightTerrainAt(0, 4);
-		out = fearow.findPathTo(destination, 10);
+		out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
 
 		destination = fightMap.getFightTerrainAt(1, 5);
-		out = fearow.findPathTo(destination, 10);
+		out = fearow.findPathTo(destination, 10).get();
 		assertEquals(2, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(1));
@@ -225,25 +225,25 @@ public class TestPokemonFindPathTo {
 
 		// move from (1, 1) to (3, 1)
 		FightTerrain destination = fightMap.getFightTerrainAt(3, 1);
-		Path out = squirtle.findPathTo(destination, 10); // this line will error
+		Path out = squirtle.findPathTo(destination, 10).get(); // this line will error
 		assertNull(out);
 
 		// Surrounded By Blocks and Boundary
 
 		squirtle.move(0, 0);
 		destination = fightMap.getFightTerrainAt(1, 1);
-		out = squirtle.findPathTo(destination, 10);
+		out = squirtle.findPathTo(destination, 10).get();
 		assertNull(out);
 
 		// reach limit
 		// move (1, 4) -> (4, 4)
 		squirtle.move(1, 4);
 		destination = fightMap.getFightTerrainAt(4, 4);
-		out = squirtle.findPathTo(destination, 1);
+		out = squirtle.findPathTo(destination, 1).get();
 		assertNull(out);
-		out = squirtle.findPathTo(destination, 2);
+		out = squirtle.findPathTo(destination, 2).get();
 		assertNull(out);
-		out = squirtle.findPathTo(destination, 3);
+		out = squirtle.findPathTo(destination, 3).get();
 		assertNull(out);
 		// limit is not fully supported...
 		System.err.flush();
@@ -261,7 +261,7 @@ public class TestPokemonFindPathTo {
 		fearow.move(3, 3);
 
 		FightTerrain destination = fightMap.getFightTerrainAt(2, 2);
-		Path out1 = fearow.findPathTo(destination, 10);
+		Path out1 = fearow.findPathTo(destination, 10).get();
 		assertEquals(3, out1.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out1.get(0));
 		assertEquals(destination, out1.get(2));
@@ -270,7 +270,7 @@ public class TestPokemonFindPathTo {
 		// move from (3, 3) -> (4, 4)
 
 		destination = fightMap.getFightTerrainAt(4, 4);
-		Path out2 = fearow.findPathTo(destination, 10);
+		Path out2 = fearow.findPathTo(destination, 10).get();
 		assertEquals(3, out2.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out2.get(0));
 		assertEquals(destination, out2.get(2));
@@ -282,7 +282,7 @@ public class TestPokemonFindPathTo {
 
 		fearow.move(3, 0);
 		destination = fightMap.getFightTerrainAt(5, 0);
-		out1 = fearow.findPathTo(destination);
+		out1 = fearow.findPathTo(destination).get();
 		System.out.println(out1);
 		assertEquals(3, out1.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out1.getFirst());
@@ -293,7 +293,7 @@ public class TestPokemonFindPathTo {
 
 		fearow.move(0, 3);
 		destination = fightMap.getFightTerrainAt(0, 5);
-		out2 = fearow.findPathTo(destination);
+		out2 = fearow.findPathTo(destination).get();
 		assertEquals(3, out2.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out2.getFirst());
 		assertEquals(destination, out2.getLast());
@@ -309,32 +309,32 @@ public class TestPokemonFindPathTo {
 		fearow.move(3, 3);
 
 		FightTerrain destination = fightMap.getFightTerrainAt(2, 1);
-		Path out = fearow.findPathTo(destination, 10);
+		Path out = fearow.findPathTo(destination, 10).get();
 		assertEquals(4, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(3));
 
 		destination = fightMap.getFightTerrainAt(4, 5);
-		out = fearow.findPathTo(destination, 15);
+		out = fearow.findPathTo(destination, 15).get();
 		assertEquals(4, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(3));
 
 		destination = fightMap.getFightTerrainAt(0, 3);
-		out = fearow.findPathTo(destination, 15);
+		out = fearow.findPathTo(destination, 15).get();
 		assertEquals(4, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(3));
 
 		destination = fightMap.getFightTerrainAt(6, 3);
-		out = fearow.findPathTo(destination, 20);
+		out = fearow.findPathTo(destination, 20).get();
 		assertEquals(4, out.size());
 		assertEquals(fearow.getCurrentFightTerrain(), out.get(0));
 		assertEquals(destination, out.get(3));
 
 		destination = fightMap.getFightTerrainAt(3, 6);
 		System.out.print("Expected Error will appear --> ");
-		out = fearow.findPathTo(destination, 48); // Upper Limit for 3 blocks
+		out = fearow.findPathTo(destination, 48).get(); // Upper Limit for 3 blocks
 		assertNull(out);
 		System.out.flush();
 		System.err.flush();

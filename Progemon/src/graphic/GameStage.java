@@ -75,6 +75,7 @@ public class GameStage extends Stage {
 			InputUtility.setKeyPressed(kEvent.getCode(), false);
 			InputUtility.setKeyTriggered(kEvent.getCode(), false);
 		});
+		
 		System.out.println("Stage Finished Adding Listener");
 	}
 

@@ -281,11 +281,11 @@ public class Pokemon implements Cloneable, IRenderable {
 		getAvaliableFightTerrains().parallelStream().forEach(fightTerrain -> fightTerrain.setShadowed(true));
 	}
 
-	public Path findPathTo(FightTerrain destination) {
+	public Optional<Path> findPathTo(FightTerrain destination) {
 		return findPathTo(destination, 40);
 	}
 
-	public Path findPathTo(FightTerrain destination, int limit) {
+	public Optional<Path> findPathTo(FightTerrain destination, int limit) {
 
 		/** Inner Class with counter */
 		final class PathWithCounter extends Path {
@@ -307,7 +307,7 @@ public class Pokemon implements Cloneable, IRenderable {
 		}
 
 		if (getCurrentFightTerrain().equals(destination)) {
-			return new Path(destination);
+			return Optional.of(new Path(destination));
 		}
 
 		paths.clear();
@@ -325,7 +325,7 @@ public class Pokemon implements Cloneable, IRenderable {
 		while (roundsPassed < limit) {
 			if (index >= paths.size()) {
 				System.err.println("Pokemon.findPath() : Failed to find Path");
-				return null;
+				return Optional.empty();
 			}
 			lastPathIter = paths.get(index);
 			lastPathIterCost = ((PathWithCounter) lastPathIter).totalCost;
@@ -356,7 +356,7 @@ public class Pokemon implements Cloneable, IRenderable {
 								(short) (lastPathIterCost + nextTerrainCost)));
 						if (nextTerrain.equals(destination)) {
 							// We have found the solution!
-							return paths.get(paths.size() - 1);
+							return Optional.of(paths.get(paths.size() - 1));
 						}
 					}
 				}
@@ -582,6 +582,8 @@ public class Pokemon implements Cloneable, IRenderable {
 
 	public final void setLevel(int level) {
 		this.level = level;
+		calculateCurrentStats();
+		resetHP();
 	}
 
 	public final double getExp() {

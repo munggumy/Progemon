@@ -87,9 +87,9 @@ public class InputUtility {
 
 	public static void setKeyTriggered(KeyCode keycode, boolean pressed) {
 		if (pressed) {
-			keyPressed.add(keycode);
+			keyTriggered.add(keycode);
 		} else {
-			keyPressed.remove(keycode);
+			keyTriggered.remove(keycode);
 		}
 	}
 

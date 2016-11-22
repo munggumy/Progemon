@@ -22,7 +22,7 @@ public abstract class Player {
 	protected Optional<Pokemon> nextAttackedPokemon;
 	protected Optional<ActiveSkill> nextAttackSkill;
 
-	protected Path nextPath;
+	protected Optional<Path> nextPath;
 	private int moveCounter = 1;
 	private int moveDelay = 5, moveDelayCounter = 0;
 
@@ -146,15 +146,15 @@ public abstract class Player {
 	protected abstract boolean inputNextPath(Pokemon pokemon);
 
 	protected final boolean move(Pokemon pokemon) {
-		if (moveCounter == nextPath.size()) {
+		if (moveCounter == nextPath.get().size()) {
 			System.out.println("Pokemon " + pokemon.getName() + " moved from (" + x + ", " + y + ") to ("
 					+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY() + ").");
 			moveCounter = 1;
 			moveDelayCounter = 0;
 			return true;
 		} else if (moveDelay == moveDelayCounter) {
-			if (nextPath.get(moveCounter) != pokemon.getCurrentFightTerrain()) {
-				pokemon.move(nextPath.get(moveCounter));
+			if (nextPath.get().get(moveCounter) != pokemon.getCurrentFightTerrain()) {
+				pokemon.move(nextPath.get().get(moveCounter));
 			} else {
 				moveCounter++;
 			}
@@ -174,6 +174,7 @@ public abstract class Player {
 			Optional<ActiveSkill> activeSkill) {
 		System.out.println("Player.attack()");
 		if (other.isPresent() && activeSkill.isPresent()) {
+			System.out.println("attacking...");
 			attackingPokemon.attack(other.get(), activeSkill.get());
 		}
 		return true;
@@ -198,6 +199,7 @@ public abstract class Player {
 		pokemon.setOwner(this);
 		pokemons.add(pokemon);
 	}
+	
 
 	public final Color getColor() {
 		return color;
