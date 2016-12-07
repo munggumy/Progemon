@@ -6,7 +6,10 @@ import graphic.Animation;
 import graphic.DrawingUtility;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
+import logic.player.HumanPlayer;
 import manager.WorldManager;
+import utility.Pokedex;
 
 public class PlayerCharacter extends Animation{
 	
@@ -19,10 +22,20 @@ public class PlayerCharacter extends Animation{
 	private static boolean moving = false, walking = false, turning = false, stucking = false;
 	private static final String DEFAULT_PATH = "load\\img\\player\\Boy.png";
 	
+	private static HumanPlayer me = new HumanPlayer("Mhee", Color.BROWN);
+	
 	public PlayerCharacter() {
-		// TODO Auto-generated constructor stub
 		super(DrawingUtility.resize(new Image(new File(DEFAULT_PATH).toURI().toString()), 2), 2);
 		setFrameDelay(3);
+		
+		Pokemon charlizard = Pokedex.getPokemon("Charlizard");
+		charlizard.setLevel(40);
+
+		Pokemon caterpie = Pokedex.getPokemon("Caterpie");
+		caterpie.setLevel(5);
+		
+		me.addPokemon(charlizard);
+		me.addPokemon(caterpie);
 	}
 	
 	@Override
@@ -250,6 +263,10 @@ public class PlayerCharacter extends Animation{
 	public void draw() {
 		// TODO Auto-generated method stub
 		DrawingUtility.drawPlayer(this);
+	}
+
+	public static final HumanPlayer getMe() {
+		return me;
 	}
 
 }

@@ -106,8 +106,7 @@ public class FightMap implements IRenderable {
 
 	public void draw() {
 		double x = InputUtility.getMouseX(), y = InputUtility.getMouseY();
-		if (0 <= x && x <= 319 && 0 <= y && y <= 239)
-		{
+		if (0 <= x && x <= 319 && 0 <= y && y <= 239) {
 			getFightTerrainAt((int) Math.floor(x / FightTerrain.IMG_SIZE_X),
 					(int) Math.floor(y / FightTerrain.IMG_SIZE_Y)).setCursor(true);
 		}
@@ -136,13 +135,13 @@ public class FightMap implements IRenderable {
 	public void hide() {
 		// TODO Auto-generated method stub
 		visible = false;
-		IRenderableHolder.removeWorldObjects(this);
+		IRenderableHolder.removeWorldObject(this);
 	}
 	
 	@Override
 	public void show() {
 		// TODO Auto-generated method stub
-		IRenderableHolder.addWorldObjects(this);
+		IRenderableHolder.addWorldObject(this);
 		visible = true;
 	}
 
@@ -154,7 +153,7 @@ public class FightMap implements IRenderable {
 		return sizeY;
 	}
 
-	/** @return List<Pokemon> Unmodifiable List of Pokemons on Map. */
+	/** @return Unmodifiable List of Pokemons on Map. */
 	public final List<Pokemon> getPokemonsOnMap() {
 		return Collections.unmodifiableList(pokemonsOnMap);
 	}

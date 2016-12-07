@@ -27,7 +27,7 @@ public class WorldMap implements IRenderable {
 	public WorldMap(String filePath) {
 		// TODO Auto-generated constructor stub
 		loadMap(filePath);
-		IRenderableHolder.addWorldObjects(this);
+		IRenderableHolder.addWorldObject(this);
 	}
 
 	@Override
@@ -58,13 +58,13 @@ public class WorldMap implements IRenderable {
 	public void hide() {
 		// TODO Auto-generated method stub
 		visible = false;
-		IRenderableHolder.removeWorldObjects(this);
+		IRenderableHolder.removeWorldObject(this);
 	}
 	
 	@Override
 	public void show() {
 		// TODO Auto-generated method stub
-		IRenderableHolder.addWorldObjects(this);
+		IRenderableHolder.addWorldObject(this);
 		visible = true;
 	}
 	

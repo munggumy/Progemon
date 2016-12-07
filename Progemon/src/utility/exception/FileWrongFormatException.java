@@ -6,9 +6,6 @@ public class FileWrongFormatException extends Exception {
 		super(message);
 	}
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3856657749984576358L;
 	
 }

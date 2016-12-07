@@ -4,20 +4,22 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import graphic.Animation;
 import graphic.DrawingUtility;
-import graphic.IRenderableHolder;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import logic.character.PlayerCharacter;
+import logic.player.Player;
+import manager.GUIFightGameManager;
 import manager.WorldManager;
 import utility.Clock;
 import utility.Function;
@@ -470,6 +472,9 @@ public class WorldObject extends Animation implements Cloneable {
 				Random random = new Random();
 				if (random.nextInt(100) < 8) {
 					System.out.println("to fightmap !!!");
+					Set<Player> players = new HashSet<Player>();
+					players.add(PlayerCharacter.getMe());
+					new GUIFightGameManager(players);
 				}
 			}
 		});

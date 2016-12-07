@@ -3,8 +3,8 @@ package logic.character;
 public enum Element {
 	NORMAL, FIRE, WATER, GRASS, ELECTRIC, ICE, FIGHTING, POISON, GROUND, FLYING, PSYCHIC, BUG, ROCK, GHOST, DRAGON, DARK, STEEL;
 
-	/** SWFactor[AttackerType][DefenderType] */
-	public static SW[][] SWFactor;
+	
+	
 	/** SW = StrengthWeakness. N = Normal, S = Strong, W = Weak, Z = Zero */
 	public enum SW {
 		N(1), S(2), W(0.5), Z(0);
@@ -18,4 +18,5 @@ public enum Element {
 			return factor;
 		}
 	}
+	
 }

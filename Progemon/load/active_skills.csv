@@ -1,0 +1,32 @@
+##name,power,Element,graphicTypeEnum,areaEnum,effectEnum
+Aerial Ace,60,Flying,ball,,
+Bite,60,Dark,constant,,flinch(30%)
+Body Slam,85,Normal,constant,,paralysis(30%)
+Bubble,50,Water,ball,,"op.speed(-1,10%)"
+Bubblebeam,65,Water,ball,,"op.speed(-1,10%)"
+Bug Bite,60,,constant,,
+Confusion,50,Psycho,ball,,confusion(10%)
+Cut,50,,constant,,
+Ember,60,Fire,line,,burn(10%)
+Fire Blast,120,Fire,ball,,burn(10%)
+Flamethrower,95,Fire,line,,burn(10%)
+Fly,70,Flying,ball,,
+Gust,40,Flying,ball,,
+Harden,0,Normal,constant,,
+Hydro Pump,120,Water,line,,freeze(100%)
+Ice Beam,95,Ice,line,,freeze(10%)
+Mega Kick,120,Normal,constant,,
+Mega Punch,80,Normal,constant,,
+Poison Sting,15,Poison,ball,,poison(30%)
+Pursuit,40,Dark,constant,,
+Razor Leaf,55,Grass,ball,,
+Razor Wind,80,Normal,ball,,
+Scratch,40,Normal,constant,,
+Slash,70,,constant,,
+Surf,60,,constant,,
+Tackle,35,,constant,,
+Take Down,90,,constant,,
+Twineedle,50,Bug,ball,,poison(20%)
+Vine Whip,35,Grass,line,,
+Water Gun,40,Water,ball,,
+Wing Attack,70,,ball,,

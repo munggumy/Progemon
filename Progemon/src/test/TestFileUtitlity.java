@@ -17,6 +17,7 @@ import logic.character.ActiveSkill;
 import logic.character.Element;
 import logic.character.Element.SW;
 import logic.character.Pokemon;
+import logic.character.SkillEffect;
 import logic.terrain.FightTerrain;
 import utility.FileUtility;
 import utility.Pokedex;
@@ -105,11 +106,11 @@ public class TestFileUtitlity {
 		String[] args = "001 49 49 45 45 1 1 WALK".split(" ");
 		Pokemon testFirstPokemon = new Pokemon(args);
 		Pokemon firstPokemon = Pokedex.getAllPokemons().get(0);
-		
+
 		assertEquals("First Pokemon Stats", testFirstPokemon.getBase().attackStat, firstPokemon.getBase().attackStat,
 				EPSILON);
-		assertEquals("First Pokemon Stats DEF", testFirstPokemon.getBase().defenceStat, firstPokemon.getBase().defenceStat,
-				EPSILON);
+		assertEquals("First Pokemon Stats DEF", testFirstPokemon.getBase().defenceStat,
+				firstPokemon.getBase().defenceStat, EPSILON);
 		assertEquals("First Pokemon Stats", testFirstPokemon.getMoveRange(), firstPokemon.getMoveRange(), EPSILON);
 		assertEquals("First Pokemon Stats", testFirstPokemon.getBase().speed, firstPokemon.getBase().speed, EPSILON);
 		assertEquals("First Pokemon Stats", testFirstPokemon.getBase().fullHP, firstPokemon.getBase().fullHP, EPSILON);
@@ -131,27 +132,14 @@ public class TestFileUtitlity {
 
 		ArrayList<ActiveSkill> aSkills = new ArrayList<ActiveSkill>(ActiveSkill.getAllActiveSkills());
 
-		assertEquals("First Move : Mega Punch", "Mega Punch", aSkills.get(0).getName());
-		assertTrue("First Move : Mega Punch", Double.compare(80, aSkills.get(0).getPower()) == 0);
-		assertEquals("Second Move : Razor Wind", "Razor Wind", aSkills.get(1).getName());
-		assertTrue("Second Move : Razor Wind", Double.compare(80, aSkills.get(1).getPower()) == 0);
-	}
+		aSkills.forEach(System.out::println);
+		assertTrue(aSkills.stream().anyMatch(as -> as.getName().equals("Flamethrower")));
+		assertTrue(aSkills.stream().anyMatch(as -> as.getName().equals("Body Slam")));
 
-	@Test
-	public void testLoadActiveSkills2() {
-		ActiveSkill.clearAllActiveSkills();
-		String customFilePath = "test/test1loadActiveSkills.txt";
+		ActiveSkill flamethrower = aSkills.stream().filter(as -> as.getName().equals("Flamethrower")).findAny().get();
+		ActiveSkill bodyslam = aSkills.stream().filter(as -> as.getName().equals("Body Slam")).findAny().get();
 
-		FileUtility.loadActiveSkills(customFilePath);
-
-		ArrayList<ActiveSkill> aSkills = new ArrayList<ActiveSkill>(ActiveSkill.getAllActiveSkills());
-
-		assertEquals("Size of allActiveSkills", 2, aSkills.size());
-
-		assertEquals("First Move : Hello WORLD", "Hello World", aSkills.get(0).getName());
-		assertTrue("First Move : Hello WORLD", Double.compare(13, aSkills.get(0).getPower()) == 0);
-		assertEquals("Second Move : Utit Mo Ko", "Utit Mo Ko", aSkills.get(1).getName());
-		assertTrue("Second Move : Utit Mo Ko", Double.compare(91, aSkills.get(1).getPower()) == 0);
+		assertEquals(SkillEffect.normal, bodyslam.getSkillEffect());
 	}
 
 	@Test

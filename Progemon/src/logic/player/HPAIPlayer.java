@@ -2,6 +2,7 @@ package logic.player;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Optional;
 
 import javafx.scene.paint.Color;
 import logic.character.Pokemon;
@@ -19,7 +20,7 @@ public class HPAIPlayer extends AIPlayer {
 	}
 
 	@Override
-	protected Path calculateNextPath(Pokemon pokemon) {
+	protected Optional<Path> calculateNextPath(Pokemon pokemon) {
 		Pokemon lowestHP = null;
 		// find pokemon with lowest HP
 		ArrayList<Pokemon> sortedList = new ArrayList<Pokemon>(pokemon.getCurrentFightMap().getPokemonsOnMap());
@@ -33,21 +34,26 @@ public class HPAIPlayer extends AIPlayer {
 		if (lowestHP == null) {
 			return super.calculateNextPath(pokemon);
 		}
-		Path wholePath = pokemon.findPathTo(lowestHP.getCurrentFightTerrain(), 1000);
-		if (wholePath == null) {
+		Optional<Path> wholePath = pokemon.findPathTo(lowestHP.getCurrentFightTerrain(), 1000);
+		if (!wholePath.isPresent()) {
 			return super.calculateNextPath(pokemon);
 		}
-		Path subPath = wholePath.subPath(0, Math.min(wholePath.size(), pokemon.getMoveRange() + 1));
-		
+		Path subPath = wholePath.get().subPath(0, Math.min(wholePath.get().size(), pokemon.getMoveRange() + 1));
+
 		// clear overlap issues
 		Path out = new Path();
 		boolean overlap = false;
 		for (FightTerrain fightTerrain : subPath) {
-			for (Pokemon otherPokemon : pokemon.getCurrentFightMap().getPokemonsOnMap()) {
-				if (otherPokemon != pokemon && otherPokemon.getCurrentFightTerrain().equals(fightTerrain)) {
-					overlap = true;
-				}
-			}
+			// for (Pokemon otherPokemon :
+			// pokemon.getCurrentFightMap().getPokemonsOnMap()) {
+			// if (otherPokemon != pokemon &&
+			// otherPokemon.getCurrentFightTerrain().equals(fightTerrain)) {
+			// overlap = true;
+			// }
+			// }
+			overlap = pokemon.getCurrentFightMap().getPokemonsOnMap().stream().anyMatch(other -> {
+				return other != pokemon && other.getCurrentFightTerrain().equals(fightTerrain);
+			});
 			if (overlap) {
 				break;
 			} else {
@@ -58,6 +64,6 @@ public class HPAIPlayer extends AIPlayer {
 			// in case this is not moving anywhere
 			return super.calculateNextPath(pokemon);
 		}
-		return out;
+		return Optional.of(out);
 	}
 }

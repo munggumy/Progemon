@@ -3,7 +3,7 @@ package main;
 import java.util.ArrayList;
 
 import graphic.DrawingUtility;
-import graphic.MyStage;
+import graphic.GameStage;
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.scene.paint.Color;
@@ -30,28 +30,21 @@ public class Main3 extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		Thread.setDefaultUncaughtExceptionHandler(ThreadUtility::showError);
-		new MyStage();
+		new GameStage();
 		FileUtility.loadAllDefaults();
 
 		Pokemon charlizard = Pokedex.getPokemon("Charlizard");
 		charlizard.setLevel(38);
-		charlizard.calculateCurrentStats();
-		charlizard.resetHP();
 
 		Pokemon caterpie = Pokedex.getPokemon("Caterpie");
 		caterpie.setLevel(5);
-		caterpie.calculateCurrentStats();
-		caterpie.resetHP();
 
 		Pokemon wartortle = Pokedex.getPokemon("Wartortle");
 		wartortle.setLevel(34);
-		wartortle.calculateCurrentStats();
-		wartortle.resetHP();
+		
 		Pokemon pidgeotto = Pokedex.getPokemon("Pidgeotto");
 		pidgeotto.setLevel(30);
 		pidgeotto.setMoveRange(8);
-		pidgeotto.calculateCurrentStats();
-		pidgeotto.resetHP();
 
 		Player p1 = new HPAIPlayer("AI 1", charlizard, Color.RED);
 		p1.addPokemon(caterpie);
