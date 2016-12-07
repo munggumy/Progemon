@@ -14,7 +14,7 @@ import utility.Clock;
 import utility.Phase;
 import utility.exception.UnknownPhaseException;
 
-public abstract class Player {
+public abstract class Player{
 	private String name;
 	private Color color;
 	private ArrayList<Pokemon> pokemons;
@@ -26,7 +26,7 @@ public abstract class Player {
 	private int moveCounter = 1;
 	private int moveDelay = 5, moveDelayCounter = 0;
 
-	private int x, y;
+	private int tokenx, tokeny;
 
 	// Constructor
 
@@ -75,8 +75,8 @@ public abstract class Player {
 					pokemon.findBlocksAround(pokemon.getMoveRange(), new MoveFilter());
 					pokemon.sortPaths();
 					pokemon.shadowBlocks();
-					x = pokemon.getCurrentFightTerrain().getX();
-					y = pokemon.getCurrentFightTerrain().getY();
+					tokenx = pokemon.getCurrentFightTerrain().getX();
+					tokeny = pokemon.getCurrentFightTerrain().getY();
 					phaseIsFinished = true;
 					break;
 				case inputMovePhase:
@@ -147,7 +147,7 @@ public abstract class Player {
 
 	protected final boolean move(Pokemon pokemon) {
 		if (moveCounter == nextPath.size()) {
-			System.out.println("Pokemon " + pokemon.getName() + " moved from (" + x + ", " + y + ") to ("
+			System.out.println("Pokemon " + pokemon.getName() + " moved from (" + tokenx + ", " + tokeny + ") to ("
 					+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY() + ").");
 			moveCounter = 1;
 			moveDelayCounter = 0;

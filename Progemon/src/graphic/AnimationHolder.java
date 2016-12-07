@@ -1,12 +1,13 @@
 package graphic;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class AnimationHolder {
 	
-	private static ArrayList<Animation> playingAnimations = new ArrayList<>();
+	private static CopyOnWriteArrayList<Animation> playingAnimations = new CopyOnWriteArrayList<>();
 	
-	public static ArrayList<Animation> getPlayingAnimations() {
+	public static CopyOnWriteArrayList<Animation> getPlayingAnimations() {
 		return playingAnimations;
 	}
 	
@@ -17,7 +18,7 @@ public class AnimationHolder {
 	}
 	
 	public static void removePlayingAnimations(Animation animation) {
-		if (! playingAnimations.contains(animation)) {
+		if (!playingAnimations.contains(animation)) {
 			playingAnimations.remove(animation);
 		}
 	}

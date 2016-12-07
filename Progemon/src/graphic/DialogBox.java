@@ -29,6 +29,7 @@ public class DialogBox implements IRenderable {
 	private static int yShift = 0;
 	private static boolean hasSentMessage = true;
 	private static int endLineWidth;
+	private static boolean visible = true;
 
 	public static final KeyCode advancingKey = KeyCode.A;
 
@@ -39,9 +40,35 @@ public class DialogBox implements IRenderable {
 	}
 
 	@Override
-	public void getDepth() {
+	public int getDepth() {
 		// TODO Auto-generated method stub
-
+		return 0;
+	}
+	
+	@Override
+	public boolean isVisible() {
+		// TODO Auto-generated method stub
+		return visible;
+	}
+	
+	@Override
+	public void setVisible(boolean visible) {
+		// TODO Auto-generated method stub
+		this.visible = visible;
+	}
+	
+	@Override
+	public void hide() {
+		// TODO Auto-generated method stub
+		visible = false;
+		IRenderableHolder.removeWorldObjects(this);
+	}
+	
+	@Override
+	public void show() {
+		// TODO Auto-generated method stub
+		IRenderableHolder.addWorldObjects(this);
+		visible = true;
 	}
 
 	public static void update() {
