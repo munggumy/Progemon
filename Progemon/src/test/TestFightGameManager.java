@@ -6,11 +6,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javafx.scene.paint.Color;
-import logic.character.ActiveSkill;
-import logic.character.Pokemon;
-import logic.player.AIPlayer;
-import logic.player.Player;
-import logic.terrain.FightMap;
+import logic_fight.character.activeSkill.ActiveSkill;
+import logic_fight.character.pokemon.Pokemon;
+import logic_fight.player.AIPlayer;
+import logic_fight.player.Player;
+import logic_fight.terrain.FightMap;
 import manager.DOSFightGameManager;
 import utility.FileUtility;
 import utility.Pokedex;

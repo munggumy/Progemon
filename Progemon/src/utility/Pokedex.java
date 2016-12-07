@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import logic.character.Pokemon;
-import logic.player.Player;
+import logic_fight.character.pokemon.Pokemon;
+import logic_fight.player.Player;
 import utility.exception.DuplicatePokemonException;
 import utility.exception.UnknownPokemonException;
 

@@ -13,12 +13,12 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
-import logic.character.ActiveSkill;
-import logic.character.Element;
-import logic.character.Element.SW;
-import logic.character.Pokemon;
-import logic.character.SkillEffect;
-import logic.terrain.FightTerrain;
+import logic_fight.character.Element;
+import logic_fight.character.Element.SW;
+import logic_fight.character.activeSkill.ActiveSkill;
+import logic_fight.character.activeSkill.SkillEffect;
+import logic_fight.character.pokemon.Pokemon;
+import logic_fight.terrain.FightTerrain;
 import utility.FileUtility;
 import utility.Pokedex;
 

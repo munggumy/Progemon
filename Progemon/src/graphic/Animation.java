@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import logic.character.ActiveSkill;
 
 public abstract class Animation implements IRenderable{
 	

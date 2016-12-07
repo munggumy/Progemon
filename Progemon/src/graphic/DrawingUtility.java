@@ -14,14 +14,14 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import logic.character.ActiveSkill;
-import logic.character.PlayerCharacter;
-import logic.character.Pokemon;
-import logic.character.Status;
-import logic.terrain.FightMap;
-import logic.terrain.FightTerrain;
-import logic.terrain.WorldMap;
-import logic.terrain.WorldObject;
+import logic_fight.character.activeSkill.ActiveSkill;
+import logic_fight.character.pokemon.Pokemon;
+import logic_fight.character.pokemon.Status;
+import logic_fight.terrain.FightMap;
+import logic_fight.terrain.FightTerrain;
+import logic_world.player.PlayerCharacter;
+import logic_world.terrain.WorldMap;
+import logic_world.terrain.WorldObject;
 import manager.WorldManager;
 
 public class DrawingUtility {
