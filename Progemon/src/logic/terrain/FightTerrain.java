@@ -4,6 +4,7 @@ import java.io.File;
 
 import graphic.DrawingUtility;
 import graphic.IRenderable;
+import graphic.IRenderableHolder;
 import javafx.scene.image.Image;
 
 /** FightTerrain */
@@ -14,6 +15,7 @@ public class FightTerrain implements IRenderable {
 	private boolean isShadowed, isCursor, isPathSign, isHighlight;
 	private TerrainType type;
 	private Image terrainImage = null;
+	private boolean visible = true;
 
 	public static enum TerrainType {
 		GRASS, ROCK, WATER, TREE, GROUND;
@@ -108,8 +110,35 @@ public class FightTerrain implements IRenderable {
 	}
 
 	@Override
-	public void getDepth() {
-
+	public int getDepth() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public boolean isVisible() {
+		// TODO Auto-generated method stub
+		return visible;
+	}
+	
+	@Override
+	public void setVisible(boolean visible) {
+		// TODO Auto-generated method stub
+		this.visible = visible;
+	}
+	
+	@Override
+	public void hide() {
+		// TODO Auto-generated method stub
+		visible = false;
+		IRenderableHolder.removeWorldObject(this);
+	}
+	
+	@Override
+	public void show() {
+		// TODO Auto-generated method stub
+		IRenderableHolder.addWorldObject(this);
+		visible = true;
 	}
 
 	public final Image getTerrainImage() {

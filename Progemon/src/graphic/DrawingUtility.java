@@ -15,10 +15,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import logic.character.ActiveSkill;
+import logic.character.PlayerCharacter;
 import logic.character.Pokemon;
 import logic.character.Status;
 import logic.terrain.FightMap;
 import logic.terrain.FightTerrain;
+import logic.terrain.WorldMap;
+import logic.terrain.WorldObject;
+import manager.WorldManager;
 
 public class DrawingUtility {
 
@@ -224,6 +228,64 @@ public class DrawingUtility {
 		gc.restore();
 	}
 
+	public static void drawWorldMap(WorldMap worldMap) {
+		double x = WorldManager.getPlayer().getX();
+		double y = WorldManager.getPlayer().getY();
+		/*
+		 * xoffset = x - (blocksize * 7) yoffset = y - (blocksize * 5.5)
+		 */
+		double xoffset = x - (32 * 7);
+		double yoffset = y - (32 * 5.5);
+		/*
+		 * startBlockX = Math.floor(xoffset/blocksize) endBlockX = startBlockX +
+		 * 16 startBlockY = Math.floor(yoffset/blocksize) endBlockY =
+		 * startBlockX + 13
+		 */
+		int startBlockX = (int) Math.floor(xoffset / 32);
+		int endBlockX = (int) Math.floor((x + (32 * 8) - 1) / 32);
+		int startBlockY = (int) Math.floor(yoffset / 32);
+		int endBlockY = (int) Math.floor((y + (32 * 6.5) - 1) / 32);
+		int tileCode;
+		for (int i = startBlockY; i <= endBlockY; i++) {
+			for (int j = startBlockX; j <= endBlockX; j++) {
+				tileCode = worldMap.getTerrainAt(j, i);
+				if (tileCode != 0) {
+					gc.drawImage(WorldMap.getImage(Math.abs(tileCode)), j * 32 - xoffset, i * 32 - yoffset, 32, 32);
+				}
+			}
+		}
+	}
+
+	public static void drawPlayer(PlayerCharacter player) {
+		// x = blocksize * 7, y = blocksize * 5.5 - (6/16 * blocksize)
+		gc.drawImage(player.getCurrentImage(), 224, 164, 32, 44);
+	}
+
+	public static void drawWorldObject(WorldObject worldObject) {
+		int height = (int) worldObject.getCurrentImage().getHeight();
+		int width = (int) worldObject.getCurrentImage().getWidth();
+		int blockX = worldObject.getBlockX();
+		int blockY = worldObject.getBlockY();
+		double x = WorldManager.getPlayer().getX();
+		double y = WorldManager.getPlayer().getY();
+		double xoffset = x - (32 * 7);
+		double yoffset = y - (32 * 5.5);
+		int startBlockX = (int) Math.floor(xoffset / 32);
+		int endBlockX = (int) Math.floor((x + (32 * 8) - 1) / 32);
+		int startBlockY = (int) Math.floor(yoffset / 32);
+		int endBlockY = (int) Math.floor((y + (32 * 6.5) - 1) / 32);
+		if (blockX > endBlockX || blockY < startBlockY) {
+			return;
+		} else if (blockX * 32 + width > xoffset || (blockY + 1) * 32 - height < yoffset + 384) {
+			gc.drawImage(worldObject.getCurrentImage(), blockX * 32 - xoffset, (blockY + 1) * 32 - height - yoffset,
+					width, height);
+		}
+	}
+
+	public static void drawScreenEffect(ScreenEffect screenEffect) {
+		gc.drawImage(screenEffect.getCurrentImage(), 0, 0);
+	}
+
 	public static double computeStringWidth(String str, Font font) {
 		if (str.length() == 0 || gc == null) {
 			return 0;
@@ -263,6 +325,20 @@ public class DrawingUtility {
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
 				pw.setColor(width - 1 - x, y, pr.getColor(x, y));
+			}
+		}
+		return wimg;
+	}
+
+	public static Image resize(Image img, int i) {
+		int height = (int) img.getHeight() * i;
+		int width = (int) img.getWidth() * i;
+		PixelReader pr = img.getPixelReader();
+		WritableImage wimg = new WritableImage(width, height);
+		PixelWriter pw = wimg.getPixelWriter();
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				pw.setColor(x, y, pr.getColor((int) Math.floor(x / i), (int) Math.floor(y / i)));
 			}
 		}
 		return wimg;
