@@ -1,0 +1,199 @@
+package graphic;
+
+import java.io.File;
+import java.util.ArrayList;
+
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
+import logic.character.ActiveSkill;
+
+public abstract class Animation implements IRenderable{
+	
+	/** Image used for animation. Must be consisted of 5 frames per row */
+	protected Image image;
+	protected int frameNumber, frameDelay, currentFrame, delayCounter;
+	protected boolean visible = true, playing = false, pause = false, loop = false, autostop = true, playback = false;
+	
+	public Animation() {
+		// TODO Auto-generated constructor stub
+		frameDelay = 1;
+	}
+	
+	public Animation(Image image, int frameNumber) {
+		// TODO Auto-generated constructor stub
+		this.image = image;
+		this.frameNumber = frameNumber;
+		frameDelay = 1;
+	}
+	
+	public Animation(int frameNumber, int frameDelay, boolean loop, boolean autostop) {
+		this.frameNumber = frameNumber;
+		this.frameDelay = frameDelay;
+		this.loop = loop;
+		this.autostop = autostop;
+	}
+	
+	public void play() {
+		if (playback) {
+			pause = false;
+			delayCounter = 0;
+			currentFrame = frameNumber - 1;
+			AnimationHolder.addPlayingAnimations(this);
+			playing = true;
+			return;
+		}
+		pause = false;
+		delayCounter = 0;
+		currentFrame = 0;
+		AnimationHolder.addPlayingAnimations(this);
+		playing = true;
+	}
+	
+	public void pause() {
+		if (!pause) {
+			playing = false;
+			AnimationHolder.removePlayingAnimations(this);
+			pause = true;
+		}
+	}
+	
+	public void unpause() {
+		if (pause) {
+			AnimationHolder.removePlayingAnimations(this);
+			playing = true;
+			pause = false;
+		}
+	}
+	
+	public void update() {
+		if (playback) {
+			updatePlayback();
+			return
+		}
+		if(!playing) {
+			return;
+		}
+		if(frameDelay > delayCounter) {
+			delayCounter++;
+		}
+		else if(frameNumber - 1 > currentFrame) {
+			currentFrame++;
+			delayCounter = 0;
+		}
+		else if(loop) {
+			currentFrame = 0;
+			delayCounter = 0;
+		}
+		else if(autostop) {
+			stop();
+		}
+		else{
+			pause();
+		}
+	}
+	
+	public void updatePlayback() {
+		if(!playing) {
+			return;
+		}
+		if(frameDelay > delayCounter) {
+			delayCounter++;
+		}
+		else if(0 < currentFrame) {
+			currentFrame++;
+			delayCounter = 0;
+		}
+		else if(loop) {
+			currentFrame = frameNumber - 1;
+			delayCounter = 0;
+		}
+		else if(autostop) {
+			stop();
+		}
+		else{
+			pause();
+		}
+	}
+	
+	public void stop() {
+		playing = false;
+		delayCounter = 0;
+		currentFrame = 0;
+		AnimationHolder.removePlayingAnimations(this);
+	}
+	
+	public Image getCurrentImage() {
+		WritableImage wimg = new WritableImage(image.getPixelReader(), currentFrame % 5 * 160, (int) (Math.floor(currentFrame / 5) * 80), 160, 80);
+		return wimg;
+	}
+	
+	public boolean isPlaying() {
+		return playing;
+	}
+	
+	public void setPlaying(boolean playing) {
+		this.playing = playing;
+	}
+	
+	public boolean isPause() {
+		return pause;
+	}
+	
+	public boolean isLoop() {
+		return loop;
+	}
+	
+	public void setLoop(boolean loop) {
+		this.loop = loop;
+	}
+	
+	public void setAutostop(boolean autostop) {
+		this.autostop = autostop;
+	}
+	
+	public void loadImage(String filePath) {
+		/*if(name.equals("Flamethrower")) {
+		File file = new File("load/img/skill/" + name + "/all.png");
+		Image image = new Image(file.toURI().toString());
+		animation = new Animation(image, 16);
+		}*/
+		File file = new File(filePath);
+		this.image = new Image(file.toURI().toString());
+		frameNumber = 16;
+	}
+	
+	public void setFrameDelay(int frameDelay) {
+		this.frameDelay = frameDelay;
+	}
+	
+	public void setFrameNumber(int frameNumber) {
+		this.frameNumber = frameNumber;
+	}
+	
+	@Override
+	public boolean isVisible() {
+		// TODO Auto-generated method stub
+		return visible;
+	}
+	
+	@Override
+	public void setVisible(boolean visible) {
+		// TODO Auto-generated method stub
+		this.visible = visible;
+	}
+	
+	@Override
+	public void hide() {
+		// TODO Auto-generated method stub
+		visible = false;
+		IRenderableHolder.removeWorldObjects(this);
+	}
+	
+	@Override
+	public void show() {
+		// TODO Auto-generated method stub
+		IRenderableHolder.addWorldObjects(this);
+		visible = true;
+	}
+
+}

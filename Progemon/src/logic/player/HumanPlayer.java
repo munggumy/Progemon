@@ -1,11 +1,21 @@
 package logic.player;
 
+import java.io.File;
+
+import graphic.Animation;
+import graphic.AnimationHolder;
+import graphic.DrawingUtility;
 import graphic.Frame;
+import graphic.IRenderable;
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import logic.character.Pokemon;
 import logic.terrain.FightTerrain;
+import manager.WorldManager;
+import utility.Clock;
 import utility.InputUtility;
 
 public class HumanPlayer extends Player {
@@ -98,4 +108,5 @@ public class HumanPlayer extends Player {
 		}
 		return super.nextAttackSkill != null;
 	}
+	
 }

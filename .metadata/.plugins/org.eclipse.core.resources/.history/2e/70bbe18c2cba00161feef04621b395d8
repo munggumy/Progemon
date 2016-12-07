@@ -1,0 +1,137 @@
+package graphic;
+
+import java.io.File;
+import java.util.ArrayList;
+
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
+import logic.character.ActiveSkill;
+
+public abstract class Animation implements IRenderable{
+	
+	/** Image used for animation. Must be consisted of 5 frames per row */
+	protected Image image;
+	protected int frameNumber, frameDelay, currentFrame, delayCounter;
+	protected boolean playing, pause = false, loop = false, autostop = true;
+	
+	public Animation() {
+		// TODO Auto-generated constructor stub
+		frameDelay = 1;
+	}
+	
+	public Animation(Image image, int frameNumber) {
+		// TODO Auto-generated constructor stub
+		this.image = image;
+		this.frameNumber = frameNumber;
+		frameDelay = 1;
+	}
+	
+	public Animation(int frameNumber, int frameDelay, boolean loop, boolean autostop) {
+		this.frameNumber = frameNumber;
+		this.frameDelay = frameDelay;
+		this.loop = loop;
+		this.autostop = autostop;
+	}
+	
+	public void play() {
+		playing = true;
+		pause = false;
+		delayCounter = 0;
+		currentFrame = 0;
+		AnimationHolder.addPlayingAnimations(this);
+	}
+	
+	public void pause() {
+		if (!pause) {
+			playing = false;
+			AnimationHolder.removePlayingAnimations(this);
+			pause = true;
+		}
+	}
+	
+	public void unpause() {
+		if (pause) {
+			playing = true;
+			AnimationHolder.removePlayingAnimations(this);
+			pause = false;
+		}
+	}
+	
+	public void update() {
+		if(!playing) {
+			return;
+		}
+		if(frameDelay > delayCounter) {
+			delayCounter++;
+		}
+		else if(frameNumber - 1 > currentFrame) {
+			currentFrame++;
+			delayCounter = 0;
+		}
+		else if(loop) {
+			currentFrame = 0;
+		}
+		else if(autostop) {
+			stop();
+		}
+		else{
+			pause();
+		}
+	}
+	
+	public void stop() {
+		playing = false;
+		delayCounter = 0;
+		currentFrame = 0;
+		AnimationHolder.removePlayingAnimations(this);
+	}
+	
+	public Image getCurrentImage() {
+		WritableImage wimg = new WritableImage(image.getPixelReader(), currentFrame % 5 * 160, (int) (Math.floor(currentFrame / 5) * 80), 160, 80);
+		return wimg;
+	}
+	
+	public boolean isPlaying() {
+		return playing;
+	}
+	
+	public boolean isPause() {
+		return pause;
+	}
+	
+	public boolean isLoop() {
+		return loop;
+	}
+	
+	public void setLoop(boolean loop) {
+		this.loop = loop;
+	}
+	
+	public void setAutostop(boolean autostop) {
+		this.autostop = autostop;
+	}
+	
+	public void loadImage(String filePath) {
+		/*if(name.equals("Flamethrower")) {
+		File file = new File("load/img/skill/" + name + "/all.png");
+		Image image = new Image(file.toURI().toString());
+		animation = new Animation(image, 16);
+		}*/
+		File file = new File(filePath);
+		this.image = new Image(file.toURI().toString());
+		frameNumber = 16;
+	}
+	
+	public void setFrameDelay(int frameDelay) {
+		this.frameDelay = frameDelay;
+	}
+	
+	public void setFrameNumber(int frameNumber) {
+		this.frameNumber = frameNumber;
+	}
+	
+	public void setPlaying(boolean playing) {
+		this.playing = playing;
+	}
+
+}

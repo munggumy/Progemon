@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import graphic.DrawingUtility;
 import graphic.IRenderable;
+import graphic.IRenderableHolder;
 import logic.character.Pokemon;
 import logic.filters.Filter;
 import logic.filters.MoveFilter;
@@ -19,6 +20,7 @@ public class FightMap implements IRenderable {
 	private int sizeX, sizeY;
 	private FightTerrain[][] map;
 	private ArrayList<Pokemon> pokemonsOnMap = new ArrayList<Pokemon>();
+	private boolean visible = true;
 
 	public static enum Direction {
 		UP(0, -1), LEFT(-1, 0), DOWN(0, 1), RIGHT(1, 0);
@@ -113,8 +115,35 @@ public class FightMap implements IRenderable {
 	}
 
 	@Override
-	public void getDepth() {
+	public int getDepth() {
 		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public boolean isVisible() {
+		// TODO Auto-generated method stub
+		return visible;
+	}
+	
+	@Override
+	public void setVisible(boolean visible) {
+		// TODO Auto-generated method stub
+		this.visible = visible;
+	}
+	
+	@Override
+	public void hide() {
+		// TODO Auto-generated method stub
+		visible = false;
+		IRenderableHolder.removeWorldObjects(this);
+	}
+	
+	@Override
+	public void show() {
+		// TODO Auto-generated method stub
+		IRenderableHolder.addWorldObjects(this);
+		visible = true;
 	}
 
 	public final int getSizeX() {

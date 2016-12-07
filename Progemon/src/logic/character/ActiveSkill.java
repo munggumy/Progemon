@@ -8,6 +8,7 @@ import java.util.List;
 import graphic.Animation;
 import graphic.DrawingUtility;
 import graphic.IRenderable;
+import graphic.IRenderableHolder;
 import logic.terrain.FightTerrain;
 import utility.StringUtility;
 
@@ -89,9 +90,9 @@ public class ActiveSkill extends Animation implements IRenderable {
 	}
 
 	@Override
-	public void getDepth() {
+	public int getDepth() {
 		// TODO Auto-generated method stub
-
+		return 0;
 	}
 
 	public void setAttackTerrain(FightTerrain attackTerrain) {
