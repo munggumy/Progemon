@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.character.Pokemon;
-import logic.terrain.FightMap;
 import manager.GUIFightGameManager;
 import utility.Clock;
 
@@ -65,13 +64,13 @@ public class QueueBox implements IRenderable {
 	public void hide() {
 		// TODO Auto-generated method stub
 		visible = false;
-		IRenderableHolder.removeWorldObjects(this);
+		IRenderableHolder.removeWorldObject(this);
 	}
 	
 	@Override
 	public void show() {
 		// TODO Auto-generated method stub
-		IRenderableHolder.addWorldObjects(this);
+		IRenderableHolder.addWorldObject(this);
 		visible = true;
 	}
 	

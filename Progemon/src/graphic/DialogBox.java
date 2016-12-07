@@ -1,15 +1,10 @@
 package graphic;
 
 import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
-import manager.GUIFightGameManager;
 import utility.Clock;
 import utility.InputUtility;
 
@@ -61,13 +56,13 @@ public class DialogBox implements IRenderable {
 	public void hide() {
 		// TODO Auto-generated method stub
 		visible = false;
-		IRenderableHolder.removeWorldObjects(this);
+		IRenderableHolder.removeWorldObject(this);
 	}
 	
 	@Override
 	public void show() {
 		// TODO Auto-generated method stub
-		IRenderableHolder.addWorldObjects(this);
+		IRenderableHolder.addWorldObject(this);
 		visible = true;
 	}
 

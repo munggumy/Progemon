@@ -1,24 +1,23 @@
 package logic.player;
 
-import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-import graphic.Animation;
-import graphic.AnimationHolder;
-import graphic.DrawingUtility;
-import graphic.Frame;
-import graphic.IRenderable;
-import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import logic.character.ActiveSkill;
 import logic.character.Pokemon;
 import logic.terrain.FightTerrain;
-import manager.WorldManager;
-import utility.Clock;
+import manager.GUIFightGameManager;
 import utility.InputUtility;
 
 public class HumanPlayer extends Player {
+
+	Set<KeyCode> attackingKeys = new HashSet<KeyCode>(
+			Arrays.asList(KeyCode.DIGIT1, KeyCode.DIGIT2, KeyCode.DIGIT3, KeyCode.DIGIT4));
 
 	public HumanPlayer(String name) {
 		super(name);
@@ -34,15 +33,13 @@ public class HumanPlayer extends Player {
 
 	@Override
 	protected boolean inputNextPath(Pokemon pokemon) {
-		MouseEvent mEvent = InputUtility.getLastMouseClickEvent();
-		if (mEvent == null) {
-			super.nextPath = null;
+		if (!InputUtility.isMouseLeftClicked()) {
 			return false;
 		} else {
 			FightTerrain destination = pokemon.getCurrentFightMap().getFightTerrainAt(
-					(mEvent.getX() - Frame.OFFSET_X) / FightTerrain.IMG_SIZE_X,
-					(mEvent.getY() - Frame.OFFSET_Y) / FightTerrain.IMG_SIZE_Y);
-			System.out.println(destination);
+					(InputUtility.getMouseX()) / FightTerrain.IMG_SIZE_X,
+					(InputUtility.getMouseY()) / FightTerrain.IMG_SIZE_Y);
+			System.out.println("Destination : " + destination);
 			if (pokemon.getAvaliableFightTerrains().contains(destination)) {
 				super.nextPath = pokemon.findPathTo(destination);
 				return true;
@@ -55,22 +52,22 @@ public class HumanPlayer extends Player {
 
 	@Override
 	protected boolean inputAttackPokemon(Pokemon pokemon) {
-		if (super.nextAttackedPokemon != null) {
+
+		if (super.nextAttackedPokemon.isPresent()) {
 			return true;
 		}
-		MouseEvent mEvent = InputUtility.getLastMouseClickEvent();
-		if (mEvent == null) {
-			super.nextAttackedPokemon = null;
+		if (!InputUtility.isMouseLeftClicked()) {
 			return false;
 		} else {
 			FightTerrain destination = pokemon.getCurrentFightMap().getFightTerrainAt(
-					(mEvent.getX()) / FightTerrain.IMG_SIZE_X, (mEvent.getY()) / FightTerrain.IMG_SIZE_Y);
-			Pokemon otherPokemon = pokemon.getCurrentFightMap().getPokemonAt(destination);
-			if (otherPokemon != null && otherPokemon.getOwner() != pokemon.getOwner()) {
+					InputUtility.getMouseX() / FightTerrain.IMG_SIZE_X,
+					InputUtility.getMouseY() / FightTerrain.IMG_SIZE_Y);
+			Optional<Pokemon> otherPokemon = pokemon.getCurrentFightMap().getPokemonAt(destination);
+			if (otherPokemon.isPresent() && otherPokemon.get().getOwner() != pokemon.getOwner()) {
 				super.nextAttackedPokemon = otherPokemon;
 				return true;
 			} else {
-				super.nextAttackedPokemon = null;
+				super.nextAttackedPokemon = Optional.empty();
 				return false;
 			}
 		}
@@ -78,35 +75,23 @@ public class HumanPlayer extends Player {
 
 	@Override
 	protected boolean inputAttackActiveSkill(Pokemon attackingPokemon) {
-
-		System.out.println(super.nextAttackSkill);
-		if (super.nextAttackSkill != null) {
+		KeyCode endTurn = KeyCode.E;
+		if (InputUtility.getKeyTriggered(endTurn)) {
+			GUIFightGameManager.nextPhase();
+		}
+		if (super.nextAttackSkill.isPresent()) {
 			return true;
 		}
-		KeyEvent kEvent = InputUtility.getLastKeyEvent();
-		if (kEvent.getID() != KeyEvent.KEY_RELEASED) {
-			return false;
-		}
-		int keyCode = kEvent.getKeyCode();
-		System.out.println("KeyCode = " + keyCode);
-		switch (keyCode) {
-		case KeyEvent.VK_1:
-		case KeyEvent.VK_2:
-		case KeyEvent.VK_3:
-		case KeyEvent.VK_4:
-			if (keyCode - KeyEvent.VK_0 > attackingPokemon.getActiveSkills().size()) {
-				System.err.println("keyCode " + (keyCode - KeyEvent.VK_0) + " is invalid.");
-				super.nextAttackSkill = null;
-			} else {
-				super.nextAttackSkill = attackingPokemon.getActiveSkills().get(keyCode - KeyEvent.VK_0 - 1);
-				System.out.println("Attacking with skill " + (keyCode - KeyEvent.VK_0));
+		List<ActiveSkill> attackSkills = attackingPokemon.getActiveSkills();
+		for (KeyCode kc : attackingKeys) {
+			int index = kc.ordinal() - KeyCode.DIGIT1.ordinal();
+			if (InputUtility.getKeyTriggered(kc) && index >= 0 && index < attackSkills.size()) {
+				System.out.println("Attack Skill setted");
+				super.nextAttackSkill = Optional.of(attackSkills.get(index));
+				return true;
 			}
-
-			break;
-		default:
-			InputUtility.setLastKeyEvent(kEvent); // pass event back
 		}
-		return super.nextAttackSkill != null;
+		return false;
 	}
 	
 }

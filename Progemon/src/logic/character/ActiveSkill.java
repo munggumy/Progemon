@@ -14,18 +14,27 @@ import utility.StringUtility;
 
 public class ActiveSkill extends Animation implements IRenderable {
 	private static final double DEFAULT_POWER = 50;
+
 	private double power;
 	private String name;
-	// TODO type of active skill?
 	private static ArrayList<ActiveSkill> allActiveSkills = new ArrayList<ActiveSkill>();
 	private FightTerrain attackTerrain, targetTerrain;
+	private SkillEffect skillEffect;
+	private Element element;
+	private AreaType areaType;
+	private GraphicType graphicType;
 
 	private ActiveSkill(String skillName, double skillPower) {
-		super();
+		super(16, 2, false, true);
 		setName(skillName);
 		setPower(skillPower);
 		allActiveSkills.add(this);
 		loadImage("load/img/skill/Flamethrower/all.png");
+	}
+
+	@Override
+	public String toString() {
+		return "ActiveSkill " + name + " POWER:" + power;
 	}
 
 	public static ActiveSkill getActiveSkill(String skillName) {
@@ -37,18 +46,26 @@ public class ActiveSkill extends Animation implements IRenderable {
 	}
 
 	public static ActiveSkill getActiveSkill(String skillName, double powerIfNotCreated, boolean verbose) {
-		Iterator<ActiveSkill> it = allActiveSkills.iterator();
-		while (it.hasNext()) {
-			ActiveSkill skill = (ActiveSkill) it.next();
-			if (skill.name.equalsIgnoreCase(skillName)) {
-				return skill;
+		return allActiveSkills.stream().filter(e -> e.getName().equalsIgnoreCase(skillName)).findAny().orElseGet(() -> {
+			if (verbose) {
+				System.out.println("ActiveSkill : ActiveSkill " + skillName + " not found...");
+				System.out.println("ActiveSkill : Creating new ActiveSkill with power " + powerIfNotCreated + ".");
 			}
-		}
-		if (verbose) {
-			System.out.println("ActiveSkill : ActiveSkill " + skillName + " not found...");
-			System.out.println("ActiveSkill : Creating new ActiveSkill with power " + powerIfNotCreated + ".");
-		}
-		return new ActiveSkill(skillName, powerIfNotCreated);
+			return new ActiveSkill(skillName, powerIfNotCreated);
+		});
+
+	}
+
+	public void setOnAttack(SkillEffect skillEffect) {
+		this.skillEffect = skillEffect;
+	}
+	
+	public SkillEffect getSkillEffect() {
+		return skillEffect;
+	}
+
+	public void applySkillEffect(Pokemon user, Pokemon hitted) {
+		skillEffect.apply(this, user, hitted);
 	}
 
 	// Array Getter
@@ -109,6 +126,30 @@ public class ActiveSkill extends Animation implements IRenderable {
 
 	public FightTerrain getTargetTerrain() {
 		return targetTerrain;
+	}
+
+	public final AreaType getAreaType() {
+		return areaType;
+	}
+
+	public final GraphicType getGraphicType() {
+		return graphicType;
+	}
+
+	public final void setAreaType(AreaType areaType) {
+		this.areaType = areaType;
+	}
+
+	public final void setGraphicType(GraphicType graphicType) {
+		this.graphicType = graphicType;
+	}
+
+	public final Element getElement() {
+		return element;
+	}
+
+	public final void setElement(Element element) {
+		this.element = element;
 	}
 
 }

@@ -16,12 +16,10 @@ public abstract class Animation implements IRenderable{
 	protected boolean visible = true, playing = false, pause = false, loop = false, autostop = true, playback = false;
 	
 	public Animation() {
-		// TODO Auto-generated constructor stub
 		frameDelay = 1;
 	}
 	
 	public Animation(Image image, int frameNumber) {
-		// TODO Auto-generated constructor stub
 		this.image = image;
 		this.frameNumber = frameNumber;
 		frameDelay = 1;
@@ -198,13 +196,13 @@ public abstract class Animation implements IRenderable{
 	public void hide() {
 		// TODO Auto-generated method stub
 		visible = false;
-		IRenderableHolder.removeWorldObjects(this);
+		IRenderableHolder.removeWorldObject(this);
 	}
 	
 	@Override
 	public void show() {
 		// TODO Auto-generated method stub
-		IRenderableHolder.addWorldObjects(this);
+		IRenderableHolder.addWorldObject(this);
 		visible = true;
 	}
 

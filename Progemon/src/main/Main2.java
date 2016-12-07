@@ -1,16 +1,17 @@
 package main;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import graphic.DrawingUtility;
-import graphic.MyStage;
+import graphic.GameStage;
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import logic.character.Pokemon;
-import logic.player.AIPlayer;
 import logic.player.HPAIPlayer;
+import logic.player.HumanPlayer;
 import logic.player.Player;
 import manager.GUIFightGameManager;
 import utility.FileUtility;
@@ -19,72 +20,84 @@ import utility.ThreadUtility;
 
 public class Main2 extends Application {
 
+	static {
+		Thread.setDefaultUncaughtExceptionHandler(ThreadUtility::showError);
+	}
+
 	public static void main(String[] args) {
 		Thread.setDefaultUncaughtExceptionHandler(ThreadUtility::showError);
-		launch(args);
+		try {
+			launch(args);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private static Thread updateUIThread;
 
 	@Override
-	public void start(Stage primaryStage) throws Exception {
-		Thread.setDefaultUncaughtExceptionHandler(ThreadUtility::showError);
-		new MyStage();
-		FileUtility.loadAllDefaults();
+	public void stop() throws Exception {
+		super.stop();
+	}
 
-		Pokemon charlizard = Pokedex.getPokemon("Charlizard");
-		charlizard.setLevel(38);
-		charlizard.calculateCurrentStats();
-		charlizard.resetHP();
+	@Override
+	public void start(Stage primaryStage) {
+		try {
+			Thread.setDefaultUncaughtExceptionHandler(ThreadUtility::showError);
+			new GameStage();
+			FileUtility.loadAllDefaults();
 
-		Pokemon caterpie = Pokedex.getPokemon("Caterpie");
-		caterpie.setLevel(5);
-		caterpie.calculateCurrentStats();
-		caterpie.resetHP();
+			Pokemon charlizard = Pokedex.getPokemon("Charlizard");
+			charlizard.setLevel(40);
 
-		Pokemon wartortle = Pokedex.getPokemon("Wartortle");
-		wartortle.setLevel(34);
-		wartortle.calculateCurrentStats();
-		wartortle.resetHP();
-		Pokemon pidgeotto = Pokedex.getPokemon("Pidgeotto");
-		pidgeotto.setLevel(30);
-		pidgeotto.setMoveRange(8);
-		pidgeotto.calculateCurrentStats();
-		pidgeotto.resetHP();
+			Pokemon caterpie = Pokedex.getPokemon("Caterpie");
+			caterpie.setLevel(5);
+			caterpie.showStats();
 
-		Player p1 = new HPAIPlayer("AI 1", charlizard, Color.RED);
-		p1.addPokemon(caterpie);
-		Player p2 = new AIPlayer("AI 2", pidgeotto, Color.BLUE);
-		p2.addPokemon(wartortle);
+			Pokemon blastoise = Pokedex.getPokemon("Blastoise");
+			blastoise.setLevel(50);
 
-		ArrayList<Player> players = new ArrayList<Player>();
-		players.add(p1);
-		players.add(p2);
+			Pokemon pidgeotto = Pokedex.getPokemon("Pidgeotto");
+			pidgeotto.setLevel(30);
+			pidgeotto.setMoveRange(8);
 
-		new DrawingUtility();
+			Player p1 = new HPAIPlayer("AI 1", charlizard, Color.RED);
+			p1.addPokemon(caterpie);
+			Player p2 = new HumanPlayer("Kris", pidgeotto, Color.BLUE);
+			p2.addPokemon(blastoise);
 
-		// @SuppressWarnings("unused")
+			Set<Player> players = new HashSet<Player>();
+			players.add(p1);
+			players.add(p2);
 
-		/*
-		 * Thread t = new Thread(() -> { GUIFightGameManager gui = new
-		 * GUIFightGameManager(players); }); t.start();
-		 */
+			new DrawingUtility();
 
-		/*
-		 * (this.updateUIThread = new Thread(() -> { GUIFightGameManager gui =
-		 * new GUIFightGameManager(players); })).start();
-		 */
-		Thread logic = new Thread(new Task<Void>() {
+			// @SuppressWarnings("unused")
 
-			@Override
-			protected Void call() throws Exception {
-				new GUIFightGameManager(players);
-				return null;
-			}
+			/*
+			 * Thread t = new Thread(() -> { GUIFightGameManager gui = new
+			 * GUIFightGameManager(players); }); t.start();
+			 */
 
-		});
-		logic.setName("Logic Thread");
-		logic.start();
+			/*
+			 * (this.updateUIThread = new Thread(() -> { GUIFightGameManager gui
+			 * = new GUIFightGameManager(players); })).start();
+			 */
+			Thread logic = new Thread(new Task<Void>() {
+
+				@Override
+				protected Void call() throws Exception {
+					new GUIFightGameManager(players);
+					return null;
+				}
+
+			});
+			logic.setName("Logic Thread");
+			logic.start();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

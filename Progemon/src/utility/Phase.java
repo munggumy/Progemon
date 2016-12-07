@@ -1,7 +1,7 @@
 package utility;
 
 /** State in Finite State Machine */
-public enum Phase {
+public enum Phase{
 	initialPhase {
 	},
 	preMovePhase {

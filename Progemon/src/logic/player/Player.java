@@ -14,15 +14,16 @@ import utility.Clock;
 import utility.Phase;
 import utility.exception.UnknownPhaseException;
 
-public abstract class Player{
+public abstract class Player {	
 	private String name;
 	private Color color;
 	private ArrayList<Pokemon> pokemons;
+	private boolean godlike;
 
 	protected Optional<Pokemon> nextAttackedPokemon;
 	protected Optional<ActiveSkill> nextAttackSkill;
 
-	protected Path nextPath;
+	protected Optional<Path> nextPath;
 	private int moveCounter = 1;
 	private int moveDelay = 5, moveDelayCounter = 0;
 
@@ -66,8 +67,8 @@ public abstract class Player{
 				switch (GUIFightGameManager.getCurrentPhase()) {
 				case initialPhase:
 					nextPath = null;
-					nextAttackedPokemon = null;
-					nextAttackSkill = null;
+					nextAttackedPokemon = Optional.empty();
+					nextAttackSkill = Optional.empty();
 					phaseIsFinished = true;
 					break;
 
@@ -137,7 +138,6 @@ public abstract class Player{
 			nextAttackedPokemon = null;
 			nextAttackSkill = null;
 		}
-		System.out.println("WTF");
 
 		// pokemonMove(pokemon);
 		// pokemonAttack(pokemon);
@@ -146,15 +146,20 @@ public abstract class Player{
 	protected abstract boolean inputNextPath(Pokemon pokemon);
 
 	protected final boolean move(Pokemon pokemon) {
-		if (moveCounter == nextPath.size()) {
+//<<<<<<< HEAD
+//		if (moveCounter == nextPath.get().size()) {
+//			System.out.println("Pokemon " + pokemon.getName() + " moved from (" + x + ", " + y + ") to ("
+//=======
+		if (moveCounter == nextPath.get().size()) {
 			System.out.println("Pokemon " + pokemon.getName() + " moved from (" + tokenx + ", " + tokeny + ") to ("
+//>>>>>>> 510768d529f4fdb8b001f678c37730aaa55ef038
 					+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY() + ").");
 			moveCounter = 1;
 			moveDelayCounter = 0;
 			return true;
 		} else if (moveDelay == moveDelayCounter) {
-			if (nextPath.get(moveCounter) != pokemon.getCurrentFightTerrain()) {
-				pokemon.move(nextPath.get(moveCounter));
+			if (nextPath.get().get(moveCounter) != pokemon.getCurrentFightTerrain()) {
+				pokemon.move(nextPath.get().get(moveCounter));
 			} else {
 				moveCounter++;
 			}
@@ -172,8 +177,8 @@ public abstract class Player{
 
 	protected final boolean attack(Pokemon attackingPokemon, Optional<Pokemon> other,
 			Optional<ActiveSkill> activeSkill) {
-		System.out.println("Player.attack()");
 		if (other.isPresent() && activeSkill.isPresent()) {
+			System.out.println("attacking... ");
 			attackingPokemon.attack(other.get(), activeSkill.get());
 		}
 		return true;
@@ -201,6 +206,14 @@ public abstract class Player{
 
 	public final Color getColor() {
 		return color;
+	}
+
+	public final boolean isGodlike() {
+		return godlike;
+	}
+
+	public final void setGodlike(boolean godlike) {
+		this.godlike = godlike;
 	}
 
 }

@@ -35,8 +35,8 @@ public class AIPlayer extends Player {
 	}
 
 	/** This can be overrided by other AIs */
-	protected Path calculateNextPath(Pokemon pokemon) {
-		return pokemon.getPaths().get(0);
+	protected Optional<Path> calculateNextPath(Pokemon pokemon) {
+		return Optional.ofNullable(pokemon.getPaths().get(0));
 	}
 
 	@Override

@@ -4,12 +4,17 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import graphic.DrawingUtility;
 import graphic.GameScreen;
@@ -28,25 +33,23 @@ import utility.Pokedex;
 import utility.RandomUtility;
 import utility.StringUtility;
 
-public class Pokemon implements Cloneable, IRenderable {
+public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 
 	// Constants and Variables
 
 	private static final String DEFAULT_IMAGE_FILE_LOCATION = "load/img/pokemon";
+	public static final int MAX_ACTIVE_SKILLS = 4;
 
 	private double currentHP, nextTurnTime;
-	private int moveRange, attackRange, id;
 	private Player owner;
-	private MoveType moveType;
-	private Element primaryElement, secondaryElement;
-	private ArrayList<ActiveSkill> activeSkills = new ArrayList<ActiveSkill>();
-	private ArrayList<PassiveSkill> passiveSkills = new ArrayList<PassiveSkill>();
-	private Stat base = new Stat();
-	private Stat current = new Stat();
-	private String imageFileName;
-	private Image image = null;
+	private List<ActiveSkill> activeSkills = new ArrayList<ActiveSkill>();
+	private List<PassiveSkill> passiveSkills = new ArrayList<PassiveSkill>();
+	private Stat attack, defense, speed;
+	private HPStat hp;
+	private Map<String, Stat> stats = new HashMap<String, Stat>();
 	/** Individual value */
-	private double iv = RandomUtility.randomInt(0, 15) + 32;
+	private Status status = Status.NORMAL;
+	private Pokemon killer;
 	private boolean visible = true;
 
 	/**
@@ -57,20 +60,23 @@ public class Pokemon implements Cloneable, IRenderable {
 	private FightMap currentFightMap = null;
 	private FightTerrain currentFightTerrain = null;
 
-	private int level = 5;
-	private double exp = 0;
+	private int level;
+	private double currentExp;
+	private double lastExpRequired;
+	private double nextExpRequired;
 
 	// Enums and inner classes
 
 	/** This inner class is used to hold pokemon stats (base and current). */
-	public class Stat implements Cloneable {
-		public double attackStat, defenceStat, speed, fullHP;
-
-		@Override
-		public Object clone() throws CloneNotSupportedException {
-			return (Stat) super.clone();
-		}
-	}
+	// @Deprecated
+	// public class Stat implements Cloneable {
+	// public double attackStat, defenceStat, speed, fullHP;
+	//
+	// @Override
+	// public Object clone() throws CloneNotSupportedException {
+	// return (Stat) super.clone();
+	// }
+	// }
 
 	/** Type of relocation on <code>fightMap</code>. */
 	public static enum MoveType {
@@ -93,51 +99,112 @@ public class Pokemon implements Cloneable, IRenderable {
 
 	// Constructors
 
-	public Pokemon(int id, double attackStat, double defenceStat, double speed, double hp, int moveRange,
-			int attackRange, MoveType moveType) {
-		this.id = id;
-		this.base.attackStat = attackStat;
-		this.base.defenceStat = defenceStat;
-		this.moveRange = moveRange;
-		this.attackRange = attackRange;
-		this.base.speed = speed;
-		this.base.fullHP = hp;
-		this.moveType = moveType;
+	public Pokemon(PokemonTemplate pokemonTemplate, int level) {
+		Objects.requireNonNull(pokemonTemplate, "pokemonTemplate Required in Pokemon Constructor");
+		id = pokemonTemplate.id;
+		this.level = level;
+
+		attack = new Stat(pokemonTemplate.getBaseAttack(), level);
+		defense = new Stat(pokemonTemplate.getBaseDefense(), level);
+		speed = new Stat(pokemonTemplate.getBaseSpeed(), level);
+		hp = new HPStat(pokemonTemplate.getBaseHP(), level);
+
+		moveRange = pokemonTemplate.moveRange;
+		attackRange = pokemonTemplate.attackRange;
+		moveType = pokemonTemplate.moveType;
+
+		stats.put("attack", attack);
+		stats.put("defense", defense);
+		stats.put("speed", speed);
+		stats.put("hp", hp);
+
+		primaryElement = pokemonTemplate.primaryElement;
+		secondaryElement = pokemonTemplate.secondaryElement;
+		levelingRate = pokemonTemplate.levelingRate;
+		expYield = pokemonTemplate.expYield;
+
+		updateExpRequired();
+		currentExp = levelingRate.getRequiredExperience(level);
+
 		nextTurnTime = 0;
-		calculateCurrentStats();
 		calculateNextTurnTime();
 		resetHP();
 		setImageFileLocation();
 	}
 
-	public Pokemon(int id, double attackStat, double defenceStat, double speed, double hp, int moveRange,
-			int attackRange, MoveType moveType, Player owner) {
-		this(id, attackStat, defenceStat, speed, hp, moveRange, attackRange, moveType);
-		this.owner = owner;
+	public Pokemon(PokemonTemplate pokemonTemplate, int level, Player owner) {
+		this(pokemonTemplate, level);
 		owner.addPokemon(this);
 	}
 
-	/**
-	 * Load arguments to <code>Pokemon</code> by <code>String[]</code>. </br>
-	 * Usage : id attack defence speed fullHP moveRange attackRange moveType.
-	 * 
-	 * @param args
-	 *            String of arguments.
-	 */
-	public Pokemon(String[] args) {
-		this.id = Integer.parseInt(args[0]);
-		this.base.attackStat = Double.parseDouble(args[1]);
-		this.base.defenceStat = Double.parseDouble(args[2]);
-		this.base.speed = Double.parseDouble(args[3]);
-		this.base.fullHP = Double.parseDouble(args[4]);
-		this.moveRange = Integer.parseInt(args[5]);
-		this.attackRange = Integer.parseInt(args[6]);
-		this.moveType = toMoveType(args[7]).orElse(MoveType.WALK);
-		nextTurnTime = 0;
-		calculateCurrentStats();
-		calculateNextTurnTime();
-		resetHP();
-		setImageFileLocation();
+	// public Pokemon(int id, int attackStat, int defenceStat, int speed, int
+	// hp, int moveRange, int attackRange,
+	// MoveType moveType) {
+	// this.id = id;
+	// attack = new Stat(attackStat, level);
+	// defense = new Stat(defenceStat, level);
+	// this.hp = new HPStat(hp, level);
+	// this.speed = new Stat(speed, level);
+	// this.moveRange = moveRange;
+	// this.attackRange = attackRange;
+	// this.moveType = moveType;
+	// stats = Arrays.asList(attack, defense, this.speed, this.hp);
+	// nextTurnTime = 0;
+	// calculateNextTurnTime();
+	// resetHP();
+	// setImageFileLocation();
+	// }
+	//
+	// public Pokemon(int id, int attackStat, int defenceStat, int speed, int
+	// hp, int moveRange, int attackRange,
+	// MoveType moveType, Player owner) {
+	// this(id, attackStat, defenceStat, speed, hp, moveRange, attackRange,
+	// moveType);
+	// this.owner = owner;
+	// owner.addPokemon(this);
+	// }
+	//
+	// /**
+	// * Load arguments to <code>Pokemon</code> by <code>String[]</code>. </br>
+	// * Usage : id attack defence speed fullHP moveRange attackRange moveType.
+	// *
+	// * @param args
+	// * String of arguments.
+	// */
+	// public Pokemon(String[] args) {
+	// id = Integer.parseInt(args[0]);
+	// attack = new Stat(Integer.parseInt(args[1]), level);
+	// defense = new Stat(Integer.parseInt(args[2]), level);
+	// speed = new Stat(Integer.parseInt(args[3]), level);
+	// hp = new HPStat(Integer.parseInt(args[4]), level);
+	// moveRange = Integer.parseInt(args[5]);
+	// attackRange = Integer.parseInt(args[6]);
+	// moveType = toMoveType(args[7]).orElse(MoveType.WALK);
+	// stats = Arrays.asList(attack, defense, this.speed, this.hp);
+	// nextTurnTime = 0;
+	// calculateNextTurnTime();
+	// resetHP();
+	// setImageFileLocation();
+	// }
+
+	@Override
+	public String toString() {
+		return "Pokemon " + this.getName() + " LV." + this.getLevel();
+	}
+
+	public void showStats() {
+		System.out.println("name : " + getName());
+		System.out.println("level : " + level);
+		System.out.println(" - attack" + attack);
+		System.out.println(" - defense" + defense);
+		System.out.println(" - speed" + speed);
+		System.out.println(" - hp" + hp);
+	}
+
+	/** Use to reset pokemon before entering fight */
+	public void enterFight() {
+		stats.values().forEach(st -> st.resetStage());
+		killer = null;
 	}
 
 	// move and attack
@@ -153,9 +220,7 @@ public class Pokemon implements Cloneable, IRenderable {
 	 *            position
 	 */
 	public void move(int x, int y) {
-		if (currentFightMap == null) {
-			System.err.println("Pokemon.move() : [ID=" + id + "].currentFightMap not set");
-		}
+		Objects.requireNonNull(currentFightMap, "Pokemon.move() : [ID=" + id + "].currentFightMap not set");
 		if (!currentFightMap.outOfMap(x, y)) {
 			this.currentFightTerrain = currentFightMap.getFightTerrainAt(x, y);
 		} else {
@@ -167,33 +232,53 @@ public class Pokemon implements Cloneable, IRenderable {
 		this.currentFightTerrain = fightTerrain;
 	}
 
-	public void attack(Pokemon p, int selectedSkill) {
-		double damage = ((((2 * level + 10) * activeSkills.get(selectedSkill).getPower() * current.attackStat
-				/ p.current.defenceStat) * 0.004) + 2) * RandomUtility.randomPercent(85, 100);
-		p.changeHP(-damage);
-		// p.setHp(p.getHp() - activeSkills.get(selectedSkill).getPower() *
-		// attackStat );
-		System.out.println(this.getOwner().getName() + "'s " + this.getName() + " attacked " + p.getOwner().getName()
-				+ "'s " + p.getName() + " with " + activeSkills.get(selectedSkill).getName() + "!" + " Damage dealt : "
-				+ damage);
-		System.out.printf("%s's HP = %.2f  " + StringUtility.hpBar(p.getCurrentHP() / p.getFullHP()) + "\n",
-				p.getName(), p.getCurrentHP());
+	public void attack(Pokemon other, ActiveSkill selectedSkill) {
+		if (selectedSkill == null || !activeSkills.contains(selectedSkill)) {
+			throw new IllegalArgumentException("Invalid selectedSkill : " + selectedSkill.getName());
+		}
+		if (other == null) {
+			throw new IllegalArgumentException("Other Pokemon is null!");
+		}
+		double damage = ((((2 * level + 10) * selectedSkill.getPower() * attack.current / other.defense.current)
+				* 0.004) + 2) * SWTable.instance.getFactor(selectedSkill.getElement(), other.getPrimaryElement())
+				* RandomUtility.randomPercent(85, 100);
+		other.changeHP(-damage);
+		if (other.isDead()) {
+			other.setKiller(this);
+		}
+		System.out.println(this.getOwner().getName() + "'s " + this.getName() + " attacked "
+				+ other.getOwner().getName() + "'s " + other.getName() + " with " + selectedSkill.getName() + "!"
+				+ " Damage dealt : " + StringUtility.formatDouble(damage, 2));
+		System.out.printf("%s's HP = %.2f  " + StringUtility.hpBar(other.getCurrentHP() / other.getFullHP()) + "\n",
+				other.getName(), other.getCurrentHP());
+		sendEffectivenessMessage(other, selectedSkill);
+
+		selectedSkill.applySkillEffect(this, other);
+		selectedSkill.setAttackTerrain(currentFightTerrain);
+		selectedSkill.setTargetTerrain(other.currentFightTerrain);
+		selectedSkill.play();
+
+		IRenderableHolder.addFightObject(selectedSkill);
+		while (selectedSkill.isPlaying()) {
+			Clock.tick();
+		}
+		IRenderableHolder.removeFightObject(selectedSkill);
 	}
 
-	public void attack(Pokemon p, ActiveSkill selectedSkill) {
-		int n = activeSkills.indexOf(selectedSkill);
-		if (n != -1) {
-			selectedSkill.setAttackTerrain(currentFightTerrain);
-			selectedSkill.setTargetTerrain(p.currentFightTerrain);
-			selectedSkill.play();
-			GameScreen.addObject(selectedSkill);
-			while (selectedSkill.isPlaying()) {
-				Clock.tick();
-			}
-			GameScreen.removeObject(selectedSkill);
-			attack(p, n);
-		} else {
-			System.err.println(getName() + " can't find move \"" + selectedSkill.getName() + "\".");
+	private void sendEffectivenessMessage(Pokemon other, ActiveSkill selectedSkill) {
+		switch (SWTable.instance.getSW(selectedSkill.getElement(), other.getPrimaryElement())) {
+		case N:
+			break;
+		case S:
+			System.out.println("It's super effective!");
+			break;
+		case W:
+			System.out.println("It's not very effective...");
+			break;
+		case Z:
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -202,43 +287,9 @@ public class Pokemon implements Cloneable, IRenderable {
 
 	// Comparators
 
-	public static Comparator<Pokemon> bySpeed = (Pokemon p1, Pokemon p2) -> Double.compare(p1.nextTurnTime,
-			p2.nextTurnTime);
-	public static Comparator<Pokemon> byID = (Pokemon p1, Pokemon p2) -> p1.id - p2.id;
-	public static Comparator<Pokemon> byHP = (Pokemon p1, Pokemon p2) -> Double.compare(p1.currentHP, p2.currentHP);
-
-	// public static Comparator<Pokemon> getSpeedComparator() {
-	// return new SpeedComparator();
-	// }
-	//
-	// private static class SpeedComparator implements Comparator<Pokemon> {
-	// @Override
-	// public int compare(Pokemon o1, Pokemon o2) {
-	// return Double.compare(o1.nextTurnTime, o2.nextTurnTime);
-	// }
-	// }
-	//
-	// public static Comparator<Pokemon> getIDComparator() {
-	// return new IDComparator();
-	// }
-	//
-	// private static class IDComparator implements Comparator<Pokemon> {
-	// @Override
-	// public int compare(Pokemon o1, Pokemon o2) {
-	// return o1.id - o2.id;
-	// }
-	// }
-	//
-	// public static Comparator<Pokemon> getHPComparator() {
-	// return new HPComparator();
-	// }
-	//
-	// private static class HPComparator implements Comparator<Pokemon> {
-	// @Override
-	// public int compare(Pokemon p1, Pokemon p2) {
-	// return Double.compare(p1.currentHP, p2.currentHP);
-	// }
-	// }
+	public static Comparator<Pokemon> bySpeed = (p1, p2) -> Double.compare(p1.nextTurnTime, p2.nextTurnTime);
+	public static Comparator<Pokemon> byID = (p1, p2) -> p1.id - p2.id;
+	public static Comparator<Pokemon> byHP = (p1, p2) -> Double.compare(p1.currentHP, p2.currentHP);
 
 	// Clone
 
@@ -251,12 +302,6 @@ public class Pokemon implements Cloneable, IRenderable {
 	 * Generate <code>paths</code> from <code>range</code> and
 	 * <code>filter</code>.
 	 */
-	// public void findBlocksAround(int range, Filter filter) {
-	// this.paths.clear();
-	// findBlocksAroundRecursive(range, new
-	// PathNode(this.getCurrentFightTerrain()), this.getCurrentFightTerrain(),
-	// currentFightMap, filter);
-	// }
 
 	public void findBlocksAround(int range, Filter filter) {
 		paths.clear();
@@ -264,9 +309,6 @@ public class Pokemon implements Cloneable, IRenderable {
 	}
 
 	/** Called by findBlocksAround() method. */
-	// private void findBlocksAroundRecursive(int range, PathNode currentPath,
-	// FightTerrain fightTerrain, FightMap map,
-	// Filter filter) {
 	private void findBlocksAroundRecursive(int range, Path currentPath, FightTerrain currentFightTerrain,
 			Filter filter) {
 		if (filter.check(this, currentFightTerrain)) {
@@ -287,16 +329,8 @@ public class Pokemon implements Cloneable, IRenderable {
 
 	public HashSet<FightTerrain> getAvaliableFightTerrains() {
 		HashSet<FightTerrain> out;
-		// FightTerrain last;
-		// for (Path path : paths) {
-		// last = path.getLast();
-		// if (last != null && !out.contains(last)) {
-		// out.add(last);
-		// }
-		// }
 		Function<Path, FightTerrain> getLast = (Path p) -> p.getLast();
-		out = (HashSet<FightTerrain>) paths.stream().map(getLast).filter((FightTerrain last) -> (last != null))
-				.collect(Collectors.toSet());
+		out = (HashSet<FightTerrain>) paths.stream().map(getLast).filter(Objects::nonNull).collect(Collectors.toSet());
 		return out;
 	}
 
@@ -305,20 +339,18 @@ public class Pokemon implements Cloneable, IRenderable {
 	 * method.
 	 */
 	public void shadowBlocks() {
-		// for (FightTerrain available : getAvaliableFightTerrains()) {
-		// available.setShadowed(true);
-		// }
 		getAvaliableFightTerrains().parallelStream().forEach(fightTerrain -> fightTerrain.setShadowed(true));
 	}
 
-	public Path findPathTo(FightTerrain destination) {
-		return findPathTo(destination, 20);
+	public Optional<Path> findPathTo(FightTerrain destination) {
+		return findPathTo(destination, 100);
 	}
 
-	public Path findPathTo(FightTerrain destination, int limit) {
+	public Optional<Path> findPathTo(FightTerrain destination, int limit) {
 
 		/** Inner Class with counter */
 		final class PathWithCounter extends Path {
+			// TODO Implement Path with Counter (as one class).
 			/**
 			 * Generated Serial ID
 			 */
@@ -336,6 +368,10 @@ public class Pokemon implements Cloneable, IRenderable {
 			}
 		}
 
+		if (getCurrentFightTerrain().equals(destination)) {
+			return Optional.of(new Path(destination));
+		}
+
 		paths.clear();
 
 		paths.add(new PathWithCounter(getCurrentFightTerrain(), (short) 0));
@@ -351,7 +387,7 @@ public class Pokemon implements Cloneable, IRenderable {
 		while (roundsPassed < limit) {
 			if (index >= paths.size()) {
 				System.err.println("Pokemon.findPath() : Failed to find Path");
-				return null;
+				return Optional.empty();
 			}
 			lastPathIter = paths.get(index);
 			lastPathIterCost = ((PathWithCounter) lastPathIter).totalCost;
@@ -382,7 +418,7 @@ public class Pokemon implements Cloneable, IRenderable {
 								(short) (lastPathIterCost + nextTerrainCost)));
 						if (nextTerrain.equals(destination)) {
 							// We have found the solution!
-							return paths.get(paths.size() - 1);
+							return Optional.of(paths.get(paths.size() - 1));
 						}
 					}
 				}
@@ -393,21 +429,23 @@ public class Pokemon implements Cloneable, IRenderable {
 
 		System.err.println("Pokemon.findPath() : Failed to find Path within internal limit.");
 		return null;
-	} // end
-		// of
-		// Pokemon.findPath()
+	} // end of Pokemon.findPath()
 
-	// ActiveSKill methods
+	// ActiveSkill methods
 
 	public void addActiveSkill(ActiveSkill newActiveSkill) {
-		if (activeSkills.size() < 4) {
+		if (activeSkills.size() < MAX_ACTIVE_SKILLS) {
 			activeSkills.add(newActiveSkill);
+		} else {
+			System.err.println("Maximum no. of activeSkills for " + getName());
 		}
 	}
 
 	public void addActiveSkill(String activeSkillName) {
-		if (activeSkills.size() < 4) {
+		if (activeSkills.size() < MAX_ACTIVE_SKILLS) {
 			activeSkills.add(ActiveSkill.getActiveSkill(activeSkillName));
+		} else {
+			System.err.println("Maximum no. of activeSkills for " + getName());
 		}
 	}
 
@@ -423,89 +461,8 @@ public class Pokemon implements Cloneable, IRenderable {
 		}
 	}
 
-	// if (x < map.getSizeX() - 1) {
-	// nextFightTerrain = map.getMap()[y][x + 1];
-	// findBlocksAroundRecursive(range - 1, new Path(nextFightTerrain,
-	// currentPath), nextFightTerrain, map,
-	// filter);
-	// }
-	// if (x > 0) {
-	// nextFightTerrain = map.getMap()[y][x - 1];
-	// findBlocksAroundRecursive(range - 1, new Path(nextFightTerrain,
-	// currentPath), nextFightTerrain, map,
-	// filter);
-	// }
-	// if (y < map.getSizeY() - 1) {
-	// nextFightTerrain = map.getMap()[y + 1][x];
-	// findBlocksAroundRecursive(range - 1, new Path(nextFightTerrain,
-	// currentPath), nextFightTerrain, map,
-	// filter);
-	// }
-	// if (y > 0) {
-	// nextFightTerrain = map.getMap()[y - 1][x];
-	// findBlocksAroundRecursive(range - 1, new Path(nextFightTerrain,
-	// currentPath), nextFightTerrain, map,
-	// filter);
-	// }
-
-	// public ArrayList<FightTerrain> findMovableBlockAround(int range,
-	// FightTerrain ft, ArrayList<FightTerrain> fts,
-	// Pokemon pokemon) {
-	// if (range >= 0 && pokemon.getMoveType().check(ft)) {
-	// int x = ft.getX();
-	// int y = ft.getY();
-	// fts.add(map[y][x]);
-	// if (x < this.sizeX - 1) {
-	// findMovableBlockAround(range - 1, map[y][x + 1], fts, pokemon);
-	// }
-	// if (x > 0) {
-	// findMovableBlockAround(range - 1, map[y][x - 1], fts, pokemon);
-	// }
-	// if (y < this.sizeY - 1) {
-	// findMovableBlockAround(range - 1, map[y + 1][x], fts, pokemon);
-	// }
-	// if (y < 0) {
-	// findMovableBlockAround(range - 1, map[y - 1][x], fts, pokemon);
-	// }
-	// }
-	// return fts;
-	// }
-	//
-	// public ArrayList<FightTerrain> findAttackableBlockAround(int range,
-	// FightTerrain ft, ArrayList<FightTerrain> fts) {
-	// if (range >= 0) {
-	// int x = ft.getX();
-	// int y = ft.getY();
-	// fts.add(map[y][x]);
-	// if (x < this.sizeX - 1) {
-	// findAttackableBlockAround(range - 1, map[y][x + 1], fts);
-	// }
-	// if (x > 0) {
-	// findAttackableBlockAround(range - 1, map[y][x - 1], fts);
-	// }
-	// if (y < this.sizeY - 1) {
-	// findAttackableBlockAround(range - 1, map[y + 1][x], fts);
-	// }
-	// if (y < 0) {
-	// findAttackableBlockAround(range - 1, map[y - 1][x], fts);
-	// }
-	// }
-	// return fts;
-	// }
-
 	public void calculateNextTurnTime() {
-		nextTurnTime += (1 / current.speed);
-	}
-
-	public void calculateCurrentStats() {
-		current.attackStat = calculateStatsEquation(base.attackStat);
-		current.defenceStat = calculateStatsEquation(base.defenceStat);
-		current.speed = calculateStatsEquation(base.speed);
-		current.fullHP = (((2 * base.fullHP) + iv) * level * 0.01) + level + 10;
-	}
-
-	private double calculateStatsEquation(double inputBaseStat) {
-		return (((2 * inputBaseStat) + iv) * level * 0.01) + 5;
+		nextTurnTime += (1.0 / speed.current);
 	}
 
 	public void sortPaths() {
@@ -515,12 +472,7 @@ public class Pokemon implements Cloneable, IRenderable {
 	}
 
 	public static Optional<MoveType> toMoveType(String moveTypeString) {
-		for (MoveType mt : MoveType.values()) {
-			if (mt.toString().equalsIgnoreCase(moveTypeString)) {
-				return Optional.of(mt);
-			}
-		}
-		return Optional.empty();
+		return Stream.of(MoveType.values()).filter(mt -> mt.toString().equalsIgnoreCase(moveTypeString)).findAny();
 	}
 
 	// Graphics
@@ -535,30 +487,30 @@ public class Pokemon implements Cloneable, IRenderable {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
+
 	@Override
 	public boolean isVisible() {
 		// TODO Auto-generated method stub
 		return visible;
 	}
-	
+
 	@Override
 	public void setVisible(boolean visible) {
 		// TODO Auto-generated method stub
 		this.visible = visible;
 	}
-	
+
 	@Override
 	public void hide() {
 		// TODO Auto-generated method stub
 		visible = false;
-		IRenderableHolder.removeWorldObjects(this);
+		IRenderableHolder.removeWorldObject(this);
 	}
-	
+
 	@Override
 	public void show() {
 		// TODO Auto-generated method stub
-		IRenderableHolder.addWorldObjects(this);
+		IRenderableHolder.addWorldObject(this);
 		visible = true;
 	}
 
@@ -570,10 +522,10 @@ public class Pokemon implements Cloneable, IRenderable {
 	// Getters and Setters
 
 	public void resetHP() {
-		currentHP = new Double(current.fullHP);
+		currentHP = hp.getFull();
 	}
 
-	public double getHp() {
+	public double getHP() {
 		return currentHP;
 	}
 
@@ -605,20 +557,28 @@ public class Pokemon implements Cloneable, IRenderable {
 		return owner;
 	}
 
-	public final double getAttackStat() {
-		return current.attackStat;
-	}
-
-	public final double getDefenceStat() {
-		return current.defenceStat;
-	}
-
-	public final double getSpeed() {
-		return current.speed;
+	void changeNextTurnTime(double change) {
+		this.nextTurnTime += change;
 	}
 
 	public final double getNextTurnTime() {
 		return nextTurnTime;
+	}
+
+	public final Map<String, Stat> getStats() {
+		return stats;
+	}
+
+	public final int getAttack() {
+		return attack.current;
+	}
+
+	public final int getDefense() {
+		return defense.current;
+	}
+
+	public final int getSpeed() {
+		return speed.current;
 	}
 
 	public final double getCurrentHP() {
@@ -626,38 +586,54 @@ public class Pokemon implements Cloneable, IRenderable {
 	}
 
 	public final double getFullHP() {
-		return current.fullHP;
+		return hp.getFull();
 	}
 
 	public final int getLevel() {
 		return level;
 	}
 
+	private void updateExpRequired() {
+		nextExpRequired = levelingRate.getRequiredExperience(level + 1);
+		lastExpRequired = levelingRate.getRequiredExperience(level);
+	}
+
 	public final void setLevel(int level) {
 		this.level = level;
+		stats.values().forEach(s -> s.calculateCurrent(level));
+		updateExpRequired();
+		this.currentExp = lastExpRequired;
+		resetHP();
+	}
+
+	public final void levelUp() {
+		System.out.println(getName() + " level up!");
+		level++;
+		stats.values().forEach(s -> s.calculateCurrent(level));
+		updateExpRequired();
+		resetHP();
+	}
+
+	public void tryLevelUp() {
+		while (currentExp >= nextExpRequired) {
+			levelUp();
+		}
+	}
+
+	public final void addExpAndTryLevelUp(double change) {
+		currentExp += change;
+		tryLevelUp();
 	}
 
 	public final double getExp() {
-		return exp;
+		return currentExp;
 	}
 
-	public final Stat getBase() {
-		return base;
-	}
-
-	public final Stat getCurrent() {
-		return current;
-	}
-
-	public final MoveType getMoveType() {
-		return moveType;
-	}
-
-	public final ArrayList<ActiveSkill> getActiveSkills() {
+	public final List<ActiveSkill> getActiveSkills() {
 		return activeSkills;
 	}
 
-	public final ArrayList<PassiveSkill> getPassiveSkills() {
+	public final List<PassiveSkill> getPassiveSkills() {
 		return passiveSkills;
 	}
 
@@ -669,44 +645,12 @@ public class Pokemon implements Cloneable, IRenderable {
 		return paths;
 	}
 
-	public final Element getPrimaryElement() {
-		return primaryElement;
-	}
-
-	public final Element getSecondaryElement() {
-		return secondaryElement;
-	}
-
-	public final void setPrimaryElement(Element element) {
-		primaryElement = element;
-	}
-
-	public final void setSecondaryElement(Element element) {
-		secondaryElement = element;
-	}
-
 	public final FightMap getCurrentFightMap() {
 		return currentFightMap;
 	}
 
 	public final void setCurrentFightMap(FightMap currentFightMap) {
 		this.currentFightMap = currentFightMap;
-	}
-
-	public final int getMoveRange() {
-		return moveRange;
-	}
-
-	public void setMoveRange(int moveRange) {
-		this.moveRange = moveRange;
-	}
-
-	public int getAttackRange() {
-		return attackRange;
-	}
-
-	public void setAttackRange(int attackRange) {
-		this.attackRange = attackRange;
 	}
 
 	public final FightTerrain getCurrentFightTerrain() {
@@ -725,20 +669,32 @@ public class Pokemon implements Cloneable, IRenderable {
 		return DEFAULT_IMAGE_FILE_LOCATION;
 	}
 
-	public final int getId() {
-		return id;
+	public final Status getStatus() {
+		return status;
 	}
 
-	public final String getImageFileName() {
-		return imageFileName;
+	public final void setStatus(Status status) {
+		this.status = status;
 	}
 
-	public final Image getImage() {
-		return image;
+	public final Pokemon getKiller() {
+		return killer;
 	}
 
-	public final double getIv() {
-		return iv;
+	public final void setKiller(Pokemon killer) {
+		this.killer = killer;
+	}
+
+	public final double getLastExpRequired() {
+		return lastExpRequired;
+	}
+
+	public final double getNextExpRequired() {
+		return nextExpRequired;
+	}
+
+	public final double getCurrentExp() {
+		return currentExp;
 	}
 
 }
