@@ -79,7 +79,6 @@ public class HumanPlayer extends Player {
 		if (InputUtility.getKeyTriggered(endTurn)) {
 			GUIFightGameManager.nextPhase();
 		}
-		System.out.println("FLAG " + "[HumanPlayer.java].inputAttackActiveSkill(attackingPokemon)");
 		if (super.nextAttackSkill.isPresent()) {
 			return true;
 		}
@@ -92,7 +91,6 @@ public class HumanPlayer extends Player {
 				return true;
 			}
 		}
-		System.out.println("Attack Skill not setted");
 		return false;
 	}
 }

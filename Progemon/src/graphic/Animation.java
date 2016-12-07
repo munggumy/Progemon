@@ -15,12 +15,10 @@ public abstract class Animation implements IRenderable{
 	private boolean playing;
 	
 	public Animation() {
-		// TODO Auto-generated constructor stub
 		frameDelay = 1;
 	}
 	
 	public Animation(Image image, int frameNumber) {
-		// TODO Auto-generated constructor stub
 		this.image = image;
 		this.frameNumber = frameNumber;
 		frameDelay = 1;

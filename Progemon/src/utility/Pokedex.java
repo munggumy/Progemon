@@ -69,7 +69,6 @@ public class Pokedex {
 			if (pokemon.getID() == pokemon_id) {
 				try {
 					Pokemon temp = (Pokemon) pokemon.clone();
-					temp.calculateCurrentStats();
 					return temp;
 				} catch (CloneNotSupportedException e) {
 					e.printStackTrace();

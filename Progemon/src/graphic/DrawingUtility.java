@@ -16,19 +16,25 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import logic.character.ActiveSkill;
 import logic.character.Pokemon;
+import logic.character.Status;
 import logic.terrain.FightMap;
 import logic.terrain.FightTerrain;
 
 public class DrawingUtility {
+
+	private static final int HP_BAR_SIZE_X = 30;
+	private static final int HP_BAR_SIZE_Y = 6;
+	private static final int HP_BAR_OFFSET_X = 5;
+	private static final int HP_BAR_OFFSET_Y = 32;
+	private static final Color HP_GREEN = Color.LAWNGREEN;
+	private static final Color HP_RED = Color.RED;
 
 	private static Image shadow;
 	private static Image cursor;
 	private static Image highlight;
 
 	private static Image qimg;
-
 	private static Image sign;
-
 	private static GraphicsContext gc;
 
 	public DrawingUtility() {
@@ -56,31 +62,25 @@ public class DrawingUtility {
 		Arrays.asList(fightMap.getMap()).stream().flatMap((FightTerrain[] ft) -> Arrays.asList(ft).stream())
 				.forEach(ft -> ft.draw());
 		fightMap.getPokemonsOnMap().forEach(p -> p.draw());
-//		for (int i = 0; i < fightMap.getPokemonsOnMap().size(); i++) {
-//			fightMap.getPokemonsOnMap().get(i).draw();
-//		}
+		// for (int i = 0; i < fightMap.getPokemonsOnMap().size(); i++) {
+		// fightMap.getPokemonsOnMap().get(i).draw();
+		// }
 	}
 
 	public static void drawFightTerrain(FightTerrain fightTerrain) {
-		/*
-		 * File file = new File("load\\img\\terrain\\shadow20.png"); Image
-		 * shadow = new Image(file.toURI().toString()); file = new
-		 * File("load\\img\\terrain\\cursur.png"); Image cursor = new
-		 * Image(file.toURI().toString()); file = new
-		 * File("load\\img\\terrain\\highlight.png"); Image highlight = new
-		 * Image(file.toURI().toString());
-		 */
+		int fightTerrainSizeX = fightTerrain.getX() * FightTerrain.IMG_SIZE_X;
+		int fightTerrainSizeY = fightTerrain.getY() * FightTerrain.IMG_SIZE_Y;
 
-		gc.drawImage(fightTerrain.getTerrainImage(), fightTerrain.getX() * 40, fightTerrain.getY() * 40);
+		gc.drawImage(fightTerrain.getTerrainImage(), fightTerrainSizeX, fightTerrainSizeY);
 		if (fightTerrain.isShadowed()) {
-			gc.drawImage(shadow, fightTerrain.getX() * 40, fightTerrain.getY() * 40);
+			gc.drawImage(shadow, fightTerrainSizeX, fightTerrainSizeY);
 		}
 		if (fightTerrain.isCursor()) {
-			gc.drawImage(cursor, fightTerrain.getX() * 40, fightTerrain.getY() * 40);
+			gc.drawImage(cursor, fightTerrainSizeX, fightTerrainSizeY);
 			fightTerrain.setCursor(false);
 		}
 		if (fightTerrain.isHighlight()) {
-			gc.drawImage(highlight, fightTerrain.getX() * 40, fightTerrain.getY() * 40);
+			gc.drawImage(highlight, fightTerrainSizeX, fightTerrainSizeY);
 		}
 	}
 
@@ -96,10 +96,24 @@ public class DrawingUtility {
 		 * gc.drawImage(img, pokemon.getX() * 40, pokemon.getY() * 40, 40, 40,
 		 * null);
 		 */
-		gc.setFill(Color.RED);
-		gc.fillRect(x * 40 + 5, y * 40 + 32, 30, 6);
-		gc.setFill(Color.GREEN);
-		gc.fillRect(x * 40 + 5, y * 40 + 32, (int) (pokemon.getCurrentHP() * 30 / pokemon.getFullHP()), 6);
+		gc.setStroke(Color.BLACK);
+		gc.setLineWidth(1);
+		gc.strokeRect(x * FightTerrain.IMG_SIZE_X + HP_BAR_OFFSET_X, y * FightTerrain.IMG_SIZE_Y + HP_BAR_OFFSET_Y,
+				HP_BAR_SIZE_X, HP_BAR_SIZE_Y);
+		gc.setFill(HP_RED);
+		gc.fillRect(x * FightTerrain.IMG_SIZE_X + HP_BAR_OFFSET_X, y * FightTerrain.IMG_SIZE_Y + HP_BAR_OFFSET_Y,
+				HP_BAR_SIZE_X, HP_BAR_SIZE_Y);
+		gc.setFill(HP_GREEN);
+		gc.fillRect(x * FightTerrain.IMG_SIZE_X + HP_BAR_OFFSET_X, y * FightTerrain.IMG_SIZE_Y + HP_BAR_OFFSET_Y,
+				(int) (pokemon.getCurrentHP() * HP_BAR_SIZE_X / pokemon.getFullHP()), HP_BAR_SIZE_Y);
+
+		if (pokemon.getStatus().equals(Status.FREEZE)) {
+			gc.setGlobalAlpha(0.4);
+			gc.setFill(Color.ALICEBLUE);
+			gc.fillRect(x * FightTerrain.IMG_SIZE_X, y * FightTerrain.IMG_SIZE_Y, FightTerrain.IMG_SIZE_X,
+					FightTerrain.IMG_SIZE_Y);
+			gc.setGlobalAlpha(1.0);
+		}
 	}
 
 	public static void drawDialogBox() {

@@ -7,15 +7,16 @@ public class Path extends LinkedList<FightTerrain> implements Comparable<Path> {
 
 	private static final long serialVersionUID = 2418393279076119053L;
 
-	public Path(){
+	public Path() {
 		super();
 	}
+
 	public Path(FightTerrain initialFT) {
 		super();
 		super.add(initialFT);
 	}
-	
-	public Path(Collection<FightTerrain> c){
+
+	public Path(Collection<FightTerrain> c) {
 		super(c);
 	}
 

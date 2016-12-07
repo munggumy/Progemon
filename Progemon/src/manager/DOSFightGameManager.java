@@ -57,11 +57,11 @@ public class DOSFightGameManager {
 				System.out.println("The winner is " + winnerPlayer.getName());
 				break;
 			}
-
-			System.out.println(currentPokemon.getName() + " : " + currentPokemon.getAttackStat() + " "
-					+ currentPokemon.getCurrentHP() + " " + currentPokemon.getFullHP());
-			currentPokemon.calculateNextTurnTime();
-			currentPokemon.calculateCurrentStats();
+//
+//			System.out.println(currentPokemon.getName() + " : " + currentPokemon.getAttackStat() + " "
+//					+ currentPokemon.getCurrentHP() + " " + currentPokemon.getFullHP());
+//			currentPokemon.calculateNextTurnTime();
+//			currentPokemon.calculateCurrentStats();
 
 			field.sortPokemons();
 			i++;

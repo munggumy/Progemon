@@ -14,10 +14,11 @@ import utility.Clock;
 import utility.Phase;
 import utility.exception.UnknownPhaseException;
 
-public abstract class Player {
+public abstract class Player {	
 	private String name;
 	private Color color;
 	private ArrayList<Pokemon> pokemons;
+	private boolean godlike;
 
 	protected Optional<Pokemon> nextAttackedPokemon;
 	protected Optional<ActiveSkill> nextAttackSkill;
@@ -137,7 +138,6 @@ public abstract class Player {
 			nextAttackedPokemon = null;
 			nextAttackSkill = null;
 		}
-		System.out.println("WTF");
 
 		// pokemonMove(pokemon);
 		// pokemonAttack(pokemon);
@@ -172,9 +172,8 @@ public abstract class Player {
 
 	protected final boolean attack(Pokemon attackingPokemon, Optional<Pokemon> other,
 			Optional<ActiveSkill> activeSkill) {
-		System.out.println("Player.attack()");
 		if (other.isPresent() && activeSkill.isPresent()) {
-			System.out.println("attacking...");
+			System.out.println("attacking... ");
 			attackingPokemon.attack(other.get(), activeSkill.get());
 		}
 		return true;
@@ -199,10 +198,17 @@ public abstract class Player {
 		pokemon.setOwner(this);
 		pokemons.add(pokemon);
 	}
-	
 
 	public final Color getColor() {
 		return color;
+	}
+
+	public final boolean isGodlike() {
+		return godlike;
+	}
+
+	public final void setGodlike(boolean godlike) {
+		this.godlike = godlike;
 	}
 
 }
