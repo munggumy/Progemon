@@ -8,6 +8,7 @@ import java.util.List;
 import graphic.Animation;
 import graphic.DrawingUtility;
 import graphic.IRenderable;
+import graphic.IRenderableHolder;
 import logic.terrain.FightTerrain;
 import utility.StringUtility;
 
@@ -23,10 +24,8 @@ public class ActiveSkill extends Animation implements IRenderable {
 	private AreaType areaType;
 	private GraphicType graphicType;
 
-	// TODO type of active skill?
-
 	private ActiveSkill(String skillName, double skillPower) {
-		super();
+		super(16, 2, false, true);
 		setName(skillName);
 		setPower(skillPower);
 		allActiveSkills.add(this);
@@ -108,9 +107,9 @@ public class ActiveSkill extends Animation implements IRenderable {
 	}
 
 	@Override
-	public void getDepth() {
+	public int getDepth() {
 		// TODO Auto-generated method stub
-
+		return 0;
 	}
 
 	public void setAttackTerrain(FightTerrain attackTerrain) {

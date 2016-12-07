@@ -8,12 +8,15 @@ import java.util.stream.Collectors;
 
 import graphic.DialogBox;
 import graphic.GameScreen;
+import graphic.IRenderable;
+import graphic.IRenderableHolder;
 import graphic.QueueBox;
 import logic.character.Pokemon;
 import logic.player.Player;
 import logic.terrain.FightMap;
 import utility.Clock;
 import utility.FileUtility;
+import utility.GlobalPhase;
 import utility.Phase;
 import utility.RandomUtility;
 import utility.StringUtility;
@@ -29,6 +32,8 @@ public class GUIFightGameManager {
 	private static Phase currentPhase;
 
 	public GUIFightGameManager(Set<Player> players) {
+		
+		GlobalPhase.setCurrentPhase(GlobalPhase.FIGHT);
 
 		GUIFightGameManager.players = new ArrayList<Player>(players);
 		currentPlayers = new ArrayList<Player>(players);
@@ -49,12 +54,12 @@ public class GUIFightGameManager {
 	}
 
 	private void startFight() {
-		GameScreen.addObject(fightMap);
+		IRenderableHolder.addFightObject(fightMap);
 		spawnPokemons();
 		fightMap.sortPokemons();
 
-		GameScreen.addObject(new DialogBox());
-		GameScreen.addObject(new QueueBox());
+		IRenderableHolder.addFightObject(new DialogBox());
+		IRenderableHolder.addFightObject(new QueueBox());
 		System.out.println("Added DialogBox and QueueBox");
 		DialogBox.sentMessage("Press '" + DialogBox.advancingKey.toString() + "' to start!");
 
@@ -100,7 +105,7 @@ public class GUIFightGameManager {
 			DialogBox.update();
 			Clock.tick();
 		}
-
+		GlobalPhase.setCurrentPhase(GlobalPhase.WORLD);
 	}
 
 	private static void spawnPokemons() {

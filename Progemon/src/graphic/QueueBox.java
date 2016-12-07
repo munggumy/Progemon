@@ -22,6 +22,7 @@ public class QueueBox implements IRenderable {
 	private static int removeTimeCounter = 0, moveTimeCounter = 0;
 	private static boolean remove = false, move = false, insert = false;
 	private static boolean isQueue = true;
+	private static boolean visible = true;
 
 	public QueueBox() {
 		// TODO Auto-generated constructor stub
@@ -42,9 +43,35 @@ public class QueueBox implements IRenderable {
 	}
 
 	@Override
-	public void getDepth() {
+	public int getDepth() {
 		// TODO Auto-generated method stub
-
+		return 0;
+	}
+	
+	@Override
+	public boolean isVisible() {
+		// TODO Auto-generated method stub
+		return visible;
+	}
+	
+	@Override
+	public void setVisible(boolean visible) {
+		// TODO Auto-generated method stub
+		this.visible = visible;
+	}
+	
+	@Override
+	public void hide() {
+		// TODO Auto-generated method stub
+		visible = false;
+		IRenderableHolder.removeWorldObject(this);
+	}
+	
+	@Override
+	public void show() {
+		// TODO Auto-generated method stub
+		IRenderableHolder.addWorldObject(this);
+		visible = true;
 	}
 	
 	public static void sort() {
