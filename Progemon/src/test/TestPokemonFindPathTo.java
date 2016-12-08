@@ -5,12 +5,12 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import logic.character.Pokemon;
-import logic.character.Pokemon.MoveType;
-import logic.terrain.FightMap;
-import logic.terrain.FightTerrain;
-import logic.terrain.FightTerrain.TerrainType;
-import logic.terrain.Path;
+import logic_fight.character.pokemon.Pokemon;
+import logic_fight.character.pokemon.Pokemon.MoveType;
+import logic_fight.terrain.FightMap;
+import logic_fight.terrain.FightTerrain;
+import logic_fight.terrain.Path;
+import logic_fight.terrain.FightTerrain.TerrainType;
 import utility.FileUtility;
 
 public class TestPokemonFindPathTo {

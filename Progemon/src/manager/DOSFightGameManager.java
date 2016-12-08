@@ -3,9 +3,9 @@ package manager;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import logic.character.Pokemon;
-import logic.player.Player;
-import logic.terrain.FightMap;
+import logic_fight.character.pokemon.Pokemon;
+import logic_fight.player.Player;
+import logic_fight.terrain.FightMap;
 import utility.FileUtility;
 import utility.RandomUtility;
 

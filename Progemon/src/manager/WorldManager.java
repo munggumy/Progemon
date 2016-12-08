@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 import graphic.IRenderableHolder;
 import javafx.scene.input.KeyCode;
-import logic.character.PlayerCharacter;
-import logic.player.HumanPlayer;
-import logic.terrain.WorldMap;
-import logic.terrain.WorldObject;
+import logic_fight.player.HumanPlayer;
+import logic_world.player.PlayerCharacter;
+import logic_world.terrain.WorldMap;
+import logic_world.terrain.WorldObject;
 import utility.AnimationUtility;
 import utility.Clock;
 import utility.Function;

@@ -30,38 +30,32 @@ public class DialogBox implements IRenderable {
 
 	@Override
 	public void draw() {
-		// TODO Auto-generated method stub
 		DrawingUtility.drawDialogBox();
 	}
 
 	@Override
 	public int getDepth() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
-	
+
 	@Override
 	public boolean isVisible() {
-		// TODO Auto-generated method stub
 		return visible;
 	}
-	
+
 	@Override
 	public void setVisible(boolean visible) {
-		// TODO Auto-generated method stub
-		this.visible = visible;
+		DialogBox.visible = visible;
 	}
-	
+
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
 		visible = false;
 		IRenderableHolder.removeWorldObject(this);
 	}
-	
+
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
 		IRenderableHolder.addWorldObject(this);
 		visible = true;
 	}

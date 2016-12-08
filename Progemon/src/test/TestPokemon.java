@@ -9,10 +9,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javafx.scene.paint.Color;
-import logic.character.Pokemon;
-import logic.character.Pokemon.MoveType;
-import logic.player.AIPlayer;
-import logic.player.Player;
+import logic_fight.character.pokemon.Pokemon;
+import logic_fight.character.pokemon.Pokemon.MoveType;
+import logic_fight.player.AIPlayer;
+import logic_fight.player.Player;
 
 public class TestPokemon {
 	

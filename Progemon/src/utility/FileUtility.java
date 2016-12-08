@@ -15,18 +15,18 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import logic.character.ActiveSkill;
-import logic.character.AreaType;
-import logic.character.Element;
-import logic.character.GraphicType;
-import logic.character.LevelingRate;
-import logic.character.Pokemon;
-import logic.character.Pokemon.MoveType;
-import logic.character.PokemonTemplate;
-import logic.character.SWTable;
-import logic.character.SkillEffect;
-import logic.character.Status;
-import logic.terrain.FightTerrain;
+import logic_fight.character.Element;
+import logic_fight.character.SWTable;
+import logic_fight.character.activeSkill.ActiveSkill;
+import logic_fight.character.activeSkill.AreaType;
+import logic_fight.character.activeSkill.GraphicType;
+import logic_fight.character.activeSkill.SkillEffect;
+import logic_fight.character.pokemon.LevelingRate;
+import logic_fight.character.pokemon.Pokemon;
+import logic_fight.character.pokemon.PokemonTemplate;
+import logic_fight.character.pokemon.Status;
+import logic_fight.character.pokemon.Pokemon.MoveType;
+import logic_fight.terrain.FightTerrain;
 import utility.exception.FileWrongFormatException;
 
 public class FileUtility {

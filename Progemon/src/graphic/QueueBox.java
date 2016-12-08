@@ -3,7 +3,7 @@ package graphic;
 import java.util.ArrayList;
 import java.util.List;
 
-import logic.character.Pokemon;
+import logic_fight.character.pokemon.Pokemon;
 import manager.GUIFightGameManager;
 import utility.Clock;
 

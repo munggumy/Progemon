@@ -5,10 +5,10 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import logic.character.Pokemon;
-import logic.character.Pokemon.MoveType;
-import logic.filters.MoveFilter;
-import logic.terrain.FightMap;
+import logic_fight.character.pokemon.Pokemon;
+import logic_fight.character.pokemon.Pokemon.MoveType;
+import logic_fight.filters.MoveFilter;
+import logic_fight.terrain.FightMap;
 import utility.FileUtility;
 
 public class TestPokemonGetAvaliableFightTerrains {
