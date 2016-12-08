@@ -2,8 +2,8 @@ package main;
 
 import graphic.Frame;
 import graphic.ScreenComponent;
-import logic.character.Pokemon;
-import logic.terrain.FightMap;
+import logic_fight.character.pokemon.Pokemon;
+import logic_fight.terrain.FightMap;
 import utility.FileUtility;
 import utility.Pokedex;
 import utility.RandomUtility;

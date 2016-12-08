@@ -8,8 +8,8 @@ import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 
-import logic.character.Pokemon;
-import logic.character.Pokemon.MoveType;
+import logic_fight.character.pokemon.Pokemon;
+import logic_fight.character.pokemon.Pokemon.MoveType;
 import utility.Pokedex;
 
 public class TestPokedex {
