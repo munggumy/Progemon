@@ -8,8 +8,10 @@ import javafx.scene.input.KeyCode;
 public class InputUtility {
 
 	private static int mouseX, mouseY;
-	private static boolean mouseLeftDown, mouseRightDown, mouseOnScreen;
-	private static boolean mouseLeftLastDown, mouseRightLastDown;
+	private static int dragX, dragY;
+	private static int scrollUp, scrollDown;
+	private static boolean mouseLeftClick, mouseRightClick, mouseOnScreen;
+	private static boolean mouseLeftPress, mouseRightPress;
 	private static Set<KeyCode> keyPressed = new HashSet<KeyCode>();
 	private static Set<KeyCode> keyTriggered = new HashSet<KeyCode>();
 
@@ -18,6 +20,9 @@ public class InputUtility {
 	}
 
 	public static void setMouseX(int mouseX) {
+		if (mouseLeftPress) {
+			dragX = mouseX - InputUtility.mouseX;
+		}
 		InputUtility.mouseX = mouseX;
 	}
 
@@ -26,23 +31,26 @@ public class InputUtility {
 	}
 
 	public static void setMouseY(int mouseY) {
+		if (mouseLeftPress) {
+			dragY = mouseY - InputUtility.mouseY;
+		}
 		InputUtility.mouseY = mouseY;
 	}
 
-	public static boolean isMouseLeftDown() {
-		return mouseLeftDown;
+	public static boolean isMouseLeftClick() {
+		return mouseLeftClick;
 	}
 
-	public static void setMouseLeftDown(boolean mouseLeftDown) {
-		InputUtility.mouseLeftDown = mouseLeftDown;
+	public static void setMouseLeftClick(boolean mouseLeftClick) {
+		InputUtility.mouseLeftClick = mouseLeftClick;
 	}
 
-	public static boolean isMouseRightDown() {
-		return mouseRightDown;
+	public static boolean isMouseRightClick() {
+		return mouseRightClick;
 	}
 
-	public static void setMouseRightDown(boolean mouseRightDown) {
-		InputUtility.mouseRightDown = mouseRightDown;
+	public static void setMouseRightClick(boolean mouseRightClick) {
+		InputUtility.mouseRightClick = mouseRightClick;
 	}
 
 	public static boolean isMouseOnScreen() {
@@ -53,20 +61,20 @@ public class InputUtility {
 		InputUtility.mouseOnScreen = mouseOnScreen;
 	}
 
-	public static boolean isMouseLeftClicked() {
-		return mouseLeftLastDown;
+	public static boolean isMouseLeftPress() {
+		return mouseLeftPress;
 	}
 
-	public static void setMouseLeftLastDown(boolean mouseLeftLastDown) {
-		InputUtility.mouseLeftLastDown = mouseLeftLastDown;
+	public static void setMouseLeftPress(boolean mouseLeftPress) {
+		InputUtility.mouseLeftPress = mouseLeftPress;
 	}
 
-	public static boolean isMouseRightClicked() {
-		return mouseRightLastDown;
+	public static boolean isMouseRightPress() {
+		return mouseRightPress;
 	}
 
-	public static void setMouseRightLastDown(boolean mouseRightLastDown) {
-		InputUtility.mouseRightLastDown = mouseRightLastDown;
+	public static void setMouseRightPress(boolean mouseRightPress) {
+		InputUtility.mouseRightPress = mouseRightPress;
 	}
 
 	public static boolean getKeyPressed(KeyCode keycode) {
@@ -92,11 +100,46 @@ public class InputUtility {
 			keyTriggered.remove(keycode);
 		}
 	}
+	
+	public static int getDragX() {
+		return dragX;
+	}
+	
+	public static int getDragY() {
+		return dragY;
+	}
+	
+	public static int getScrollDown() {
+		return scrollDown;
+	}
+	
+	public static int getScrollUp() {
+		return scrollUp;
+	}
+	
+	public static void setScroll(int scroll) {
+		if (scroll > 0) {
+			scrollUp = scroll;
+		}
+		else{
+			scrollDown = -scroll;
+		}
+	}
 
 	/** Update Trigger Mechanism at end of Clock.tick() */
 	public static void postUpdate() {
-		setMouseLeftLastDown(false);
-		setMouseRightLastDown(false);
+		if (mouseLeftClick) {
+			mouseLeftPress = true;
+		}
+		if (mouseRightClick) {
+			mouseRightPress = true;
+		}
+		dragX = 0;
+		dragY = 0;
+		scrollDown = 0;
+		scrollUp = 0;
+		mouseLeftClick = false;
+		mouseRightClick = false;
 		keyTriggered.clear();
 	}
 }

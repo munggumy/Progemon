@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
 import logic_fight.FightPhase;
 import logic_fight.character.activeSkill.ActiveSkill;
 import logic_fight.character.pokemon.Pokemon;
+import logic_fight.terrain.FightMap;
 import logic_fight.terrain.FightTerrain;
 import manager.GUIFightGameManager;
 import utility.InputUtility;
@@ -39,12 +40,11 @@ public class HumanPlayer extends Player {
 		if (InputUtility.getKeyTriggered(captureKey) && getCurrentFightManager().canCapturePokemon()) {
 			throw new AbnormalPhaseOrderException(FightPhase.preCapturePhase);
 		}
-		if (!InputUtility.isMouseLeftClicked()) {
+		if (!InputUtility.isMouseLeftClick()) {
 			return false;
 		} else {
-			FightTerrain destination = pokemon.getCurrentFightMap().getFightTerrainAt(
-					(InputUtility.getMouseX()) / FightTerrain.IMG_SIZE_X,
-					(InputUtility.getMouseY()) / FightTerrain.IMG_SIZE_Y);
+			FightTerrain destination = pokemon.getCurrentFightMap().getFightTerrainAt(FightMap.getCursorX(),
+					FightMap.getCursorY());
 			System.out.println("Destination : " + destination);
 			if (pokemon.getAvaliableFightTerrains().contains(destination)) {
 				super.nextPath = pokemon.findPathTo(destination);
@@ -58,16 +58,17 @@ public class HumanPlayer extends Player {
 
 	@Override
 	protected boolean inputAttackPokemon(Pokemon pokemon) {
-
 		if (super.nextAttackedPokemon.isPresent()) {
 			return true;
 		}
-		if (!InputUtility.isMouseLeftClicked()) {
+		if (!InputUtility.isMouseLeftClick()) {
 			return false;
 		} else {
-			FightTerrain destination = pokemon.getCurrentFightMap().getFightTerrainAt(
-					InputUtility.getMouseX() / FightTerrain.IMG_SIZE_X,
-					InputUtility.getMouseY() / FightTerrain.IMG_SIZE_Y);
+			FightTerrain destination = pokemon.getCurrentFightMap().getFightTerrainAt(FightMap.getCursorX(),
+					FightMap.getCursorY());
+			if (destination == null) {
+				return false;
+			}
 			Optional<Pokemon> otherPokemon = pokemon.getCurrentFightMap().getPokemonAt(destination);
 			if (otherPokemon.isPresent() && otherPokemon.get().getOwner() != pokemon.getOwner()) {
 				super.nextAttackedPokemon = otherPokemon;
@@ -82,10 +83,14 @@ public class HumanPlayer extends Player {
 	@Override
 	protected boolean inputAttackActiveSkill(Pokemon attackingPokemon) throws AbnormalPhaseOrderException {
 		KeyCode endTurn = KeyCode.E;
+		attackingPokemon.setShowSkillMenu(true);
 		if (InputUtility.getKeyTriggered(endTurn)) {
+			attackingPokemon.setShowSkillMenu(false);
 			throw new AbnormalPhaseOrderException(FightPhase.postAttackPhase);
 		}
+
 		if (super.nextAttackSkill.isPresent()) {
+			attackingPokemon.setShowSkillMenu(false);
 			return true;
 		}
 		List<ActiveSkill> attackSkills = attackingPokemon.getActiveSkills();
@@ -94,6 +99,7 @@ public class HumanPlayer extends Player {
 			if (InputUtility.getKeyTriggered(kc) && index >= 0 && index < attackSkills.size()) {
 				System.out.println("Attack Skill setted");
 				super.nextAttackSkill = Optional.of(attackSkills.get(index));
+				attackingPokemon.setShowSkillMenu(false);
 				return true;
 			}
 		}
@@ -106,14 +112,14 @@ public class HumanPlayer extends Player {
 		if (InputUtility.getKeyTriggered(goBackKey)) {
 			throw new AbnormalPhaseOrderException(FightPhase.preMovePhase);
 		}
-		if (!InputUtility.isMouseLeftClicked()) {
+		if (!InputUtility.isMouseLeftClick()) {
 			return false;
 		}
 		FightTerrain destination = pokemon.getCurrentFightMap().getFightTerrainAt(
 				InputUtility.getMouseX() / FightTerrain.IMG_SIZE_X, InputUtility.getMouseY() / FightTerrain.IMG_SIZE_Y);
 		Optional<Pokemon> otherPokemon = pokemon.getCurrentFightMap().getPokemonAt(destination);
 		otherPokemon.ifPresent(other -> {
-			if(!other.getOwner().equals(pokemon.getOwner())){
+			if (!other.getOwner().equals(pokemon.getOwner())) {
 				captureTarget = other;
 			}
 		});

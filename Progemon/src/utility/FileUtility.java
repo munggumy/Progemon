@@ -124,7 +124,7 @@ public class FileUtility {
 
 		Pokemon new_pokemon = new Pokemon(np, 5);
 		Stream.of(activeSkills).filter(as -> !as.isEmpty()).forEachOrdered(as -> new_pokemon.addActiveSkill(as.trim()));
-		new_pokemon.loadImage(new_pokemon.getName() + ".png");
+		new_pokemon.loadImage();
 		Pokedex.addPokemonToList(new_pokemon);
 		System.out.println("added pokemon " + new_pokemon.getName());
 	}

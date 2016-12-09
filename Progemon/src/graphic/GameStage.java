@@ -1,24 +1,45 @@
 package graphic;
 
+import java.awt.RenderingHints.Key;
+
 import javafx.animation.AnimationTimer;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCharacterCombination;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import utility.InputUtility;
 
 public class GameStage extends Stage {
 
+	private static GameScreen canvas;
+	private static FullScreen fullCanvas;
+	private static Scene normalScene;
+	private static Scene fullScene;
+
 	public GameStage() {
 		super();
 		setTitle("Progemon");
-		GameScreen canvas = new GameScreen();
+		canvas = new GameScreen();
+		fullCanvas = new FullScreen();
 		Pane root = new Pane();
 		root.getChildren().add(canvas);
-		Scene scene = new Scene(root, GameScreen.WIDTH, GameScreen.HEIGHT, Color.DARKGRAY);
-		setScene(scene);
-		addListener(scene);
+		Pane root2 = new Pane();
+		root2.getChildren().add(fullCanvas);
+		normalScene = new Scene(root, GameScreen.WIDTH, GameScreen.HEIGHT, Color.DARKGRAY);
+		fullScene = new Scene(root2, FullScreen.WIDTH, FullScreen.HEIGHT, Color.BLACK);
+		setScene(normalScene);
+		addListener(normalScene);
+		addListener(fullScene);
 		setX(0);
 		setY(0);
 		try {
@@ -27,11 +48,22 @@ public class GameStage extends Stage {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		setResizable(false);
+		setFullScreenExitKeyCombination(new KeyCodeCombination(KeyCode.F12));
+		setFullScreenExitHint("Press F12 to exit full-screen mode.");
+		sizeToScene();
 		new AnimationTimer() {
 
 			@Override
 			public void handle(long now) {
-				GameScreen.repaint();
+				try {
+					GameScreen.repaint();
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				if (getScene() == fullScene) {
+					FullScreen.repaint();
+				}
 			}
 		}.start();
 		show();
@@ -40,21 +72,17 @@ public class GameStage extends Stage {
 	public void addListener(Scene scene) {
 		scene.setOnMousePressed(mEvent -> {
 			if (mEvent.getButton().equals(MouseButton.PRIMARY)) {
-				InputUtility.setMouseLeftDown(true);
-				InputUtility.setMouseLeftLastDown(true);
+				InputUtility.setMouseLeftClick(true);
 			} else if (mEvent.getButton().equals(MouseButton.SECONDARY)) {
-				InputUtility.setMouseRightDown(true);
-				InputUtility.setMouseRightLastDown(true);
+				InputUtility.setMouseRightClick(true);
 			}
 		});
 
 		scene.setOnMouseReleased(mEvent -> {
 			if (mEvent.getButton().equals(MouseButton.PRIMARY)) {
-				InputUtility.setMouseLeftDown(false);
-				InputUtility.setMouseLeftLastDown(false);
+				InputUtility.setMouseLeftPress(false);
 			} else if (mEvent.getButton().equals(MouseButton.SECONDARY)) {
-				InputUtility.setMouseRightDown(false);
-				InputUtility.setMouseRightLastDown(false);
+				InputUtility.setMouseRightPress(false);
 			}
 		});
 
@@ -71,11 +99,28 @@ public class GameStage extends Stage {
 			InputUtility.setMouseY((int) mEvent.getY());
 		});
 
+		scene.setOnMouseDragged(mEvent -> {
+			InputUtility.setMouseX((int) mEvent.getX());
+			InputUtility.setMouseY((int) mEvent.getY());
+		});
+
+		scene.setOnScroll(sEvent -> {
+			InputUtility.setScroll((int) (sEvent.getDeltaY() / 40));
+		});
+
 		scene.setOnKeyPressed(kEvent -> {
 			// System.out.println("KEY PRESSED : " +
 			// kEvent.getCode().toString());
 			InputUtility.setKeyPressed(kEvent.getCode(), true);
 			InputUtility.setKeyTriggered(kEvent.getCode(), true);
+			if (kEvent.getCode() == KeyCode.F12) {
+				if (getScene().equals(normalScene)) {
+					setScene(fullScene);
+					setFullScreen(true);
+				} else {
+					setScene(normalScene);
+				}
+			}
 		});
 
 		scene.setOnKeyReleased(kEvent -> {
@@ -84,6 +129,10 @@ public class GameStage extends Stage {
 		});
 
 		System.out.println("Stage Finished Adding Listener");
+	}
+
+	public static GameScreen getCanvas() {
+		return canvas;
 	}
 
 }
