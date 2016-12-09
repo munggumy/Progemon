@@ -17,6 +17,7 @@ import javafx.scene.text.Text;
 import logic_fight.character.activeSkill.ActiveSkill;
 import logic_fight.character.pokemon.Pokemon;
 import logic_fight.character.pokemon.Status;
+import logic_fight.player.HumanPlayer;
 import logic_fight.terrain.FightMap;
 import logic_fight.terrain.FightTerrain;
 import logic_world.player.PlayerCharacter;
@@ -24,6 +25,7 @@ import logic_world.terrain.WorldDirection;
 import logic_world.terrain.WorldMap;
 import logic_world.terrain.WorldMapException;
 import logic_world.terrain.WorldObject;
+import manager.GUIFightGameManager;
 import manager.WorldManager;
 
 public class DrawingUtility {
@@ -41,6 +43,9 @@ public class DrawingUtility {
 
 	private static Image qimg;
 	private static Image sign;
+	private static Image itemIcon;
+	private static Image pkmnBar;
+	private static Image background;
 	private static GraphicsContext gc;
 
 	public DrawingUtility() {
@@ -52,11 +57,19 @@ public class DrawingUtility {
 		highlight = new Image(hfile.toURI().toString());
 
 		File qfile = new File(QueueBox.QUEUE_BOX_PATH);
-		qimg = new Image(qfile.toURI().toString());
+		qimg = resize(new Image(qfile.toURI().toString()), 2);
 
 		File signfile = new File("load\\img\\dialogbox\\Theme1_sign.gif");
 		sign = new Image(signfile.toURI().toString());
+
+		File itemfile = new File("load\\img\\HUD\\itemicon.png");
+		itemIcon = resize(new Image(itemfile.toURI().toString()), 2);
+		File pkmnfile = new File("load\\img\\HUD\\pokemonbar.png");
+		pkmnBar = new Image(pkmnfile.toURI().toString());
+		File backgroundfile = new File("load\\img\\background\\meadow.png");
+		background = new Image(backgroundfile.toURI().toString());
 		System.out.println("Drawing Utility Loaded Successfully.");
+
 	}
 
 	public static void drawFightMap(FightMap fightMap) {
@@ -65,28 +78,41 @@ public class DrawingUtility {
 		// fightTerrain.draw();
 		// }
 		// }
+		gc.drawImage(background, 0, 0);
+		gc.setFill(Color.BLACK);
+		gc.setLineWidth(3);
+		gc.strokeRect(FightMap.getOriginX(), FightMap.getOriginY(), fightMap.getSizeX() * FightMap.getBlockSize(),
+				fightMap.getSizeY() * FightMap.getBlockSize());
 		Arrays.asList(fightMap.getMap()).stream().flatMap((FightTerrain[] ft) -> Arrays.asList(ft).stream())
 				.forEach(ft -> ft.draw());
 		fightMap.getPokemonsOnMap().forEach(p -> p.draw());
 		// for (int i = 0; i < fightMap.getPokemonsOnMap().size(); i++) {
 		// fightMap.getPokemonsOnMap().get(i).draw();
 		// }
+		gc.drawImage(itemIcon, 10, 246);
+		fightMap.getPokemonsOnMap().forEach(p -> {
+			if (p.isShowSkillMenu()) {
+				drawSkillMenu(p);
+			}
+		});
+		fightMap.getPokemonsOnMap().forEach(p -> drawPokemonBar(p));
 	}
 
 	public static void drawFightTerrain(FightTerrain fightTerrain) {
-		int fightTerrainSizeX = fightTerrain.getX() * FightTerrain.IMG_SIZE_X;
-		int fightTerrainSizeY = fightTerrain.getY() * FightTerrain.IMG_SIZE_Y;
+		int blockSize = FightMap.getBlockSize();
+		int fightTerrainX = fightTerrain.getX() * blockSize + FightMap.getOriginX();
+		int fightTerrainY = fightTerrain.getY() * blockSize + FightMap.getOriginY();
 
-		gc.drawImage(fightTerrain.getTerrainImage(), fightTerrainSizeX, fightTerrainSizeY);
+		gc.drawImage(fightTerrain.getTerrainImage(), fightTerrainX, fightTerrainY, blockSize, blockSize);
 		if (fightTerrain.isShadowed()) {
-			gc.drawImage(shadow, fightTerrainSizeX, fightTerrainSizeY);
+			gc.drawImage(shadow, fightTerrainX, fightTerrainY, blockSize, blockSize);
 		}
 		if (fightTerrain.isCursor()) {
-			gc.drawImage(cursor, fightTerrainSizeX, fightTerrainSizeY);
+			gc.drawImage(cursor, fightTerrainX, fightTerrainY, blockSize, blockSize);
 			fightTerrain.setCursor(false);
 		}
 		if (fightTerrain.isHighlight()) {
-			gc.drawImage(highlight, fightTerrainSizeX, fightTerrainSizeY);
+			gc.drawImage(highlight, fightTerrainX, fightTerrainY, blockSize, blockSize);
 		}
 	}
 
@@ -94,9 +120,11 @@ public class DrawingUtility {
 		if (pokemon.getCurrentFightTerrain() == null) {
 			return;
 		}
-		int x = pokemon.getCurrentFightTerrain().getX();
-		int y = pokemon.getCurrentFightTerrain().getY();
-		gc.drawImage(pokemon.getImage(), x * FightTerrain.IMG_SIZE_X, y * FightTerrain.IMG_SIZE_Y);
+		int blockSize = FightMap.getBlockSize();
+		double resizeRate = blockSize / 40.0;
+		int x = pokemon.getCurrentFightTerrain().getX() * blockSize + FightMap.getOriginX();
+		int y = pokemon.getCurrentFightTerrain().getY() * blockSize + FightMap.getOriginY();
+		gc.drawImage(pokemon.getImage(), x, y, blockSize, blockSize);
 		/*
 		 * Image img = new ImageIcon(pokemon.getImageName()).getImage();
 		 * gc.drawImage(img, pokemon.getX() * 40, pokemon.getY() * 40, 40, 40,
@@ -104,21 +132,76 @@ public class DrawingUtility {
 		 */
 		gc.setStroke(Color.BLACK);
 		gc.setLineWidth(1);
-		gc.strokeRect(x * FightTerrain.IMG_SIZE_X + HP_BAR_OFFSET_X, y * FightTerrain.IMG_SIZE_Y + HP_BAR_OFFSET_Y,
-				HP_BAR_SIZE_X, HP_BAR_SIZE_Y);
+		gc.strokeRect(x + HP_BAR_OFFSET_X * resizeRate, y + HP_BAR_OFFSET_Y * resizeRate, HP_BAR_SIZE_X * resizeRate,
+				HP_BAR_SIZE_Y * resizeRate);
 		gc.setFill(HP_RED);
-		gc.fillRect(x * FightTerrain.IMG_SIZE_X + HP_BAR_OFFSET_X, y * FightTerrain.IMG_SIZE_Y + HP_BAR_OFFSET_Y,
-				HP_BAR_SIZE_X, HP_BAR_SIZE_Y);
+		gc.fillRect(x + HP_BAR_OFFSET_X * resizeRate, y + HP_BAR_OFFSET_Y * resizeRate, HP_BAR_SIZE_X * resizeRate,
+				HP_BAR_SIZE_Y * resizeRate);
 		gc.setFill(HP_GREEN);
-		gc.fillRect(x * FightTerrain.IMG_SIZE_X + HP_BAR_OFFSET_X, y * FightTerrain.IMG_SIZE_Y + HP_BAR_OFFSET_Y,
-				(int) (pokemon.getCurrentHP() * HP_BAR_SIZE_X / pokemon.getFullHP()), HP_BAR_SIZE_Y);
+		gc.fillRect(x + HP_BAR_OFFSET_X * resizeRate, y + HP_BAR_OFFSET_Y * resizeRate,
+				(int) (pokemon.getCurrentHP() * HP_BAR_SIZE_X * resizeRate / pokemon.getFullHP()),
+				HP_BAR_SIZE_Y * resizeRate);
 
 		if (pokemon.getStatus().equals(Status.FREEZE)) {
 			gc.setGlobalAlpha(0.4);
 			gc.setFill(Color.ALICEBLUE);
-			gc.fillRect(x * FightTerrain.IMG_SIZE_X, y * FightTerrain.IMG_SIZE_Y, FightTerrain.IMG_SIZE_X,
-					FightTerrain.IMG_SIZE_Y);
+			gc.fillRect(x, y, FightTerrain.IMG_SIZE_X, FightTerrain.IMG_SIZE_Y);
 			gc.setGlobalAlpha(1.0);
+		}
+	}
+
+	public static void drawPokemonBar(Pokemon pokemon) {
+		int position;
+		int originX, originY;
+		gc.setFont(Font.font("monospace", 8));
+		if (pokemon.getOwner() instanceof HumanPlayer) {
+			position = pokemon.getCurrentFightMap().getPlayerPokemonsOnMap().indexOf(pokemon);
+			originX = 110 + position * 120;
+			originY = 249;
+		} else {
+			position = pokemon.getCurrentFightMap().getEnemyPokemonsOnMap().indexOf(pokemon);
+			originX = (10 + position * 120);
+			originY = 10;
+		}
+		gc.setFill(Color.BLACK);
+		gc.fillRect(originX + 42, originY + 27, 60, 4);
+		gc.setFill(Color.LIMEGREEN);
+		gc.setFill(Color.hsb((pokemon.getCurrentHP() / pokemon.getFullHP()) * 120, 1,
+				1 - (pokemon.getCurrentHP() / pokemon.getFullHP()) * 0.2));
+		gc.fillRect(originX + 42, originY + 27, (pokemon.getCurrentHP() / pokemon.getFullHP()) * 60, 4);
+		gc.drawImage(pkmnBar, originX, originY);
+		gc.drawImage(pokemon.getIcon(), originX, originY);
+		gc.setFill(Color.BLACK);
+		gc.fillText(pokemon.getName(), originX + 42, originY + 10);
+		gc.fillText("Lv" + pokemon.getLevel(), originX + 44, originY + 23);
+		gc.fillText((int) pokemon.getCurrentHP() + "/" + (int) pokemon.getFullHP(), originX + 98
+				- computeStringWidth((int) pokemon.getCurrentHP() + "/" + (int) pokemon.getFullHP(), gc.getFont()),
+				originY + 23);
+		gc.setFill(Color.AQUA);
+		gc.fillRect(originX + 33, originY + 37, ((pokemon.getCurrentExp() - pokemon.getLastExpRequired())
+				/ (pokemon.getNextExpRequired() - pokemon.getLastExpRequired())) * 77, 1);
+	}
+
+	public static void drawSkillMenu(Pokemon pokemon) {
+		int interval = 10;
+		int i = 0;
+		int blockSize = FightMap.getBlockSize();
+		int x = (int) ((pokemon.getCurrentFightTerrain().getX() + 0.5) * blockSize + FightMap.getOriginX());
+		int y = (int) ((pokemon.getCurrentFightTerrain().getY() + 0.5) * blockSize + FightMap.getOriginY());
+		for (ActiveSkill activeSkill : pokemon.getActiveSkills()) {
+			if (activeSkill.getIcon().getWidth() > 0) {
+				gc.drawImage(activeSkill.getIcon(), x - 48 - interval + (i % 2) * (48 + interval * 2),
+						y - 48 - interval + Math.floorDiv(i, 2) * (48 + interval * 2));
+			} else {
+				gc.setFill(Color.WHITE);
+				gc.fillRect(x - 48 - interval + (i % 2) * (48 + interval * 2),
+						y - 48 - interval + Math.floorDiv(i, 2) * (48 + interval * 2), 48, 48);
+			}
+			i++;
+		}
+		for (; i < 4; i++) {
+			gc.drawImage(ActiveSkill.getNullIcon(), x - 48 - interval + (i % 2) * (48 + interval * 2),
+					y - 48 - interval + Math.floorDiv(i, 2) * (48 + interval * 2));
 		}
 	}
 
@@ -129,18 +212,18 @@ public class DrawingUtility {
 		 */
 		gc.save();
 		gc.beginPath();
-		gc.rect(0, 255, 320, 65);
-		gc.closePath();
+		gc.rect(0, DialogBox.getY() + 10, 480, 64);
 
 		gc.drawImage(DialogBox.getDialogBoxImage(), DialogBox.getX(), DialogBox.getY());
 
+		gc.clip();
 		gc.setFill(Color.BLACK);
 		gc.setFont(DialogBox.getFont());
 		double messageHeight = new Text("Test").getLayoutBounds().getHeight();
-		gc.fillText(DialogBox.getMessageOnScreen()[0], DialogBox.getX() + 20,
-				DialogBox.getY() + 12 + messageHeight - DialogBox.getyShift());
-		gc.fillText(DialogBox.getMessageOnScreen()[1], DialogBox.getX() + 20,
-				DialogBox.getY() + 37 + messageHeight - DialogBox.getyShift());
+		gc.fillText(DialogBox.getMessageOnScreen()[0], DialogBox.getX() + 25,
+				DialogBox.getY() + 15 + messageHeight - DialogBox.getyShift());
+		gc.fillText(DialogBox.getMessageOnScreen()[1], DialogBox.getX() + 25,
+				DialogBox.getY() + 45 + messageHeight - DialogBox.getyShift());
 		if (DialogBox.getEndLineWidth() != 0) {
 			gc.drawImage(sign, DialogBox.getX() + 25 + DialogBox.getEndLineWidth(),
 					DialogBox.getY() + DialogBox.getCurrentLine() * 25 + 14);
@@ -323,6 +406,14 @@ public class DrawingUtility {
 			return 0;
 		} else {
 			return Toolkit.getToolkit().getFontLoader().computeStringWidth(str, font);
+		}
+	}
+
+	public static double computeStringHeight(String str, Font font) {
+		if (str.length() == 0 || gc == null) {
+			return 0;
+		} else {
+			return Toolkit.getToolkit().getFontLoader().getFontMetrics(font).getLineHeight();
 		}
 	}
 

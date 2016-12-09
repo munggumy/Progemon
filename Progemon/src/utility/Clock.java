@@ -3,6 +3,8 @@ package utility;
 import graphic.Animation;
 import graphic.AnimationHolder;
 import javafx.scene.input.KeyCode;
+import logic_fight.terrain.FightMap;
+import manager.GUIFightGameManager;
 
 public class Clock {
 

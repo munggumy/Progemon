@@ -1,5 +1,6 @@
 package logic_fight.character.activeSkill;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -9,6 +10,7 @@ import graphic.Animation;
 import graphic.DrawingUtility;
 import graphic.IRenderable;
 import graphic.IRenderableHolder;
+import javafx.scene.image.Image;
 import logic_fight.character.Element;
 import logic_fight.character.pokemon.Pokemon;
 import logic_fight.terrain.FightTerrain;
@@ -25,6 +27,13 @@ public class ActiveSkill extends Animation implements IRenderable {
 	private Element element;
 	private AreaType areaType;
 	private GraphicType graphicType;
+	private Image icon;
+	private static Image nullIcon;
+
+	static {
+		File file = new File("load\\img\\skill\\null.png");
+		nullIcon = new Image(file.toURI().toString());
+	}
 
 	private ActiveSkill(String skillName, double skillPower) {
 		super(16, 2, false, true);
@@ -32,6 +41,8 @@ public class ActiveSkill extends Animation implements IRenderable {
 		setPower(skillPower);
 		allActiveSkills.add(this);
 		loadAnimationImage("load/img/skill/Flamethrower/all.png");
+		// loadImage("load/img/skill/Flamethrower/all.png");
+		loadIcon();
 	}
 
 	@Override
@@ -61,7 +72,7 @@ public class ActiveSkill extends Animation implements IRenderable {
 	public void setOnAttack(SkillEffect skillEffect) {
 		this.skillEffect = skillEffect;
 	}
-	
+
 	public SkillEffect getSkillEffect() {
 		return skillEffect;
 	}
@@ -150,6 +161,23 @@ public class ActiveSkill extends Animation implements IRenderable {
 
 	public final void setElement(Element element) {
 		this.element = element;
+	}
+
+	public void loadIcon() {
+		try {
+			File file = new File("load\\img\\skill\\" + name + "\\icon.png");
+			icon = new Image(file.toURI().toString());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
+	public Image getIcon() {
+		return icon;
+	}
+
+	public static Image getNullIcon() {
+		return nullIcon;
 	}
 
 }

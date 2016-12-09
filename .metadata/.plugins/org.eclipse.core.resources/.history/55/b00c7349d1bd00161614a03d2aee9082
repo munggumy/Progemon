@@ -1,0 +1,28 @@
+package graphic;
+
+import java.awt.Toolkit;
+
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
+
+public class FullScreen extends Canvas {
+	
+	public static final int WIDTH = (int) ((480 * Toolkit.getDefaultToolkit().getScreenSize().getHeight()) / 384);
+	public static final int HEIGHT = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+	public static WritableImage wimg = new WritableImage(GameScreen.WIDTH, GameScreen.HEIGHT);
+	private static GraphicsContext gc;
+	
+	public FullScreen() {
+		// TODO Auto-generated constructor stub
+		super(WIDTH, HEIGHT);
+		gc = getGraphicsContext2D();
+	}
+	
+	public static void repaint() {
+		gc.clearRect(0, 0, WIDTH, HEIGHT);
+		gc.drawImage(GameStage.getCanvas().snapshot(null, wimg), 0, 0, WIDTH, HEIGHT);
+	}
+
+}
