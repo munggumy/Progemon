@@ -26,8 +26,11 @@ public class StringUtility {
 	/** Percent in range [0,1] */
 	public static String hpBar(double percent, int length) {
 		StringBuilder out = new StringBuilder("[");
-		length = length < 2 ? DEFAULT_HP_BAR_LENGTH : length; // length boundary [> 0]
-		percent = percent > 1 ? 1 : (percent < 0 ? 0 : percent); // percent boundary [0,1]
+		length = length < 2 ? DEFAULT_HP_BAR_LENGTH : length; // length boundary
+																// [> 0]
+		percent = percent > 1 ? 1 : (percent < 0 ? 0 : percent); // percent
+																	// boundary
+																	// [0,1]
 		int shaded = (int) (percent * ((double) length)); // rounds down
 		if (shaded > 0) {
 			for (short i = 0; i < shaded; i++) {
@@ -47,16 +50,20 @@ public class StringUtility {
 	public static String hpBar(double percent) {
 		return hpBar(percent, DEFAULT_HP_BAR_LENGTH);
 	}
-	
-	public static <T extends Number> String formatDouble(T num, int decimalPlaces){
-		if(decimalPlaces < 0){
+
+	public static <T extends Number> String formatDouble(T num, int decimalPlaces) {
+		if (decimalPlaces < 0) {
 			throw new IllegalArgumentException("formatDouble() illegal argument : decimalPlaces=" + decimalPlaces);
 		}
 		StringBuilder out = new StringBuilder("#.");
-		
-		for(int i = 0; i < decimalPlaces ; i++){
+
+		for (int i = 0; i < decimalPlaces; i++) {
 			out.append("0");
 		}
-		return new DecimalFormat(out.toString()).format(num); 
+		return new DecimalFormat(out.toString()).format(num);
+	}
+
+	public static int getLineNum() {
+		return Thread.currentThread().getStackTrace()[2].getLineNumber();
 	}
 }

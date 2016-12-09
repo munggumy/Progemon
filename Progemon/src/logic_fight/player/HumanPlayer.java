@@ -8,11 +8,13 @@ import java.util.Set;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import logic_fight.FightPhase;
 import logic_fight.character.activeSkill.ActiveSkill;
 import logic_fight.character.pokemon.Pokemon;
 import logic_fight.terrain.FightTerrain;
 import manager.GUIFightGameManager;
 import utility.InputUtility;
+import utility.exception.AbnormalPhaseOrderException;
 
 public class HumanPlayer extends Player {
 
@@ -32,7 +34,11 @@ public class HumanPlayer extends Player {
 	}
 
 	@Override
-	protected boolean inputNextPath(Pokemon pokemon) {
+	protected boolean inputNextPath(Pokemon pokemon) throws AbnormalPhaseOrderException {
+		KeyCode captureKey = KeyCode.C;
+		if (InputUtility.getKeyTriggered(captureKey) && getCurrentFightManager().canCapturePokemon()) {
+			throw new AbnormalPhaseOrderException(FightPhase.preCapturePhase);
+		}
 		if (!InputUtility.isMouseLeftClicked()) {
 			return false;
 		} else {
@@ -74,10 +80,10 @@ public class HumanPlayer extends Player {
 	}
 
 	@Override
-	protected boolean inputAttackActiveSkill(Pokemon attackingPokemon) {
+	protected boolean inputAttackActiveSkill(Pokemon attackingPokemon) throws AbnormalPhaseOrderException {
 		KeyCode endTurn = KeyCode.E;
 		if (InputUtility.getKeyTriggered(endTurn)) {
-			GUIFightGameManager.nextPhase();
+			throw new AbnormalPhaseOrderException(FightPhase.postAttackPhase);
 		}
 		if (super.nextAttackSkill.isPresent()) {
 			return true;
@@ -93,5 +99,25 @@ public class HumanPlayer extends Player {
 		}
 		return false;
 	}
-	
+
+	@Override
+	protected boolean inputCapturePokemon(Pokemon pokemon) throws AbnormalPhaseOrderException {
+		KeyCode goBackKey = KeyCode.C;
+		if (InputUtility.getKeyTriggered(goBackKey)) {
+			throw new AbnormalPhaseOrderException(FightPhase.preMovePhase);
+		}
+		if (!InputUtility.isMouseLeftClicked()) {
+			return false;
+		}
+		FightTerrain destination = pokemon.getCurrentFightMap().getFightTerrainAt(
+				InputUtility.getMouseX() / FightTerrain.IMG_SIZE_X, InputUtility.getMouseY() / FightTerrain.IMG_SIZE_Y);
+		Optional<Pokemon> otherPokemon = pokemon.getCurrentFightMap().getPokemonAt(destination);
+		otherPokemon.ifPresent(other -> {
+			if(!other.getOwner().equals(pokemon.getOwner())){
+				captureTarget = other;
+			}
+		});
+		return captureTarget != null;
+	}
+
 }

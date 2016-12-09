@@ -20,7 +20,9 @@ import logic_fight.character.pokemon.Status;
 import logic_fight.terrain.FightMap;
 import logic_fight.terrain.FightTerrain;
 import logic_world.player.PlayerCharacter;
+import logic_world.terrain.WorldDirection;
 import logic_world.terrain.WorldMap;
+import logic_world.terrain.WorldMapException;
 import logic_world.terrain.WorldObject;
 import manager.WorldManager;
 
@@ -42,7 +44,6 @@ public class DrawingUtility {
 	private static GraphicsContext gc;
 
 	public DrawingUtility() {
-		// TODO Auto-generated constructor stub
 		File sfile = new File("load\\img\\terrain\\shadow20.png");
 		shadow = new Image(sfile.toURI().toString());
 		File cfile = new File("load\\img\\terrain\\cursur.png");
@@ -55,6 +56,7 @@ public class DrawingUtility {
 
 		File signfile = new File("load\\img\\dialogbox\\Theme1_sign.gif");
 		sign = new Image(signfile.toURI().toString());
+		System.out.println("Drawing Utility Loaded Successfully.");
 	}
 
 	public static void drawFightMap(FightMap fightMap) {
@@ -199,6 +201,7 @@ public class DrawingUtility {
 	}
 
 	public static void drawSkill(ActiveSkill skill) {
+		// Type = Line
 		int ax = skill.getAttackTerrain().getX();
 		int ay = skill.getAttackTerrain().getY();
 		int tx = skill.getTargetTerrain().getX();
@@ -246,12 +249,41 @@ public class DrawingUtility {
 		int startBlockY = (int) Math.floor(yoffset / 32);
 		int endBlockY = (int) Math.floor((y + (32 * 6.5) - 1) / 32);
 		int tileCode;
+		int offset, trim;
+		WorldMap worldToDraw;
 		for (int i = startBlockY; i <= endBlockY; i++) {
 			for (int j = startBlockX; j <= endBlockX; j++) {
-				tileCode = worldMap.getTerrainAt(j, i);
-				if (tileCode != 0) {
-					gc.drawImage(WorldMap.getImage(Math.abs(tileCode)), j * 32 - xoffset, i * 32 - yoffset, 32, 32);
+				try {
+					if (i < 0) {
+						worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.UP);
+						offset = Integer.parseInt(worldToDraw.getMapProperties().getProperty("up_offset", "0"));
+						trim = Integer.parseInt(worldMap.getMapProperties().getProperty("up_trim", "0"));
+						tileCode = worldToDraw.getTerrainAt(j - offset, i + worldToDraw.getHeight() - trim);
+					} else if (i >= worldMap.getHeight()) {
+						worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.DOWN);
+						offset = Integer.parseInt(worldToDraw.getMapProperties().getProperty("down_offset", "0"));
+						trim = Integer.parseInt(worldMap.getMapProperties().getProperty("down_trim", "0"));
+						tileCode = worldToDraw.getTerrainAt(j - offset, i - worldMap.getHeight() + trim);
+					} else if (j < 0) {
+						worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.LEFT);
+						offset = Integer.parseInt(worldToDraw.getMapProperties().getProperty("left_offset", "0"));
+						trim = Integer.parseInt(worldMap.getMapProperties().getProperty("down_trim", "0"));
+						tileCode = worldToDraw.getTerrainAt(j + worldToDraw.getWidth() - trim, i - offset);
+					} else if (j >= worldMap.getWidth()) {
+						worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.RIGHT);
+						offset = Integer.parseInt(worldToDraw.getMapProperties().getProperty("right_offset", "0"));
+						trim = Integer.parseInt(worldMap.getMapProperties().getProperty("down_trim", "0"));
+						tileCode = worldToDraw.getTerrainAt(j - worldMap.getWidth() + trim, i - offset);
+					} else {
+						tileCode = worldMap.getTerrainAt(j, i);
+					}
+					if (tileCode != 0) {
+						gc.drawImage(WorldMap.getImage(Math.abs(tileCode)), j * 32 - xoffset, i * 32 - yoffset, 32, 32);
+					}
+				} catch (WorldMapException e) {
+					e.printStackTrace();
 				}
+
 			}
 		}
 	}

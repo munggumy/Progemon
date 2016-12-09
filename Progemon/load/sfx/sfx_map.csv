@@ -1,0 +1,17 @@
+potion_use,emerald_0001 	
+pc_select,emerald_0002
+pc_close,emerald_0003
+pc_open,emerald_0004
+dialog_box_change,emerald_0005
+menu_open,emerald_0006
+walk_obstructed,emerald_0007
+door_open,emerald_0008
+change_place,emerald_0009
+bicycle_bell,emerald_000B
+attack_not_effective,emerald_000C
+attack_normal_effective,emerald_000D
+attack_super_effective,emerald_000E
+pokeball_in_pokemon_center,emerald_0017
+pokeball_throw,emerald_003D
+pokemon_low_hp_alert,emerald_005A
+pokemon_stage_inc,emerald_00EF

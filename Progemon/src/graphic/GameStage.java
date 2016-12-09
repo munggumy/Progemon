@@ -21,6 +21,12 @@ public class GameStage extends Stage {
 		addListener(scene);
 		setX(0);
 		setY(0);
+		try {
+			// TODO Join
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		new AnimationTimer() {
 
 			@Override
@@ -66,7 +72,8 @@ public class GameStage extends Stage {
 		});
 
 		scene.setOnKeyPressed(kEvent -> {
-			System.out.println("KEY PRESSED : " + kEvent.getCode().toString());
+			// System.out.println("KEY PRESSED : " +
+			// kEvent.getCode().toString());
 			InputUtility.setKeyPressed(kEvent.getCode(), true);
 			InputUtility.setKeyTriggered(kEvent.getCode(), true);
 		});
@@ -75,7 +82,7 @@ public class GameStage extends Stage {
 			InputUtility.setKeyPressed(kEvent.getCode(), false);
 			InputUtility.setKeyTriggered(kEvent.getCode(), false);
 		});
-		
+
 		System.out.println("Stage Finished Adding Listener");
 	}
 

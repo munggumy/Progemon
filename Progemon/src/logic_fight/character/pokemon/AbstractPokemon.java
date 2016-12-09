@@ -12,6 +12,7 @@ public abstract class AbstractPokemon {
 	protected int moveRange, attackRange, id;
 	protected LevelingRate levelingRate;
 	protected int expYield;
+	protected int catchRate;
 
 	protected String imageFileName;
 	protected Image image;
@@ -71,5 +72,11 @@ public abstract class AbstractPokemon {
 	public final void setImage(Image image) {
 		this.image = image;
 	}
+
+	public final int getCatchRate() {
+		return catchRate;
+	}
+	
+	
 
 }

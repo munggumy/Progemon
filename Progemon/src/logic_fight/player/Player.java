@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import javafx.scene.paint.Color;
+import logic_fight.FightPhase;
 import logic_fight.character.activeSkill.ActiveSkill;
 import logic_fight.character.pokemon.Pokemon;
 import logic_fight.filters.AttackFilter;
@@ -11,10 +12,11 @@ import logic_fight.filters.MoveFilter;
 import logic_fight.terrain.Path;
 import manager.GUIFightGameManager;
 import utility.Clock;
-import utility.Phase;
+import utility.RandomUtility;
+import utility.exception.AbnormalPhaseOrderException;
 import utility.exception.UnknownPhaseException;
 
-public abstract class Player {	
+public abstract class Player {
 	private String name;
 	private Color color;
 	private ArrayList<Pokemon> pokemons;
@@ -22,12 +24,14 @@ public abstract class Player {
 
 	protected Optional<Pokemon> nextAttackedPokemon;
 	protected Optional<ActiveSkill> nextAttackSkill;
+	protected Pokemon captureTarget;
 
 	protected Optional<Path> nextPath;
 	private int moveCounter = 1;
 	private int moveDelay = 5, moveDelayCounter = 0;
-
 	private int tokenx, tokeny;
+
+	private GUIFightGameManager currentFightManager;
 
 	// Constructor
 
@@ -63,74 +67,110 @@ public abstract class Player {
 	public final void runTurn(Pokemon pokemon) {
 		boolean phaseIsFinished = false;
 		try {
-			while (GUIFightGameManager.getCurrentPhase() != Phase.endPhase) {
-				switch (GUIFightGameManager.getCurrentPhase()) {
-				case initialPhase:
-					nextPath = null;
-					nextAttackedPokemon = Optional.empty();
-					nextAttackSkill = Optional.empty();
-					phaseIsFinished = true;
-					break;
+			while (currentFightManager.getCurrentPhase() != FightPhase.endPhase) {
+				try {
+					FightPhase currentPhase = currentFightManager.getCurrentPhase();
+					// System.out.println("currentPhase = " + currentPhase);
+					switch (currentPhase) {
+					case initialPhase:
+						nextPath = null;
+						nextAttackedPokemon = Optional.empty();
+						nextAttackSkill = Optional.empty();
+						captureTarget = null;
+						phaseIsFinished = true;
+						break;
 
-				case preMovePhase:
-					pokemon.findBlocksAround(pokemon.getMoveRange(), new MoveFilter());
-					pokemon.sortPaths();
-					pokemon.shadowBlocks();
-					tokenx = pokemon.getCurrentFightTerrain().getX();
-					tokeny = pokemon.getCurrentFightTerrain().getY();
-					phaseIsFinished = true;
-					break;
-				case inputMovePhase:
-					// GUIFightGameManager.checkInputs();
-					phaseIsFinished = inputNextPath(pokemon);
-					break;
-				case movePhase:
-					phaseIsFinished = move(pokemon);
-					break;
-				case postMovePhase:
-					pokemon.getCurrentFightMap().unshadowAllBlocks();
-					phaseIsFinished = true;
-					break;
-
-				case preAttackPhase:
-					pokemon.findBlocksAround(pokemon.getAttackRange(), new AttackFilter());
-					pokemon.sortPaths();
-					pokemon.shadowBlocks();
-					pokemon.getCurrentFightMap().getPokemonsOnMap().stream()
-							.filter((Pokemon other) -> !pokemon.getOwner().equals(other.getOwner()))
-							.filter((Pokemon other) -> pokemon.getAvaliableFightTerrains()
-									.contains(other.getCurrentFightTerrain()))
-							.forEach((Pokemon other) -> other.getCurrentFightTerrain().setHighlight(true));
-					phaseIsFinished = true;
-					break;
-				case inputAttackPhase:
-					// GUIFightGameManager.checkInputs();
-					boolean check1 = inputAttackPokemon(pokemon);
-					boolean check2 = inputAttackActiveSkill(pokemon);
-					phaseIsFinished = check1 && check2;
-					break;
-				case attackPhase:
-					phaseIsFinished = attack(pokemon, nextAttackedPokemon, nextAttackSkill);
-					break;
-				case postAttackPhase:
-					pokemon.getCurrentFightMap().unshadowAllBlocks();
-					phaseIsFinished = true;
-					break;
-
-				case endPhase:
-					phaseIsFinished = true;
-					break;
-				default:
-					throw new UnknownPhaseException("Unknown Phase in Player.java[" + this.name + "].");
+					case preMovePhase:
+						pokemon.getCurrentFightMap().unshadowAllBlocks();
+						pokemon.findBlocksAround(pokemon.getMoveRange(), new MoveFilter());
+						pokemon.sortPaths();
+						pokemon.shadowBlocks();
+						tokenx = pokemon.getCurrentFightTerrain().getX();
+						tokeny = pokemon.getCurrentFightTerrain().getY();
+						phaseIsFinished = true;
+						break;
+					case inputMovePhase:
+						phaseIsFinished = inputNextPath(pokemon);
+						break;
+					case movePhase:
+						phaseIsFinished = move(pokemon);
+						break;
+					case postMovePhase:
+						pokemon.getCurrentFightMap().unshadowAllBlocks();
+						phaseIsFinished = true;
+						break;
+					case preAttackPhase:
+						pokemon.findBlocksAround(pokemon.getAttackRange(), new AttackFilter());
+						pokemon.sortPaths();
+						pokemon.shadowBlocks();
+						pokemon.getCurrentFightMap().getPokemonsOnMap().stream()
+								.filter((Pokemon other) -> !pokemon.getOwner().equals(other.getOwner()))
+								.filter((Pokemon other) -> pokemon.getAvaliableFightTerrains()
+										.contains(other.getCurrentFightTerrain()))
+								.forEach((Pokemon other) -> other.getCurrentFightTerrain().setHighlight(true));
+						phaseIsFinished = true;
+						break;
+					case inputAttackPhase:
+						boolean check1 = inputAttackPokemon(pokemon);
+						boolean check2 = inputAttackActiveSkill(pokemon);
+						phaseIsFinished = check1 && check2;
+						break;
+					case attackPhase:
+						phaseIsFinished = attack(pokemon, nextAttackedPokemon, nextAttackSkill);
+						break;
+					case postAttackPhase:
+						pokemon.getCurrentFightMap().unshadowAllBlocks();
+						phaseIsFinished = true;
+						break;
+					case endPhase:
+						phaseIsFinished = true;
+						break;
+					case preCapturePhase:
+						pokemon.getCurrentFightMap().unshadowAllBlocks();
+						pokemon.getCurrentFightMap().shadowAllBlocks();
+						pokemon.getCurrentFightMap().getPokemonsOnMap().stream()
+								.filter(p -> !p.getOwner().equals(pokemon.getOwner()))
+								.map(Pokemon::getCurrentFightTerrain).forEach(ft -> ft.setHighlight(true));
+						phaseIsFinished = true;
+						break;
+					case inputCapturePhase:
+						phaseIsFinished = inputCapturePokemon(pokemon);
+						break;
+					case capturePhase:
+						if (captureTarget == null) {
+							System.err.println("Capture Target not Set!");
+							break;
+						}
+						pokemon.getCurrentFightMap().unshadowAllBlocks();
+						captureTarget.getCurrentFightTerrain().setHighlight(true);
+						boolean captured = RandomUtility.randomPercent(100) <= 0.2;
+						if (captured) {
+							pokemon.getCurrentFightMap().removePokemonFromMap(captureTarget);
+							captureTarget.getOwner().removePokemon(captureTarget);
+							pokemon.getOwner().addPokemon(captureTarget);
+							System.out.println("(Player.java:145) CAPTURED!");
+						} else {
+							System.out.println("(Player.java:147) NOT CAPTURED!");
+						}
+						phaseIsFinished = true;
+						break;
+					case postCapturePhase:
+						pokemon.getCurrentFightMap().unshadowAllBlocks();
+						phaseIsFinished = true;
+						break;
+					default:
+						throw new UnknownPhaseException("Unknown Phase in Player.java[" + this.name + "].");
+					}
+					if (phaseIsFinished) {
+						currentFightManager.setNextPhase(currentPhase.nextPhase());
+					} else {
+						currentFightManager.setNextPhase(currentPhase);
+					}
+				} catch (AbnormalPhaseOrderException e) {
+					currentFightManager.setNextPhase(e.getNextPhase());
 				}
-
+				currentFightManager.nextPhase();
 				Clock.tick();
-
-				if (phaseIsFinished) {
-					GUIFightGameManager.nextPhase();
-					System.out.println(GUIFightGameManager.getCurrentPhase());
-					phaseIsFinished = false;
-				}
 			}
 		} catch (UnknownPhaseException e) {
 			e.printStackTrace();
@@ -143,16 +183,17 @@ public abstract class Player {
 		// pokemonAttack(pokemon);
 	}
 
-	protected abstract boolean inputNextPath(Pokemon pokemon);
+	protected abstract boolean inputNextPath(Pokemon pokemon) throws AbnormalPhaseOrderException;
 
 	protected final boolean move(Pokemon pokemon) {
-//<<<<<<< HEAD
-//		if (moveCounter == nextPath.get().size()) {
-//			System.out.println("Pokemon " + pokemon.getName() + " moved from (" + x + ", " + y + ") to ("
-//=======
+		// <<<<<<< HEAD
+		// if (moveCounter == nextPath.get().size()) {
+		// System.out.println("Pokemon " + pokemon.getName() + " moved from (" +
+		// x + ", " + y + ") to ("
+		// =======
 		if (moveCounter == nextPath.get().size()) {
 			System.out.println("Pokemon " + pokemon.getName() + " moved from (" + tokenx + ", " + tokeny + ") to ("
-//>>>>>>> 510768d529f4fdb8b001f678c37730aaa55ef038
+			// >>>>>>> 510768d529f4fdb8b001f678c37730aaa55ef038
 					+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY() + ").");
 			moveCounter = 1;
 			moveDelayCounter = 0;
@@ -173,7 +214,7 @@ public abstract class Player {
 
 	protected abstract boolean inputAttackPokemon(Pokemon pokemon);
 
-	protected abstract boolean inputAttackActiveSkill(Pokemon attackingPokemon);
+	protected abstract boolean inputAttackActiveSkill(Pokemon attackingPokemon) throws AbnormalPhaseOrderException;
 
 	protected final boolean attack(Pokemon attackingPokemon, Optional<Pokemon> other,
 			Optional<ActiveSkill> activeSkill) {
@@ -184,9 +225,13 @@ public abstract class Player {
 		return true;
 	}
 
+	protected boolean inputCapturePokemon(Pokemon pokemon) throws AbnormalPhaseOrderException {
+		return true;
+	}
+
 	/** Checks if this player loses (All pokemons are dead) */
 	public boolean isLose() {
-		return pokemons.stream().allMatch(Pokemon::isDead);
+		return pokemons.stream().allMatch(p -> p.isDead()) || pokemons.isEmpty();
 	}
 
 	// Getters
@@ -204,6 +249,11 @@ public abstract class Player {
 		pokemons.add(pokemon);
 	}
 
+	public void removePokemon(Pokemon pokemon) {
+		pokemon.setOwner(null);
+		pokemons.remove(pokemon);
+	}
+
 	public final Color getColor() {
 		return color;
 	}
@@ -214,6 +264,14 @@ public abstract class Player {
 
 	public final void setGodlike(boolean godlike) {
 		this.godlike = godlike;
+	}
+
+	public final GUIFightGameManager getCurrentFightManager() {
+		return currentFightManager;
+	}
+
+	public final void setCurrentFightManager(GUIFightGameManager currentFightManager) {
+		this.currentFightManager = currentFightManager;
 	}
 
 }

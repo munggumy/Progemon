@@ -31,7 +31,7 @@ public class ActiveSkill extends Animation implements IRenderable {
 		setName(skillName);
 		setPower(skillPower);
 		allActiveSkills.add(this);
-		loadImage("load/img/skill/Flamethrower/all.png");
+		loadAnimationImage("load/img/skill/Flamethrower/all.png");
 	}
 
 	@Override
@@ -104,13 +104,11 @@ public class ActiveSkill extends Animation implements IRenderable {
 
 	@Override
 	public void draw() {
-		// TODO Auto-generated method stub
 		DrawingUtility.drawSkill(this);
 	}
 
 	@Override
 	public int getDepth() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
