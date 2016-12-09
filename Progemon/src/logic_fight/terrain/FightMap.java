@@ -6,20 +6,30 @@ import java.util.List;
 import java.util.Optional;
 
 import graphic.DrawingUtility;
+import graphic.GameScreen;
 import graphic.IRenderable;
 import graphic.IRenderableHolder;
+import javafx.scene.input.KeyCode;
 import logic_fight.character.pokemon.Pokemon;
 import logic_fight.filters.Filter;
 import logic_fight.filters.MoveFilter;
+import logic_fight.player.HumanPlayer;
+import manager.GUIFightGameManager;
 import utility.InputUtility;
 
 public class FightMap implements IRenderable {
 
 	public static final int MAX_SIZE_X = 20;
 	public static final int MAX_SIZE_Y = 20;
+	public static final int ORIGINAL_BLOCK_SIZE = 40;
+	private static int originX, originY;
+	private static int zoomLevel;
+	private static int cursorX = -1, cursorY = -1;
 	private int sizeX, sizeY;
 	private FightTerrain[][] map;
 	private ArrayList<Pokemon> pokemonsOnMap = new ArrayList<Pokemon>();
+	private ArrayList<Pokemon> playerPokemonsOnMap = new ArrayList<Pokemon>(3);
+	private ArrayList<Pokemon> enemyPokemonsOnMap = new ArrayList<Pokemon>(3);
 	private boolean visible = true;
 
 	public static enum Direction {
@@ -47,12 +57,18 @@ public class FightMap implements IRenderable {
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
 		map = new FightTerrain[sizeY][sizeX];
+		originX = 0;
+		originY = 0;
+		zoomLevel = 0;
 	}
 
 	public FightMap(FightTerrain[][] ft) {
 		map = ft;
 		sizeX = map[0].length;
 		sizeY = map.length;
+		originX = 0;
+		originY = 0;
+		zoomLevel = 0;
 	}
 
 	/** Sort by Speed. Used in calculation of Turn Time and Queue. */
@@ -105,10 +121,17 @@ public class FightMap implements IRenderable {
 	}
 
 	public void draw() {
-		double x = InputUtility.getMouseX(), y = InputUtility.getMouseY();
-		if (0 <= x && x <= 319 && 0 <= y && y <= 239) {
-			getFightTerrainAt((int) Math.floor(x / FightTerrain.IMG_SIZE_X),
-					(int) Math.floor(y / FightTerrain.IMG_SIZE_Y)).setCursor(true);
+		checkInput();
+		int blockSize = getBlockSize();
+		double x = InputUtility.getMouseX() - originX, y = InputUtility.getMouseY() - originY;
+		if (0 <= x && x < sizeX * blockSize && 0 <= y && y < sizeY * blockSize) {
+			cursorX = (int) Math.floor(x / blockSize);
+			cursorY = (int) Math.floor(y / blockSize);
+			getFightTerrainAt(cursorX, cursorY).setCursor(true);
+		}
+		else{
+			cursorX = -1;
+			cursorY = -1;
 		}
 		DrawingUtility.drawFightMap(this);
 	}
@@ -170,6 +193,12 @@ public class FightMap implements IRenderable {
 			pokemon.setCurrentFightMap(this);
 			pokemon.move(x, y);
 			pokemonsOnMap.add(pokemon);
+			if (pokemon.getOwner() instanceof HumanPlayer) {
+				playerPokemonsOnMap.add(pokemon);
+			}
+			else{
+				enemyPokemonsOnMap.add(pokemon);
+			}
 			return true;
 		} else {
 			return false;
@@ -197,6 +226,77 @@ public class FightMap implements IRenderable {
 				map[j][i].setHighlight(false);
 			}
 		}
+	}
+	
+	public ArrayList<Pokemon> getPlayerPokemonsOnMap() {
+		return playerPokemonsOnMap;
+	}
+	
+	public ArrayList<Pokemon> getEnemyPokemonsOnMap() {
+		return enemyPokemonsOnMap;
+	}
+	
+	public void checkInput() {
+		setOrigin(InputUtility.getDragX() + originX, InputUtility.getDragY() + originY);
+		setZoomLevel(zoomLevel + InputUtility.getScrollUp() - InputUtility.getScrollDown());
+	}
+	
+	public static int getOriginX() {
+		return originX;
+	}
+	
+	public static int getOriginY() {
+		return originY;
+	}
+	
+	public void setOrigin(int x, int y) {
+		int blockSize = getBlockSize();
+		if (x + 0.5 * blockSize > GameScreen.WIDTH / 2) {
+			originX = (GameScreen.WIDTH - blockSize) / 2;
+		}
+		else if (x + (sizeX - 0.5) * blockSize < GameScreen.WIDTH / 2) {
+			originX = (int) (GameScreen.WIDTH / 2 - (sizeX - 0.5) * blockSize);
+		}
+		else{
+			originX = x;
+		}
+		if (y + 0.5 * blockSize > GameScreen.HEIGHT / 2) {
+			originY = (GameScreen.HEIGHT - blockSize) / 2;
+		}
+		else if (y + (sizeY + 0.25) * blockSize < GameScreen.HEIGHT / 2) {
+			originY = (int) (GameScreen.HEIGHT / 2 - (sizeY + 0.25) * blockSize);
+		}
+		else{
+			originY = y;
+		}
+	}
+	
+	public static int getZoomLevel() {
+		return zoomLevel;
+	}
+	
+	public static void setZoomLevel(int zoomLevel) {
+		if (zoomLevel > 3) {
+			zoomLevel = 3;
+		}
+		else if (zoomLevel < -6) {
+			zoomLevel = -6;
+		}
+		else {
+			FightMap.zoomLevel = zoomLevel;
+		}
+	}
+	
+	public static int getBlockSize() {
+		return (int) (ORIGINAL_BLOCK_SIZE * Math.pow(1.1, zoomLevel));
+	}
+	
+	public static int getCursorX() {
+		return cursorX;
+	}
+	
+	public static int getCursorY() {
+		return cursorY;
 	}
 
 }

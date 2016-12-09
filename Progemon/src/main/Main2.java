@@ -60,11 +60,19 @@ public class Main2 extends Application {
 			Pokemon pidgeotto = Pokedex.getPokemon("Pidgeotto");
 			pidgeotto.setLevel(30);
 			pidgeotto.setMoveRange(8);
+			
+			Pokemon pidgey1 = Pokedex.getPokemon("Pidgey");
+			pidgey1.setLevel(20);
+			
+			Pokemon pidgey2 = Pokedex.getPokemon("Pidgey");
+			pidgey2.setLevel(20);
 
 			Player p1 = new HPAIPlayer("AI 1", charlizard, Color.RED);
 			p1.addPokemon(caterpie);
+			p1.addPokemon(pidgey2);
 			Player p2 = new HumanPlayer("Kris", pidgeotto, Color.BLUE);
 			p2.addPokemon(blastoise);
+			p2.addPokemon(pidgey1);
 
 			Set<Player> players = new HashSet<Player>();
 			players.add(p1);

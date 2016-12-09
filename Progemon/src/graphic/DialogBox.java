@@ -10,13 +10,13 @@ import utility.InputUtility;
 
 public class DialogBox implements IRenderable {
 
-	protected static final String DIALOG_BOX_PATH = "load\\img\\dialogbox\\Theme1.png";
+	protected static final String DIALOG_BOX_PATH = "load\\img\\dialogbox\\Theme2.png";
 	private static Image dialogBoxImage = null;
 
-	private static final int x = 0, y = 240;
+	private static final int x = 2, y = 294;
 	// private static final Font DEFAULT_FONT = new Font(Font.MONOSPACED,
 	// Font.PLAIN, 15);
-	private static final Font DEFAULT_FONT = new Font("Monospaced", 15);
+	private static final Font DEFAULT_FONT = new Font("Monospaced", 20);
 	private static String message = "", nextWord = "";
 	private static String[] messageOnScreen = { "", "" };
 	private static Font font = DEFAULT_FONT;
@@ -130,7 +130,7 @@ public class DialogBox implements IRenderable {
 
 	public static void loadDialogBoxImage() {
 		File file = new File(DialogBox.DIALOG_BOX_PATH);
-		dialogBoxImage = new Image(file.toURI().toString());
+		dialogBoxImage = DrawingUtility.resize(new Image(file.toURI().toString()), 2);
 	}
 
 	public static int getX() {
