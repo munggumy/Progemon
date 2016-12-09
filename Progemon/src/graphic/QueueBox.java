@@ -9,10 +9,10 @@ import utility.Clock;
 
 public class QueueBox implements IRenderable {
 
-	protected static final String QUEUE_BOX_PATH = "load\\img\\queuebox\\Theme1.png";
+	protected static final String QUEUE_BOX_PATH = "load\\img\\HUD\\queuebox.png";
 
-	private static final int ORIGIN_X = 326, ORIGIN_Y = 18, WIDTH = 68, HEIGHT = 40;
-	private static final int BOX_X = 320, BOX_Y = 0;
+	private static final int ORIGIN_X = 396, ORIGIN_Y = 18, WIDTH = 68, HEIGHT = 40;
+	private static final int BOX_X = 390, BOX_Y = 0;
 	private static ArrayList<Pokemon> pokemonsOnQueue = new ArrayList<Pokemon>();
 	private static List<Pokemon> pokemonsOnMap = new ArrayList<Pokemon>(
 			GUIFightGameManager.getFightMap().getPokemonsOnMap());
