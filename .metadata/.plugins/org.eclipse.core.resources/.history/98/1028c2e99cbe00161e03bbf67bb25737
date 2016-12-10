@@ -1,0 +1,12 @@
+package graphic;
+
+public abstract class PsuedoAnimation {
+	
+	protected int amountOfFrame, frameDelay, currentFrame, delayCounter;
+	protected boolean visible = true, playing = false;
+	
+	public PsuedoAnimation() {
+		// TODO Auto-generated constructor stub
+	}
+	
+}

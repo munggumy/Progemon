@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="graphic.AnimationHolder"/>
-<fullyQualifiedTypeName name="javafx.application.Application"/>
 <fullyQualifiedTypeName name="logic.player.HumanPlayer"/>
 <fullyQualifiedTypeName name="logic.character.Pokemon"/>
-<fullyQualifiedTypeName name="java.io.File"/>
 <fullyQualifiedTypeName name="java.util.Collections"/>
 <fullyQualifiedTypeName name="java.util.Comparator"/>
 <fullyQualifiedTypeName name="graphic.IRenderable"/>
@@ -46,7 +43,6 @@
 <fullyQualifiedTypeName name="javafx.scene.input.KeyCombination"/>
 <fullyQualifiedTypeName name="javafx.scene.input.KeyCodeCombination"/>
 <fullyQualifiedTypeName name="javafx.stage.Screen"/>
-<fullyQualifiedTypeName name="javafx.scene.image.Image"/>
 <fullyQualifiedTypeName name="javafx.scene.image.WritableImage"/>
 <fullyQualifiedTypeName name="graphic.GameStage"/>
 <fullyQualifiedTypeName name="java.lang.System"/>
@@ -54,10 +50,14 @@
 <fullyQualifiedTypeName name="manager.WorldManager"/>
 <fullyQualifiedTypeName name="manager.GUIFightGameManager"/>
 <fullyQualifiedTypeName name="javafx.scene.input.KeyCode"/>
-<fullyQualifiedTypeName name="javafx.scene.paint.Color"/>
 <fullyQualifiedTypeName name="javafx.event.EventHandler"/>
 <fullyQualifiedTypeName name="javafx.scene.input.ScrollEvent"/>
-<fullyQualifiedTypeName name="java.lang.Math"/>
 <fullyQualifiedTypeName name="utility.InputUtility"/>
+<fullyQualifiedTypeName name="java.awt.Cursor"/>
 <fullyQualifiedTypeName name="logic_fight.terrain.FightMap"/>
+<fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="javafx.scene.image.Image"/>
+<fullyQualifiedTypeName name="java.lang.Math"/>
+<fullyQualifiedTypeName name="logic_fight.character.activeSkill.ActiveSkill"/>
+<fullyQualifiedTypeName name="javafx.scene.paint.Color"/>
 </qualifiedTypeNameHistroy>

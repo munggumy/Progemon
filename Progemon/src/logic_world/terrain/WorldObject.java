@@ -396,6 +396,7 @@ public class WorldObject extends Animation implements Cloneable {
 		allObjectFunctions.put("spawn", object -> {
 			Random random = new Random();
 			if (random.nextInt(100) < 8) {
+				MusicUtility.playMusic("battle_wild");
 				AnimationUtility.getLoadScreen01().show();
 				AnimationUtility.getLoadScreen01().play();
 				while (AnimationUtility.getLoadScreen01().isPlaying()) {
