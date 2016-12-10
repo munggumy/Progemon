@@ -28,7 +28,7 @@ import utility.RandomUtility;
 import utility.StringUtility;
 
 public class GUIFightGameManager {
-	
+
 	public static GUIFightGameManager instance;
 
 	private ArrayList<Player> players;
@@ -74,6 +74,7 @@ public class GUIFightGameManager {
 	}
 
 	private void startFight() {
+
 		IRenderableHolder.addFightObject(fightMap);
 		spawnPokemons();
 		fightMap.sortPokemons();
@@ -253,7 +254,7 @@ public class GUIFightGameManager {
 	public final boolean isWild() {
 		return isWild;
 	}
-	
+
 	public void checkInput() {
 		fightMap.checkInput();
 		FightHUD.checkInput();
