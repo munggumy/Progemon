@@ -51,26 +51,32 @@ public class FileUtility {
 	 * @throws IOException
 	 */
 	public static void loadPokemons(String filePath) {
-		String primaryDelimiter = ",\\s*", secondaryDelimiter = "/";
+		String primaryDelimiter = "\\s*,\\s*", secondaryDelimiter = "/";
 		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(filePath)))) {
 			Pattern pattern = Pattern.compile(String.join(primaryDelimiter, "(\\d+|\\w+)", "(?<attack>\\d+(\\.\\d*)?)",
 					"(?<defense>\\d+(\\.\\d*)?)", "(?<speed>\\d+(\\.\\d*)?)", "(?<hp>\\d+(\\.\\d*)?)",
 					"(?<moveRange>\\d+)", "(?<attackRange>\\d+)", "(?<moveType>\\w+)",
 					"(?<attackSkills>[a-zA-z" + secondaryDelimiter + " ]+)",
 					"(?<elements>[a-zA-Z" + secondaryDelimiter + " ]+)", "(?<levelingType>[\\w_]+)",
-					"(?<expYield>\\d+)"));
+					"(?<expYield>\\d+)", "(?<catchRate>\\d+)"));
+			
 			Matcher matcher;
 			while (scanner.hasNextLine()) {
-				matcher = pattern.matcher(scanner.nextLine());
+				String nextLine = scanner.nextLine();
+				if(nextLine.matches("^#+.*")){
+					continue;
+				}
+				matcher = pattern.matcher(nextLine);
 				if (!matcher.find()) {
-					System.err.println(pattern.toString());
-					System.err.println(scanner.nextLine());
+					System.err.println("pattern : " + pattern.toString());
+					System.err.println(pattern.split(",").length);
+					System.err.println("this line : " + nextLine);
 					throw new FileWrongFormatException("Needs at least 8 parameters per pokemon!");
 				}
 				String[] args = { matcher.group(1), matcher.group("attack"), matcher.group("defense"),
 						matcher.group("speed"), matcher.group("hp"), matcher.group("moveRange"),
 						matcher.group("attackRange"), matcher.group("moveType"), matcher.group("levelingType"),
-						matcher.group("expYield") };
+						matcher.group("expYield"), matcher.group("catchRate") };
 				if (matcher.group(1).matches("\\d+")) {
 					loadPokemonByID(args, matcher.group("attackSkills").split(secondaryDelimiter),
 							matcher.group("elements").split(secondaryDelimiter));
@@ -114,6 +120,7 @@ public class FileUtility {
 		} else {
 			np.setSecondaryElement(null);
 		}
+		np.setCatchRate(Integer.parseInt(args[10]));
 
 		Pokemon new_pokemon = new Pokemon(np, 5);
 		Stream.of(activeSkills).filter(as -> !as.isEmpty()).forEachOrdered(as -> new_pokemon.addActiveSkill(as.trim()));

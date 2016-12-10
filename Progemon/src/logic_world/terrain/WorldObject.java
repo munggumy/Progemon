@@ -5,14 +5,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import audio.MusicUtility;
 import graphic.Animation;
 import graphic.DrawingUtility;
 import javafx.scene.image.Image;
@@ -21,25 +24,30 @@ import logic_fight.player.Player;
 import logic_world.player.PlayerCharacter;
 import manager.GUIFightGameManager;
 import manager.WorldManager;
+import utility.AnimationUtility;
 import utility.Clock;
-import utility.Function;
 
 public class WorldObject extends Animation implements Cloneable {
-	
-	protected int blockX, blockY;
-	protected int objectCode;
-	private static ArrayList<WorldObject> allWorldObjects = new ArrayList<>();
-	private static ArrayList<Function<WorldObject>> allObjectFunctions = new ArrayList<>();
-	private static ArrayList<ArrayList<Image>> objectImagesSet = new ArrayList<>();
+
+	private static final String WORLD_OBJECTS_PROP_FILE = "load\\worldobjects_list.csv";
 	private static final String DEFAULT_IMG_PATH = "load\\img\\world\\worldobjects.png";
-	private static final String DEFAULT_IMGPOS_PATH = "load\\img\\world\\imageposition.txt";
-	private ArrayList<Function<WorldObject>> onEnter = new ArrayList<>(), onExit = new ArrayList<>(), onStep = new ArrayList<>(), onInteract = new ArrayList<>();
+	private static final String DEFAULT_IMGPOS_PATH = "load\\img\\world\\imageposition.csv";
+
+	protected int blockX, blockY;
+	protected String objectCode;
+	private static Map<String, WorldObject> allWorldObjects = new HashMap<>();
+	private static Map<String, WorldObjectAction> allObjectFunctions = new HashMap<>();
+	private static Map<String, ArrayList<Image>> objectImagesSet = new HashMap<>();
+	private ArrayList<WorldObjectAction> onEnter = new ArrayList<>(), onExit = new ArrayList<>(),
+			onStep = new ArrayList<>(), onInteract = new ArrayList<>();
+
+	/** Use to tell graphicDepth if objects overlap in worldMap. */
 	private int specialDepth = 0;
 	private ArrayList<ArrayList<String>> functionParameter = new ArrayList<>(4);
 	private int actionType = 0, parameterCounter = 0;
-	
-	public static WorldObject createWorldObject(int objectCode, int blockX, int blockY, ArrayList<String> parameters) {
-		// TODO Auto-generated constructor stub
+
+	public static WorldObject createWorldObject(String objectCode, int blockX, int blockY, ArrayList<String> parameters,
+			WorldMap owner) {
 		try {
 			WorldObject worldObject;
 			worldObject = (WorldObject) allWorldObjects.get(objectCode).clone();
@@ -50,29 +58,30 @@ public class WorldObject extends Animation implements Cloneable {
 			}
 			if (!parameters.isEmpty()) {
 				for (String string : parameters) {
-					worldObject.functionParameter.get(Integer.parseInt(string.substring(0, 1))).add(string.substring(string.indexOf("[") + 1, string.indexOf("]")));
+					worldObject.functionParameter.get(Integer.parseInt(string.substring(0, 1)))
+							.add(string.substring(string.indexOf("[") + 1, string.indexOf("]")));
 				}
 			}
 			if (allWorldObjects.get(objectCode).isPlaying()) {
 				worldObject.play();
 			}
 			if (!allWorldObjects.get(objectCode).isVisible()) {
-				worldObject.hide();
+				worldObject.visible = false;
+			} else {
+				worldObject.visible = true;
+				owner.addVisibleWorldObject(worldObject);
 			}
-			else{
-				worldObject.show();
-			}
-			WorldManager.addWorldObjects(worldObject);
+
+			owner.addWorldObjects(worldObject);
 			return worldObject;
 		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-	public WorldObject(int objectCode, int frameNumber, int frameDelay, boolean loop, boolean autostop, int specialDepth) {
-		// TODO Auto-generated constructor stub
+
+	public WorldObject(String objectCode, int frameNumber, int frameDelay, boolean loop, boolean autostop,
+			int specialDepth) {
 		super(frameNumber, frameDelay, loop, autostop);
 		this.objectCode = objectCode;
 		this.specialDepth = specialDepth;
@@ -80,8 +89,9 @@ public class WorldObject extends Animation implements Cloneable {
 		addOnStep("-");
 		addOnExit("-");
 	}
-	
-	public WorldObject(int objectCode, String onEnter, String onStep, String onExit, String onInteract, int frameNumber, int frameDelay, boolean loop, boolean autostop) {
+
+	public WorldObject(String objectCode, String onEnter, String onStep, String onExit, String onInteract,
+			int frameNumber, int frameDelay, boolean loop, boolean autostop) {
 		// TODO Auto-generated constructor stub
 		super(frameNumber, frameDelay, loop, autostop);
 		this.objectCode = objectCode;
@@ -89,11 +99,12 @@ public class WorldObject extends Animation implements Cloneable {
 		addOnStep(onStep);
 		addOnExit(onExit);
 	}
-	
+
 	public WorldObject(String[] args) {
-		super(Integer.parseInt(args[5]), Integer.parseInt(args[6]), Boolean.parseBoolean(args[7]), Boolean.parseBoolean(args[8]));
+		super(Integer.parseInt(args[5]), Integer.parseInt(args[6]), Boolean.parseBoolean(args[7]),
+				Boolean.parseBoolean(args[8]));
 		currentFrame = 0;
-		objectCode = Integer.parseInt(args[0]);
+		objectCode = args[0];
 		addOnEnter(args[1]);
 		addOnStep(args[2]);
 		addOnExit(args[3]);
@@ -102,179 +113,186 @@ public class WorldObject extends Animation implements Cloneable {
 		super.setPlaying(Boolean.parseBoolean(args[9]));
 		super.setVisible(Boolean.parseBoolean(args[10]));
 	}
-	
+
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
-		// TODO Auto-generated method stub
-		WorldObject worldObject = new WorldObject(objectCode, frameNumber, frameDelay, loop, autostop, specialDepth);
+		WorldObject worldObject = new WorldObject(objectCode, amountOfFrame, frameDelay, loop, autostop, specialDepth);
 		worldObject.setOnEnter(onEnter);
 		worldObject.setOnInteract(onInteract);
 		worldObject.setOnStep(onStep);
 		worldObject.setOnExit(onExit);
 		return worldObject;
 	}
-	
+
 	@Override
 	public Image getCurrentImage() {
-		// TODO Auto-generated method stub
+		if (objectImagesSet.get(objectCode) == null) {
+			throw new NullPointerException("getCurrentImage : Can't find objectCode=" + objectCode);
+		}
 		return objectImagesSet.get(objectCode).get(currentFrame);
 	}
 
 	@Override
 	public void draw() {
-		// TODO Auto-generated method stub
 		DrawingUtility.drawWorldObject(this);
 	}
 
 	@Override
 	public int getDepth() {
-		// TODO Auto-generated method stub
 		return blockY * 32 + specialDepth;
 	}
-	
+
 	public int getBlockX() {
 		return blockX;
 	}
-	
+
 	public void setBlockX(int blockX) {
 		this.blockX = blockX;
 	}
-	
+
 	public int getBlockY() {
 		return blockY;
 	}
-	
+
 	public void setBlockY(int blockY) {
 		this.blockY = blockY;
 	}
-	
+
 	public void setSpecialDepth(int specialDepth) {
 		this.specialDepth = specialDepth;
 	}
-	
-	public void addOnEnter(String string) {
-		for (String str : string.split("/")) {
-			for (Function<WorldObject> function : allObjectFunctions) {
-				if (function.getName().equals(str)) {
-					this.onEnter.add(function);
-				}
-			}
+
+	public void addOnEnter(String actionCodes) {
+		for (String actionCode : actionCodes.split("/")) {
+			this.onEnter.add(allObjectFunctions.get(actionCode));
 		}
 	}
-	
-	public void setOnEnter(ArrayList<Function<WorldObject>> onEnter) {
+
+	public void setOnEnter(ArrayList<WorldObjectAction> onEnter) {
 		this.onEnter = onEnter;
 	}
-	
+
 	public void entered() {
 		parameterCounter = 0;
 		actionType = 0;
-		for (Function<WorldObject> function : onEnter) {
+		for (WorldObjectAction function : onEnter) {
 			function.execute(this);
 		}
 	}
-	
-	public void addOnInteract(String string) {
-		for (String str : string.split("/")) {
-			for (Function<WorldObject> function : allObjectFunctions) {
-				if (function.getName().equals(str)) {
-					this.onInteract.add(function);
-				}
-			}
+
+	public void addOnInteract(String actionCodes) {
+		for (String actionCode : actionCodes.split("/")) {
+			this.onInteract.add(allObjectFunctions.get(actionCode));
 		}
 	}
-	
-	public void setOnInteract(ArrayList<Function<WorldObject>> onInteract) {
+
+	public void setOnInteract(ArrayList<WorldObjectAction> onInteract) {
 		this.onInteract = onInteract;
 	}
-	
+
 	public void interacted() {
 		parameterCounter = 0;
 		actionType = 1;
-		for (Function<WorldObject> function : onInteract) {
+		for (WorldObjectAction function : onInteract) {
 			function.execute(this);
 		}
 	}
-	
-	public void addOnStep(String string) {
-		for (String str : string.split("/")) {
-			for (Function<WorldObject> function : allObjectFunctions) {
-				if (function.getName().equals(str)) {
-					this.onStep.add(function);
-				}
-			}
+
+	public void addOnStep(String actionCodes) {
+		for (String actionCode : actionCodes.split("/")) {
+			this.onStep.add(allObjectFunctions.get(actionCode));
 		}
 	}
-	
-	public void setOnStep(ArrayList<Function<WorldObject>> onStep) {
+
+	public void setOnStep(ArrayList<WorldObjectAction> onStep) {
 		this.onStep = onStep;
 	}
-	
+
 	public void step() {
 		parameterCounter = 0;
 		actionType = 2;
-		for (Function<WorldObject> function : onStep) {
+		for (WorldObjectAction function : onStep) {
 			function.execute(this);
 		}
 	}
-	
-	public void addOnExit(String string) {
-		for (String str : string.split("/")) {
-			for (Function<WorldObject> function : allObjectFunctions) {
-				if (function.getName().equals(str)) {
-					this.onExit.add(function);
-				}
-			}
+
+	public void addOnExit(String actionCodes) {
+		for (String actionCode : actionCodes.split("/")) {
+			this.onExit.add(allObjectFunctions.get(actionCode));
 		}
 	}
-	
-	public void setOnExit(ArrayList<Function<WorldObject>> onExit) {
+
+	public void setOnExit(ArrayList<WorldObjectAction> onExit) {
 		this.onExit = onExit;
 	}
-	
+
 	public void exit() {
 		parameterCounter = 0;
 		actionType = 3;
-		for (Function<WorldObject> function : onExit) {
+		for (WorldObjectAction function : onExit) {
 			function.execute(this);
 		}
 	}
-	
-	
-	//loading method
-	public static void loadMapObjects(String datapath) {
-		String delimeter = "\\s+";
+
+	// WorldDirection use incase owner map is not current center.
+	/** load objects on map */
+	public static void loadMapObjects(String datapath, WorldMap owner, int offsetX, int offsetY, int minX, int minY,
+			int maxX, int maxY) {
+		String delimiter = "\\s*,\\s*";
 		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(datapath)))) {
-			Pattern pattern = Pattern.compile("(\\d+)" + delimeter + "(\\d+)" + delimeter + "(\\d+)((" + delimeter + "\\d\\[.+\\])+)?");
+			Pattern pattern = Pattern.compile(String.join(delimiter, "(?<objectCode>\\d+)", "(?<blockX>\\d+)",
+					"(?<blockY>\\d+)(?<functionParam>(", "\\d\\[.+\\])+)?"));
 			Matcher matcher;
-			int[] args = new int[3];
-			ArrayList<String> str = new ArrayList<>();
-			while (scanner.hasNextLine()) {
+			ArrayList<String> functionsStr = new ArrayList<String>();
+			loop: while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				if (line.matches("^#+.*")) { // comment line ##hey hey heys
-					continue;
+					continue loop;
 				}
 				matcher = pattern.matcher(line);
 				if (matcher.find()) {
-					for (int i = 0; i < 3 ; i ++) {
-						args[i] = Integer.parseInt(matcher.group(i + 1));
+					String objectCode = matcher.group("objectCode");
+					int blockX = Integer.parseInt(matcher.group("blockX"));
+					int blockY = Integer.parseInt(matcher.group("blockY"));
+					if (blockX < minX || blockX > maxX || blockY < minY || blockY > maxY) {
+						if (!objectCode.equals("001") && !objectCode.equals("002")) {
+							System.out.println(
+									"WorldObject.java : Rejected object " + objectCode + " in " + owner.getName());
+							System.out.println("[blockX=" + blockX + ", blockY=" + blockY + ", x in [" + minX + ", "
+									+ maxX + "], y in [" + minY + ", " + maxY + "] ]");
+						}
+						continue loop;
 					}
-					if (matcher.group(4) != null) {
-						for (String string : matcher.group(4).trim().split(delimeter)) {
-							str.add(string);
+					blockX += offsetX;
+					blockY += offsetY;
+					if (matcher.group("functionParam") != null && !matcher.group("functionParam").isEmpty()) {
+						functionsStr.clear();
+						for (String string : matcher.group("functionParam").trim().split(delimiter)) {
+							if (!string.isEmpty()) {
+								functionsStr.add(string);
+							}
 						}
 					}
-					createWorldObject(args[0], args[1], args[2], str);
+					createWorldObject(objectCode, blockX, blockY, functionsStr, owner);
 				}
 			}
-		} catch (FileNotFoundException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public static void loadWorldObjects() {
-		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader("load\\worldobjects.txt")))) {
-			Pattern pattern = Pattern.compile("(\\d+)\\s+(\\w+[/\\w+]*|-)\\s+(\\w+[/\\w+]*|-)\\s+(\\w+[/\\w+]*|-)\\s+(\\w+[/\\w+]*|-)\\s+(\\d+)\\s+(\\d+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(\\w+)\\s+(-?\\d+)");
+
+	/**
+	 * load all object template
+	 * 
+	 * @throws WorldMapException
+	 */
+	public static void loadWorldObjects() throws WorldMapException {
+		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(WORLD_OBJECTS_PROP_FILE)))) {
+			String delimiter = "\\s*,\\s*";
+			Pattern pattern = Pattern.compile(String.join(delimiter, "(?<objectCode>\\d+)",
+					"(?<onEnter>\\w+[/\\w+]*|-)", "(?<onStep>\\w+[/\\w+]*|-)", "(?<onExit>\\w+[/\\w+]*|-)",
+					"(?<onInteract>\\w+[/\\w+]*|-)", "(?<frameNumber>\\d+)", "(?<frameDelay>\\d+)", "(?<loop>\\w+)",
+					"(?<autoStop>\\w+)", "(?<playing>\\w+)", "(?<showing>\\w+)", "(?<specialDepth>-?\\d+)"));
 			Matcher matcher;
 			String[] args = new String[12];
 			while (scanner.hasNextLine()) {
@@ -284,25 +302,27 @@ public class WorldObject extends Animation implements Cloneable {
 				}
 				matcher = pattern.matcher(line);
 				if (matcher.find()) {
-					for (int i = 0; i < 12 ; i ++) {
+					for (int i = 0; i < 12; i++) {
 						args[i] = matcher.group(i + 1);
 					}
-					allWorldObjects.add(new WorldObject(args));
+					allWorldObjects.put(args[0], new WorldObject(args));
+				} else {
+					throw new WorldMapException("loadWorldObjects() : Unmatched pattern=" + line);
 				}
 			}
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			throw new WorldMapException("loadWorldObjects() : file not found " + WORLD_OBJECTS_PROP_FILE, e);
 		}
 	}
-	
+
 	public static void loadObjectImages() {
-		// TODO Auto-generated method stub
 		Image img = new Image(new File(DEFAULT_IMG_PATH).toURI().toString());
+		System.out.println(img);
 		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(DEFAULT_IMGPOS_PATH)))) {
-			// objectcode xpos ypos width height
-			Pattern pattern = Pattern.compile("(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)");
+			String delimiter = "\\s*,\\s*";
+			Pattern pattern = Pattern.compile(String.join(delimiter, "(?<objectCode>\\d+)", "(?<xPos>\\d+)",
+					"(?<yPos>\\d+)", "(?<width>\\d+)", "(?<height>\\d+)"));
 			Matcher matcher;
-			int[] args = new int[5];
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				if (line.matches("^#+.*")) { // comment line ##hey hey heys
@@ -310,237 +330,131 @@ public class WorldObject extends Animation implements Cloneable {
 				}
 				matcher = pattern.matcher(line);
 				if (matcher.find()) {
-					for (int i = 0; i < 5 ; i ++) {
-						args[i] = Integer.parseInt(matcher.group(i + 1));
-					}
-					int frame = allWorldObjects.get(args[0]).frameNumber;
+					int amountOfFrame = allWorldObjects.get(matcher.group("objectCode")).amountOfFrame;
 					ArrayList<Image> array = new ArrayList<>();
-					for (int i = 0; i < frame; i++) {
-						array.add(DrawingUtility.resize(new WritableImage(img.getPixelReader(), args[1] + (args[3] / frame) * i, args[2], (args[3] / frame), args[4]), 2));
+					int xPos = Integer.parseInt(matcher.group("xPos")), yPos = Integer.parseInt(matcher.group("yPos")),
+							width = Integer.parseInt(matcher.group("width")),
+							height = Integer.parseInt(matcher.group("height"));
+					for (int i = 0; i < amountOfFrame; i++) {
+						array.add(DrawingUtility.resize(new WritableImage(img.getPixelReader(),
+								xPos + (width / amountOfFrame) * i, yPos, (width / amountOfFrame), height), 2));
 					}
-					objectImagesSet.add(array);
+					objectImagesSet.put(matcher.group("objectCode"), array);
 				}
 			}
-		} catch (FileNotFoundException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	//All Object Function
+
+	// All Object Function
 	public static void loadObjectFunctions() {
-		allObjectFunctions.add(new Function<WorldObject>() {
-			
-			@Override
-			public String getName() {
-				// TODO Auto-generated method stub
-				return "-";
+		allObjectFunctions.put("-", target -> {
+
+		});
+
+		allObjectFunctions.put("play", target -> {
+			target.show();
+			target.play();
+			return;
+		});
+
+		allObjectFunctions.put("playback", target -> {
+			target.show();
+			target.setPlayback(true);
+			target.play();
+		});
+
+		allObjectFunctions.put("playforward", target -> {
+			target.show();
+			target.setPlayback(false);
+			target.play();
+		});
+
+		allObjectFunctions.put("delay", target -> {
+			String parameter = target.functionParameter.get(target.actionType).get(target.parameterCounter);
+			int delay = Integer.parseInt(parameter);
+			while (delay > 0) {
+				delay--;
+				Clock.tick();
 			}
-			
-			@Override
-			public void execute(WorldObject object) {
-				// TODO Auto-generated method stub
+			target.parameterCounter++;
+		});
+
+		allObjectFunctions.put("hide", target -> {
+			target.hide();
+		});
+
+		allObjectFunctions.put("hideplayer", object -> {
+			WorldManager.getPlayer().hide();
+		});
+
+		allObjectFunctions.put("showplayer", object -> {
+			WorldManager.getPlayer().show();
+		});
+
+		allObjectFunctions.put("spawn", object -> {
+			Random random = new Random();
+			if (random.nextInt(100) < 8) {
+				AnimationUtility.getLoadScreen01().show();
+				AnimationUtility.getLoadScreen01().play();
+				while (AnimationUtility.getLoadScreen01().isPlaying()) {
+					Clock.tick();
+				}
+
+				System.out.println("to fightmap !!!");
+				Set<Player> players = new HashSet<Player>();
+				players.add(PlayerCharacter.getMe());
+				new GUIFightGameManager(players);
+				MusicUtility.playMusic(WorldManager.getWorldMap().getMapProperties().getProperty("music"));
+
+				
 			}
 		});
 
-		Consumer<WorldObject> hide = object -> object.play();
-		allObjectFunctions.add(new Function<WorldObject>() {
-			
-			@Override
-			public String getName() {
-				// TODO Auto-generated method stub
-				return "play";
-			}
-			
-			@Override
-			public void execute(WorldObject object) {
-				// TODO Auto-generated method stub
-				object.show();
-				object.play();
+		allObjectFunctions.put("changemap", object -> {
+			String[] parameters = object.functionParameter.get(object.actionType).get(object.parameterCounter)
+					.split("/");
+			object.parameterCounter++;
+			System.out.println("parameter passed [1] and [2]" + parameters[1] + " " + parameters[2]);
+			WorldManager.changeWorld(parameters[0], Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]),
+					Boolean.parseBoolean(parameters[3]), parameters[4]);
+		});
+
+		allObjectFunctions.put("playerpause", object -> {
+			WorldManager.getPlayer().pause();
+		});
+
+		allObjectFunctions.put("playerunpause", object -> {
+			WorldManager.getPlayer().unpause();
+		});
+
+		allObjectFunctions.put("playerwalk", object -> {
+			WorldManager.getPlayer().walk();
+		});
+
+		allObjectFunctions.put("loadmap", object -> {
+			String[] parameters = object.functionParameter.get(object.actionType).get(object.parameterCounter)
+					.split("/");
+			object.parameterCounter++;
+			try {
+				WorldManager.setWorldMapBuffer(WorldManager.loadWorld(parameters[0]));
+			} catch (WorldMapException ex) {
+				ex.printStackTrace();
 			}
 		});
-		
-		allObjectFunctions.add(new Function<WorldObject>() {
-			
-			@Override
-			public String getName() {
-				// TODO Auto-generated method stub
-				return "playback";
-			}
-			
-			@Override
-			public void execute(WorldObject object) {
-				// TODO Auto-generated method stub
-				object.show();
-				object.setPlayback(true);
-				object.play();
+
+		allObjectFunctions.put("usemap", object -> {
+			String[] parameters = object.functionParameter.get(object.actionType).get(object.parameterCounter)
+					.split("/");
+			object.parameterCounter++;
+			try {
+				WorldManager.useBufferedWorld(Integer.parseInt(parameters[0]), Integer.parseInt(parameters[1]));
+			} catch (NumberFormatException | WorldMapException ex) {
+				ex.printStackTrace();
 			}
 		});
-		
-		allObjectFunctions.add(new Function<WorldObject>() {
-			
-			@Override
-			public String getName() {
-				// TODO Auto-generated method stub
-				return "playforward";
-			}
-			
-			@Override
-			public void execute(WorldObject object) {
-				// TODO Auto-generated method stub
-				object.show();
-				object.setPlayback(false);
-				object.play();
-			}
-		});
-		
-		allObjectFunctions.add(new Function<WorldObject>() {
-			
-			@Override
-			public String getName() {
-				// TODO Auto-generated method stub
-				return "delay";
-			}
-			
-			@Override
-			public void execute(WorldObject object) {
-				// TODO Auto-generated method stub
-				String parameter = object.functionParameter.get(object.actionType).get(object.parameterCounter);
-				int delay = Integer.parseInt(parameter);
-				while (delay > 0) {
-					delay--;
-					Clock.tick();
-				}
-				object.parameterCounter++;
-			}
-		});
-		
-		allObjectFunctions.add(new Function<WorldObject>() {
-			
-			@Override
-			public String getName() {
-				// TODO Auto-generated method stub
-				return "hide";
-			}
-			
-			@Override
-			public void execute(WorldObject object) {
-				// TODO Auto-generated method stub
-				object.hide();
-			}
-		});
-		
-		allObjectFunctions.add(new Function<WorldObject>() {
-			
-			@Override
-			public String getName() {
-				// TODO Auto-generated method stub
-				return "hideplayer";
-			}
-			
-			@Override
-			public void execute(WorldObject object) {
-				// TODO Auto-generated method stub
-				WorldManager.getPlayer().hide();
-			}
-		});
-		
-		allObjectFunctions.add(new Function<WorldObject>() {
-			
-			@Override
-			public String getName() {
-				// TODO Auto-generated method stub
-				return "showplayer";
-			}
-			
-			@Override
-			public void execute(WorldObject object) {
-				// TODO Auto-generated method stub
-				WorldManager.getPlayer().show();
-			}
-		});
-		
-		allObjectFunctions.add(new Function<WorldObject>() {
-			
-			@Override
-			public String getName() {
-				// TODO Auto-generated method stub
-				return "spawn";
-			}
-			
-			@Override
-			public void execute(WorldObject object) {
-				// TODO Auto-generated method stub
-				Random random = new Random();
-				if (random.nextInt(100) < 8) {
-					System.out.println("to fightmap !!!");
-					Set<Player> players = new HashSet<Player>();
-					players.add(PlayerCharacter.getMe());
-					new GUIFightGameManager(players);
-				}
-			}
-		});
-		
-		allObjectFunctions.add(new Function<WorldObject>() {
-			
-			@Override
-			public String getName() {
-				// TODO Auto-generated method stub
-				return "changemap";
-			}
-			
-			@Override
-			public void execute(WorldObject object) {
-				// TODO Auto-generated method stub
-				String[] parameters = object.functionParameter.get(object.actionType).get(object.parameterCounter).split("/");
-				object.parameterCounter++;
-				WorldManager.changeWorld(parameters[0], Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]));
-			}
-		});
-		
-		allObjectFunctions.add(new Function<WorldObject>() {
-			
-			@Override
-			public String getName() {
-				// TODO Auto-generated method stub
-				return "playerpause";
-			}
-			
-			@Override
-			public void execute(WorldObject object) {
-				// TODO Auto-generated method stub
-				WorldManager.getPlayer().pause();
-			}
-		});
-		
-		allObjectFunctions.add(new Function<WorldObject>() {
-			
-			@Override
-			public String getName() {
-				// TODO Auto-generated method stub
-				return "playerunpause";
-			}
-			
-			@Override
-			public void execute(WorldObject object) {
-				// TODO Auto-generated method stub
-				WorldManager.getPlayer().unpause();
-			}
-		});
-		
-		allObjectFunctions.add(new Function<WorldObject>() {
-			
-			@Override
-			public String getName() {
-				// TODO Auto-generated method stub
-				return "playerwalk";
-			}
-			
-			@Override
-			public void execute(WorldObject object) {
-				// TODO Auto-generated method stub
-				WorldManager.getPlayer().walk();
-			}
-		});
+
 	}
 
 }

@@ -2,6 +2,7 @@ package graphic;
 
 import java.io.File;
 
+import audio.SFXUtility;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
@@ -94,6 +95,7 @@ public class DialogBox implements IRenderable {
 			// } else if (kEvent != null &&
 			// kEvent.getCode().equals(advancingKey)) {
 		} else if (InputUtility.getKeyTriggered(advancingKey)) {
+			SFXUtility.playSound("dialog_box_next");
 			clear();
 			hasSentMessage = true;
 		} else if (endLineWidth == 0) {

@@ -3,6 +3,8 @@ package main;
 import java.util.HashSet;
 import java.util.Set;
 
+import audio.MusicUtility;
+import audio.SFXUtility;
 import graphic.DrawingUtility;
 import graphic.GameStage;
 import javafx.application.Application;
@@ -79,6 +81,8 @@ public class Main2 extends Application {
 			players.add(p2);
 
 			new DrawingUtility();
+			new MusicUtility();
+			new SFXUtility(2);
 
 			// @SuppressWarnings("unused")
 

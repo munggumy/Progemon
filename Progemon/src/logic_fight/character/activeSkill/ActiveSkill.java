@@ -29,7 +29,7 @@ public class ActiveSkill extends Animation implements IRenderable {
 	private GraphicType graphicType;
 	private Image icon;
 	private static Image nullIcon;
-	
+
 	static {
 		File file = new File("load\\img\\skill\\null.png");
 		nullIcon = new Image(file.toURI().toString());
@@ -40,7 +40,8 @@ public class ActiveSkill extends Animation implements IRenderable {
 		setName(skillName);
 		setPower(skillPower);
 		allActiveSkills.add(this);
-		loadImage("load/img/skill/Flamethrower/all.png");
+		loadAnimationImage("load/img/skill/Flamethrower/all.png");
+		// loadImage("load/img/skill/Flamethrower/all.png");
 		loadIcon();
 	}
 
@@ -71,7 +72,7 @@ public class ActiveSkill extends Animation implements IRenderable {
 	public void setOnAttack(SkillEffect skillEffect) {
 		this.skillEffect = skillEffect;
 	}
-	
+
 	public SkillEffect getSkillEffect() {
 		return skillEffect;
 	}
@@ -114,13 +115,11 @@ public class ActiveSkill extends Animation implements IRenderable {
 
 	@Override
 	public void draw() {
-		// TODO Auto-generated method stub
 		DrawingUtility.drawSkill(this);
 	}
 
 	@Override
 	public int getDepth() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -163,7 +162,7 @@ public class ActiveSkill extends Animation implements IRenderable {
 	public final void setElement(Element element) {
 		this.element = element;
 	}
-	
+
 	public void loadIcon() {
 		try {
 			File file = new File("load\\img\\skill\\" + name + "\\icon.png");
@@ -172,11 +171,11 @@ public class ActiveSkill extends Animation implements IRenderable {
 			// TODO: handle exception
 		}
 	}
-	
+
 	public Image getIcon() {
 		return icon;
 	}
-	
+
 	public static Image getNullIcon() {
 		return nullIcon;
 	}

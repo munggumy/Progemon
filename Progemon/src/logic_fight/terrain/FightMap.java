@@ -1,9 +1,11 @@
 package logic_fight.terrain;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import graphic.DrawingUtility;
 import graphic.GameScreen;
@@ -84,6 +86,10 @@ public class FightMap implements IRenderable {
 		this.map = map;
 	}
 
+	public boolean contains(FightTerrain fightTerrain) {
+		return Stream.of(map).flatMap(line -> Stream.of(line)).anyMatch(ft -> ft.equals(fightTerrain));
+	}
+
 	public FightTerrain getFightTerrainAt(int x, int y) {
 		if (outOfMap(x, y)) {
 			return null;
@@ -120,6 +126,8 @@ public class FightMap implements IRenderable {
 		}
 	}
 
+	// Graphics
+
 	public void draw() {
 		checkInput();
 		int blockSize = getBlockSize();
@@ -138,32 +146,27 @@ public class FightMap implements IRenderable {
 
 	@Override
 	public int getDepth() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
-	
+
 	@Override
 	public boolean isVisible() {
-		// TODO Auto-generated method stub
 		return visible;
 	}
-	
+
 	@Override
 	public void setVisible(boolean visible) {
-		// TODO Auto-generated method stub
 		this.visible = visible;
 	}
-	
+
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
 		visible = false;
 		IRenderableHolder.removeWorldObject(this);
 	}
-	
+
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
 		IRenderableHolder.addWorldObject(this);
 		visible = true;
 	}
@@ -216,6 +219,21 @@ public class FightMap implements IRenderable {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	public void shadowAllBlocks() {
+		for (int j = 0; j < sizeY; j++) {
+			for (int i = 0; i < sizeX; i++) {
+				map[j][i].setShadowed(true);
+			}
+		}
+	}
+
+	public void highlightAllBlocks() {
+		for (Pokemon p : pokemonsOnMap) {
+			FightTerrain ft = p.getCurrentFightTerrain();
+			ft.setHighlight(true);
 		}
 	}
 

@@ -1,0 +1,14 @@
+###data format
+###1objectcode,2onenter,3onstep,4onexit,5oninteract,6framenumber,7framedelay,8loop,9autostop,10playing,11showing,12specialdepth
+000,-,-,-,-,1,0,false,true,false,false,0
+001,-,-,-,-,1,0,false,true,false,true,0
+002,play,spawn,delay/hide,-,5,5,false,false,false,false,1
+003,-,-,-,-,1,0,false,true,false,true,0
+004,-,-,-,-,1,0,false,true,false,true,0
+005,-,-,-,-,1,0,false,true,false,true,0
+006,playforward/playerpause/delay/playerunpause,hideplayer/playback/changemap,showplayer/playback,-,4,5,false,false,false,true,-1
+007,playforward/playerpause/delay/playerunpause,hideplayer/playback/changemap,showplayer/playback,-,4,5,false,false,false,true,-1
+008,-,-,-,-,1,0,false,true,false,true,0
+009,-,-,-,-,1,0,false,true,false,true,-32
+010,-,-,-,-,4,20,true,true,true,true,-32
+011,loadmap,usemap,-,-,1,0,false,true,false,false,0

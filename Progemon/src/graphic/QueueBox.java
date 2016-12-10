@@ -14,8 +14,7 @@ public class QueueBox implements IRenderable {
 	private static final int ORIGIN_X = 396, ORIGIN_Y = 18, WIDTH = 68, HEIGHT = 40;
 	private static final int BOX_X = 390, BOX_Y = 0;
 	private static ArrayList<Pokemon> pokemonsOnQueue = new ArrayList<Pokemon>();
-	private static List<Pokemon> pokemonsOnMap = new ArrayList<Pokemon>(
-			GUIFightGameManager.getFightMap().getPokemonsOnMap());
+	private static List<Pokemon> pokemonsOnMap;
 	private static int[][] delta = new int[10][2];
 	private static final int REMOVE_TIME = 34, REMOVE_RATE = 2;
 	private static final int MOVE_TIME = 20, MOVE_RATE = 2;
@@ -23,9 +22,13 @@ public class QueueBox implements IRenderable {
 	private static boolean remove = false, move = false, insert = false;
 	private static boolean isQueue = true;
 	private static boolean visible = true;
+	
+	private static GUIFightGameManager currentFightManager;
 
-	public QueueBox() {
-		// TODO Auto-generated constructor stub
+	public QueueBox(GUIFightGameManager currentFightManager) {
+		QueueBox.currentFightManager = currentFightManager;
+		pokemonsOnMap = new ArrayList<Pokemon>(QueueBox.currentFightManager.getFightMap().getPokemonsOnMap());
+		clearQueue();
 		for (Pokemon pokemon : pokemonsOnMap) {
 			pokemonsOnQueue.add(pokemon);
 		}
@@ -38,54 +41,48 @@ public class QueueBox implements IRenderable {
 
 	@Override
 	public void draw() {
-		// TODO Auto-generated method stub
 		DrawingUtility.drawQueueBox();
 	}
 
 	@Override
 	public int getDepth() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
-	
+
 	@Override
 	public boolean isVisible() {
-		// TODO Auto-generated method stub
 		return visible;
 	}
-	
+
 	@Override
 	public void setVisible(boolean visible) {
-		// TODO Auto-generated method stub
 		this.visible = visible;
 	}
-	
+
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
 		visible = false;
 		IRenderableHolder.removeWorldObject(this);
 	}
-	
+
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
 		IRenderableHolder.addWorldObject(this);
 		visible = true;
 	}
-	
+
 	public static void sort() {
 		isQueue = false;
 		while (!isQueue) {
 			update();
-			
-			//MyCanvas.repaint();
+
+			// MyCanvas.repaint();
 			Clock.tick();
 		}
 	}
-	
-	public static void update(){
-		pokemonsOnMap = GUIFightGameManager.getFightMap().getPokemonsOnMap();
+
+	public static void update() {
+		pokemonsOnMap = currentFightManager.getFightMap().getPokemonsOnMap();
 		boolean equal = true;
 		if (pokemonsOnQueue.size() == pokemonsOnMap.size()) {
 			for (int i = 0; i < pokemonsOnQueue.size(); i++) {
@@ -155,11 +152,15 @@ public class QueueBox implements IRenderable {
 		}
 	}
 
-	
-	/*private void insert(){
-	  
-	}*/
-	 
+	/*
+	 * private void insert(){
+	 * 
+	 * }
+	 */
+
+	public static void clearQueue() {
+		pokemonsOnQueue.clear();
+	}
 
 	public static int getBOX_X() {
 		return BOX_X;
