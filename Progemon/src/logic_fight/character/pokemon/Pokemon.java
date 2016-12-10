@@ -16,6 +16,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import audio.SFXUtility;
 import graphic.DrawingUtility;
 import graphic.GameScreen;
 import graphic.IRenderable;
@@ -257,7 +258,7 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 				+ " Damage dealt : " + StringUtility.formatDouble(damage, 2));
 		System.out.printf("%s's HP = %.2f  " + StringUtility.hpBar(other.getCurrentHP() / other.getFullHP()) + "\n",
 				other.getName(), other.getCurrentHP());
-		sendEffectivenessMessage(other, selectedSkill);
+		processEffectiveness(other, selectedSkill);
 
 		selectedSkill.applySkillEffect(this, other);
 		selectedSkill.setAttackTerrain(currentFightTerrain);
@@ -271,14 +272,16 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 		IRenderableHolder.removeFightObject(selectedSkill);
 	}
 
-	private void sendEffectivenessMessage(Pokemon other, ActiveSkill selectedSkill) {
+	private void processEffectiveness(Pokemon other, ActiveSkill selectedSkill) {
 		switch (SWTable.instance.getSW(selectedSkill.getElement(), other.getPrimaryElement())) {
 		case N:
 			break;
 		case S:
+			SFXUtility.playSound("attack_super_effective");
 			System.out.println("It's super effective!");
 			break;
 		case W:
+			SFXUtility.playSound("attack_not_effective");
 			System.out.println("It's not very effective...");
 			break;
 		case Z:

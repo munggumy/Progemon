@@ -2,6 +2,8 @@ package main;
 
 import java.util.ArrayList;
 
+import audio.MusicUtility;
+import audio.SFXUtility;
 import graphic.DrawingUtility;
 import graphic.GameStage;
 import javafx.application.Application;
@@ -12,20 +14,24 @@ import logic_fight.character.pokemon.Pokemon;
 import logic_fight.player.AIPlayer;
 import logic_fight.player.HPAIPlayer;
 import logic_fight.player.Player;
-import manager.GUIFightGameManager;
 import manager.WorldManager;
 import utility.FileUtility;
 import utility.Pokedex;
 import utility.ThreadUtility;
 
 public class Main3 extends Application {
-	
+
 	public static void main(String[] args) {
 		Thread.setDefaultUncaughtExceptionHandler(ThreadUtility::showError);
 		launch(args);
 	}
 
 	private static Thread updateUIThread;
+
+	@Override
+	public void stop() throws Exception {
+		System.exit(0);
+	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -41,7 +47,7 @@ public class Main3 extends Application {
 
 		Pokemon wartortle = Pokedex.getPokemon("Wartortle");
 		wartortle.setLevel(34);
-		
+
 		Pokemon pidgeotto = Pokedex.getPokemon("Pidgeotto");
 		pidgeotto.setLevel(30);
 		pidgeotto.setMoveRange(8);
@@ -56,6 +62,8 @@ public class Main3 extends Application {
 		players.add(p2);
 
 		new DrawingUtility();
+		new MusicUtility();
+		new SFXUtility(2);
 
 		// @SuppressWarnings("unused")
 

@@ -20,7 +20,7 @@ import javafx.stage.WindowEvent;
 import utility.InputUtility;
 
 public class GameStage extends Stage {
-	
+
 	private static GameScreen canvas;
 	private static FullScreen fullCanvas;
 	private static Scene normalScene;
@@ -42,6 +42,12 @@ public class GameStage extends Stage {
 		addListener(fullScene);
 		setX(0);
 		setY(0);
+		try {
+			// TODO Join
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		setResizable(false);
 		setFullScreenExitKeyCombination(new KeyCodeCombination(KeyCode.F12));
 		setFullScreenExitHint("Press F12 to exit full-screen mode.");
@@ -51,12 +57,12 @@ public class GameStage extends Stage {
 			@Override
 			public void handle(long now) {
 				try {
-					GameScreen.repaint();		
+					GameScreen.repaint();
 				} catch (Exception e) {
 					// TODO: handle exception
 				}
 				if (getScene() == fullScene) {
-					FullScreen.repaint();	
+					FullScreen.repaint();
 				}
 			}
 		}.start();
@@ -92,26 +98,26 @@ public class GameStage extends Stage {
 			InputUtility.setMouseX((int) mEvent.getX());
 			InputUtility.setMouseY((int) mEvent.getY());
 		});
-		
+
 		scene.setOnMouseDragged(mEvent -> {
 			InputUtility.setMouseX((int) mEvent.getX());
 			InputUtility.setMouseY((int) mEvent.getY());
 		});
-		
+
 		scene.setOnScroll(sEvent -> {
 			InputUtility.setScroll((int) (sEvent.getDeltaY() / 40));
 		});
 
 		scene.setOnKeyPressed(kEvent -> {
-			System.out.println("KEY PRESSED : " + kEvent.getCode().toString());
+			// System.out.println("KEY PRESSED : " +
+			// kEvent.getCode().toString());
 			InputUtility.setKeyPressed(kEvent.getCode(), true);
 			InputUtility.setKeyTriggered(kEvent.getCode(), true);
 			if (kEvent.getCode() == KeyCode.F12) {
 				if (getScene().equals(normalScene)) {
 					setScene(fullScene);
 					setFullScreen(true);
-				}
-				else{
+				} else {
 					setScene(normalScene);
 				}
 			}
@@ -121,10 +127,10 @@ public class GameStage extends Stage {
 			InputUtility.setKeyPressed(kEvent.getCode(), false);
 			InputUtility.setKeyTriggered(kEvent.getCode(), false);
 		});
-		
+
 		System.out.println("Stage Finished Adding Listener");
 	}
-	
+
 	public static GameScreen getCanvas() {
 		return canvas;
 	}

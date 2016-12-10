@@ -23,7 +23,7 @@ public class HPStat extends Stat {
 	}
 	
 	public int getFull(){
-		return base;
+		return current;
 	}
 
 }

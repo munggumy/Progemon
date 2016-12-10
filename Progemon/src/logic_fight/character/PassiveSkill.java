@@ -1,20 +1,20 @@
 package logic_fight.character;
 
-import utility.Phase;
+import logic_fight.FightPhase;
 
 public class PassiveSkill implements Comparable<PassiveSkill> {
 
 	// Private Fields
 
 	private String name;
-	private Phase phaseToActivate;
+	private FightPhase phaseToActivate;
 	private PassiveSkillAction onActivate, onDeactivate;
 	private int duration, power;
 	private boolean alwaysActivate = false, activateOnce = false;
 
 	// Constructor
 
-	public PassiveSkill(String name, Phase phaseToActivate, int power) {
+	public PassiveSkill(String name, FightPhase phaseToActivate, int power) {
 		this.name = name;
 		this.phaseToActivate = phaseToActivate;
 		this.power = power;
@@ -22,6 +22,7 @@ public class PassiveSkill implements Comparable<PassiveSkill> {
 
 	// Comparable Method
 
+	/** Compares by Phase */
 	@Override
 	public int compareTo(PassiveSkill other) {
 		return this.phaseToActivate.compareTo(other.phaseToActivate);
@@ -33,7 +34,7 @@ public class PassiveSkill implements Comparable<PassiveSkill> {
 		return name;
 	}
 
-	public final Phase getPhaseToActivate() {
+	public final FightPhase getPhaseToActivate() {
 		return phaseToActivate;
 	}
 
@@ -49,7 +50,7 @@ public class PassiveSkill implements Comparable<PassiveSkill> {
 		this.name = name;
 	}
 
-	public final void setPhaseToActivate(Phase phaseToActivate) {
+	public final void setPhaseToActivate(FightPhase phaseToActivate) {
 		this.phaseToActivate = phaseToActivate;
 	}
 
@@ -63,6 +64,10 @@ public class PassiveSkill implements Comparable<PassiveSkill> {
 
 	public final int getDuration() {
 		return duration;
+	}
+	
+	public final int getPower() {
+		return power;
 	}
 
 	public final boolean isAlwaysActivate() {
@@ -83,6 +88,10 @@ public class PassiveSkill implements Comparable<PassiveSkill> {
 
 	public final void setActivateOnce(boolean activateOnce) {
 		this.activateOnce = activateOnce;
+	}
+
+	public final void setPower(int power) {
+		this.power = power;
 	}
 
 }

@@ -68,5 +68,9 @@ public class PokemonTemplate extends AbstractPokemon {
 	public final void setSecondaryElement(Element secondaryElement) {
 		this.secondaryElement = secondaryElement;
 	}
+	
+	public final void setCatchRate(int catchRate){
+		this.catchRate = catchRate;
+	}
 
 }

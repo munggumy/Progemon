@@ -1,0 +1,5 @@
+littleroot,005 Littleroot Town.mp3
+battle_wild,009 Battle! (Wild Pokemon).mp3
+victory_wild,010 Victory! (Wild Pokemon).mp3
+route_101, 011 Route 101.mp3
+oldale, 012 Oldale Town.mp3

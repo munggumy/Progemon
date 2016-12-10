@@ -2,6 +2,7 @@ package logic_world.player;
 
 import java.io.File;
 
+import audio.SFXUtility;
 import graphic.Animation;
 import graphic.DrawingUtility;
 import javafx.scene.image.Image;
@@ -9,39 +10,41 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import logic_fight.character.pokemon.Pokemon;
 import logic_fight.player.HumanPlayer;
+import logic_world.terrain.WorldDirection;
 import manager.WorldManager;
 import utility.Pokedex;
 
-public class PlayerCharacter extends Animation{
-	
+public class PlayerCharacter extends Animation {
+
+	private static final String DEFAULT_IMG_PATH = "load\\img\\player\\Boy.png";
+	private static final int FAST_DELAY = 2, MEDIAM_DELAY = 5, SLOW_DELAY = 8, VERYSLOW_DELAY = 11;
+
 	private static float x, y;
 	private static int blockX, blockY;
-	private static int direction;
+	private static WorldDirection direction;
 	private static int frameLimit = 2;
 	private static int legState = 0;
-	private static final int FAST_DELAY = 2, MEDIAM_DELAY = 5, SLOW_DELAY = 8, VERYSLOW_DELAY = 11;
 	private static boolean moving = false, walking = false, turning = false, stucking = false;
-	private static final String DEFAULT_PATH = "load\\img\\player\\Boy.png";
-	
+
 	private static HumanPlayer me = new HumanPlayer("Mhee", Color.BROWN);
-	
+
 	public PlayerCharacter() {
-		super(DrawingUtility.resize(new Image(new File(DEFAULT_PATH).toURI().toString()), 2), 2);
+		super(DrawingUtility.resize(new Image(new File(DEFAULT_IMG_PATH).toURI().toString()), 2), 2);
 		setFrameDelay(3);
-		
+
 		Pokemon charlizard = Pokedex.getPokemon("Charlizard");
 		charlizard.setLevel(40);
 
 		Pokemon caterpie = Pokedex.getPokemon("Caterpie");
 		caterpie.setLevel(5);
-		
+
 		me.addPokemon(charlizard);
 		me.addPokemon(caterpie);
+		direction = WorldDirection.DOWN;
 	}
-	
+
 	@Override
 	public void play() {
-		// TODO Auto-generated method stub
 		frameDelay = FAST_DELAY;
 		frameLimit = 2;
 		stucking = false;
@@ -49,90 +52,86 @@ public class PlayerCharacter extends Animation{
 	}
 
 	public void walk() {
-		int x = blockX + (direction - 2) * (direction % 2);
-		int y = blockY + (direction - 1) * (direction % 2 - 1);
+		int x = blockX + (direction.ordinal() - 2) * (direction.ordinal() % 2);
+		int y = blockY + (direction.ordinal() - 1) * (direction.ordinal() % 2 - 1);
 		System.out.println("Player walk --> x : " + x + ", y : " + y);
 		play();
 		walking = true;
 		moving = true;
-		WorldManager.getObjectAt(x, y).entered();
-		WorldManager.getObjectAt(blockX, blockY).exit();
+		WorldManager.getWorldMap().getObjectAt(x, y).entered();
+		WorldManager.getWorldMap().getObjectAt(blockX, blockY).exit();
 	}
-	
-	public void turn(int newDirection) {
+
+	public void turn(WorldDirection newDirection) {
 		play();
 		turning = true;
 		direction = newDirection;
 	}
-	
+
 	public void stuck() {
+		SFXUtility.playSound("walk_obstructed");
 		play();
 		stucking = true;
 		moving = true;
 	}
-	
+
 	@Override
 	public void update() {
 		// TODO Auto-generated method stub
-		if(!playing) {
+		if (!playing) {
 			return;
 		}
-		if(walking) {
+		if (walking) {
 			walkUpdate();
-		}
-		else if(turning) {
+		} else if (turning) {
 			turnUpdate();
-		}
-		else if(stucking) {
+		} else if (stucking) {
 			stuckUpdate();
 		}
 	}
-	
+
 	public void walkUpdate() {
 		switch (direction) {
-		case 0:
+		case DOWN:
 			y += 32f / (VERYSLOW_DELAY + 1);
 			break;
-		case 1:
+		case LEFT:
 			x -= 32f / (VERYSLOW_DELAY + 1);
 			break;
-		case 2:
+		case UP:
 			y -= 32f / (VERYSLOW_DELAY + 1);
 			break;
-		case 3:
+		case RIGHT:
 			x += 32f / (VERYSLOW_DELAY + 1);
 			break;
 		}
-		if(frameDelay > delayCounter) {
+		if (frameDelay > delayCounter) {
 			delayCounter++;
 			return;
-		}
-		else if(frameLimit != 0) {
+		} else if (frameLimit != 0) {
 			currentFrame++;
 			frameLimit--;
-			currentFrame %= frameNumber;
-			if(frameDelay == FAST_DELAY) {
+			currentFrame %= amountOfFrame;
+			if (frameDelay == FAST_DELAY) {
 				frameDelay = MEDIAM_DELAY;
-			}
-			else {
+			} else {
 				frameDelay = FAST_DELAY;
 			}
-		}
-		else{
+		} else {
 			frameLimit = 2;
 			legState++;
 			legState %= 2;
 			switch (direction) {
-			case 0:
+			case DOWN:
 				blockY += 1;
 				break;
-			case 1:
+			case LEFT:
 				blockX -= 1;
 				break;
-			case 2:
+			case UP:
 				blockY -= 1;
 				break;
-			case 3:
+			case RIGHT:
 				blockX += 1;
 				break;
 			}
@@ -140,28 +139,25 @@ public class PlayerCharacter extends Animation{
 			y = blockY * 32;
 			walking = false;
 			pause();
-			WorldManager.getObjectAt(blockX, blockY).step();
+			WorldManager.getWorldMap().getObjectAt(blockX, blockY).step();
 		}
 		delayCounter = 0;
 	}
-	
+
 	public void stuckUpdate() {
-		if(frameDelay > delayCounter) {
+		if (frameDelay > delayCounter) {
 			delayCounter++;
 			return;
-		}
-		else if(frameLimit != 0) {
+		} else if (frameLimit != 0) {
 			currentFrame++;
-			currentFrame %= frameNumber;
+			currentFrame %= amountOfFrame;
 			frameLimit--;
-			if(frameDelay == FAST_DELAY) {
+			if (frameDelay == FAST_DELAY) {
 				frameDelay = VERYSLOW_DELAY;
-			}
-			else if(frameDelay == VERYSLOW_DELAY) {
+			} else if (frameDelay == VERYSLOW_DELAY) {
 				frameDelay = SLOW_DELAY;
 			}
-		}
-		else{
+		} else {
 			frameLimit = 2;
 			legState++;
 			legState %= 2;
@@ -170,99 +166,96 @@ public class PlayerCharacter extends Animation{
 		}
 		delayCounter = 0;
 	}
-	
+
 	public void turnUpdate() {
-		if(FAST_DELAY > delayCounter) {
+		if (FAST_DELAY > delayCounter) {
 			delayCounter++;
 			return;
-		}
-		else if(frameLimit != 0) {
+		} else if (frameLimit != 0) {
 			currentFrame++;
-			currentFrame %= frameNumber;
+			currentFrame %= amountOfFrame;
 			frameLimit--;
-		}
-		else {
+		} else {
 			frameLimit = 2;
 			legState++;
 			legState %= 2;
 			turning = false;
 			pause();
-			WorldManager.getObjectAt(blockX, blockY).step();
+			WorldManager.getWorldMap().getObjectAt(blockX, blockY).step();
 		}
 		delayCounter = 0;
 	}
-	
+
 	@Override
 	public Image getCurrentImage() {
-		WritableImage wimg = new WritableImage(image.getPixelReader(), (legState * 2 + currentFrame) * 32, direction * 44, 32, 44);
+		WritableImage wimg = new WritableImage(animationImage.getPixelReader(), (legState * 2 + currentFrame) * 32,
+				direction.ordinal() * 44, 32, 44);
 		return wimg;
 	}
-	
+
 	public static double getX() {
 		return x;
 	}
-	
+
 	public static double getY() {
 		return y;
 	}
-	
+
 	public static void setX(float x) {
 		PlayerCharacter.x = x;
 	}
-	
+
 	public static void setY(float y) {
 		PlayerCharacter.y = y;
 	}
-	
+
 	public static int getBlockX() {
 		return blockX;
 	}
-	
+
 	public static int getBlockY() {
 		return blockY;
 	}
-	
+
 	public static void setBlockX(int blockX) {
 		PlayerCharacter.blockX = blockX;
 	}
-	
+
 	public static void setBlockY(int blockY) {
 		PlayerCharacter.blockY = blockY;
 	}
-	
-	public static int getDirection() {
+
+	public static WorldDirection getDirection() {
 		return direction;
 	}
-	
-	public static void setDirection(int direction) {
+
+	public static void setDirection(WorldDirection direction) {
 		PlayerCharacter.direction = direction;
 	}
-	
+
 	public static boolean isMoving() {
 		return moving;
 	}
-	
+
 	public static void setMoving(boolean moving) {
 		PlayerCharacter.moving = moving;
 	}
-	
+
 	public static boolean isWalking() {
 		return walking;
 	}
-	
+
 	public static boolean isStucking() {
 		return stucking;
 	}
-	
+
 	@Override
 	public int getDepth() {
-		// TODO Auto-generated method stub
 		return (int) y;
 	}
-	
+
 	@Override
 	public void draw() {
-		// TODO Auto-generated method stub
 		DrawingUtility.drawPlayer(this);
 	}
 
