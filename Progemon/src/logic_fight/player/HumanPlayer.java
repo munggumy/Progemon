@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import graphic.FightHUD;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import logic_fight.FightPhase;
@@ -72,8 +73,14 @@ public class HumanPlayer extends Player {
 			Optional<Pokemon> otherPokemon = pokemon.getCurrentFightMap().getPokemonAt(destination);
 			if (otherPokemon.isPresent() && otherPokemon.get().getOwner() != pokemon.getOwner()) {
 				super.nextAttackedPokemon = otherPokemon;
+				FightHUD.setShowSkillMenu(true);
 				return true;
-			} else {
+			}
+			else if (otherPokemon.orElse(null) == pokemon) {
+				FightHUD.setShowSkillMenu(true);
+				return false;
+			}
+			else {
 				super.nextAttackedPokemon = Optional.empty();
 				return false;
 			}
@@ -83,14 +90,13 @@ public class HumanPlayer extends Player {
 	@Override
 	protected boolean inputAttackActiveSkill(Pokemon attackingPokemon) throws AbnormalPhaseOrderException {
 		KeyCode endTurn = KeyCode.E;
-		attackingPokemon.setShowSkillMenu(true);
 		if (InputUtility.getKeyTriggered(endTurn)) {
-			attackingPokemon.setShowSkillMenu(false);
+			FightHUD.setShowSkillMenu(false);
 			throw new AbnormalPhaseOrderException(FightPhase.postAttackPhase);
 		}
 
 		if (super.nextAttackSkill.isPresent()) {
-			attackingPokemon.setShowSkillMenu(false);
+			FightHUD.setShowSkillMenu(false);
 			return true;
 		}
 		List<ActiveSkill> attackSkills = attackingPokemon.getActiveSkills();
@@ -99,9 +105,15 @@ public class HumanPlayer extends Player {
 			if (InputUtility.getKeyTriggered(kc) && index >= 0 && index < attackSkills.size()) {
 				System.out.println("Attack Skill setted");
 				super.nextAttackSkill = Optional.of(attackSkills.get(index));
-				attackingPokemon.setShowSkillMenu(false);
+				FightHUD.setShowSkillMenu(false);
 				return true;
 			}
+		}
+		if (FightHUD.getSelectedSkill() >= 0) {
+			System.out.println("Attack Skill setted");
+			super.nextAttackSkill = Optional.of(attackSkills.get(FightHUD.getSelectedSkill()));
+			FightHUD.setShowSkillMenu(false);
+			return true;
 		}
 		return false;
 	}

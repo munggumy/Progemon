@@ -1,0 +1,46 @@
+package graphic;
+
+import java.util.ArrayList;
+
+import logic_fight.character.pokemon.Pokemon;
+import logic_fight.terrain.FightMap;
+import utility.InputUtility;
+
+public class FightHUD {
+	
+	private static ArrayList<Boolean> skillMenuSelect = new ArrayList<>(4);
+	private static int skillMenuInterval;
+	private static Pokemon currentPokemon;
+	
+	public static void checkInput() {
+		if (currentPokemon == null) {
+			return;
+		}
+		int blockSize = FightMap.getBlockSize();
+		int x = (int) (InputUtility.getMouseX() - FightMap.getOriginX() - (currentPokemon.getCurrentFightTerrain().getX() + 0.5) * blockSize);
+		int y = (int) (InputUtility.getMouseY() - FightMap.getOriginY() - (currentPokemon.getCurrentFightTerrain().getY() + 0.5) * blockSize);
+		
+	}
+	
+	public static void setCurrentPokemon(Pokemon currentPokemon) {
+		FightHUD.currentPokemon = currentPokemon;
+	}
+	
+	public static ArrayList<Boolean> getSkillMenuSelect() {
+		return skillMenuSelect;
+	}
+	
+	public static int getSelectedSkill() {
+		for (int i = 0; i < 4; i++){
+			if (skillMenuSelect.get(i)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	public static int getSkillMenuInterval() {
+		return skillMenuInterval;
+	}
+
+}

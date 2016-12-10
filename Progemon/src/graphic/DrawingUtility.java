@@ -90,11 +90,7 @@ public class DrawingUtility {
 		// fightMap.getPokemonsOnMap().get(i).draw();
 		// }
 		gc.drawImage(itemIcon, 10, 246);
-		fightMap.getPokemonsOnMap().forEach(p -> {
-			if (p.isShowSkillMenu()) {
-				drawSkillMenu(p);
-			}
-		});
+
 		fightMap.getPokemonsOnMap().forEach(p -> drawPokemonBar(p));
 	}
 
@@ -124,7 +120,9 @@ public class DrawingUtility {
 		double resizeRate = blockSize / 40.0;
 		int x = pokemon.getCurrentFightTerrain().getX() * blockSize + FightMap.getOriginX();
 		int y = pokemon.getCurrentFightTerrain().getY() * blockSize + FightMap.getOriginY();
-		gc.drawImage(pokemon.getImage(), x, y, blockSize, blockSize);
+		if (pokemon.isVisible()) {
+			gc.drawImage(pokemon.getImage(), x, y, blockSize, blockSize);	
+		}
 		/*
 		 * Image img = new ImageIcon(pokemon.getImageName()).getImage();
 		 * gc.drawImage(img, pokemon.getX() * 40, pokemon.getY() * 40, 40, 40,
@@ -181,9 +179,13 @@ public class DrawingUtility {
 		gc.fillRect(originX + 33, originY + 37, ((pokemon.getCurrentExp() - pokemon.getLastExpRequired())
 				/ (pokemon.getNextExpRequired() - pokemon.getLastExpRequired())) * 77, 1);
 	}
-
-	public static void drawSkillMenu(Pokemon pokemon) {
-		int interval = 10;
+	
+	public static void drawFightHUD(FightHUD fightHUD) {
+		if (!FightHUD.isShowSkillMenu()) {
+			return;
+		}
+		int interval = FightHUD.getSkillMenuInterval();
+		Pokemon pokemon = FightHUD.getCurrentPokemon();
 		int i = 0;
 		int blockSize = FightMap.getBlockSize();
 		int x = (int) ((pokemon.getCurrentFightTerrain().getX() + 0.5) * blockSize + FightMap.getOriginX());
@@ -192,6 +194,14 @@ public class DrawingUtility {
 			if (activeSkill.getIcon().getWidth() > 0) {
 				gc.drawImage(activeSkill.getIcon(), x - 48 - interval + (i % 2) * (48 + interval * 2),
 						y - 48 - interval + Math.floorDiv(i, 2) * (48 + interval * 2));
+				if (FightHUD.getSelectedSkill() == i) {
+					gc.save();
+					gc.setFill(Color.BLACK);
+					gc.setGlobalAlpha(0.5);
+					gc.fillRect(x - 48 - interval + (i % 2) * (48 + interval * 2) + 4,
+							y - 48 - interval + Math.floorDiv(i, 2) * (48 + interval * 2) + 4, 40, 40);
+					gc.restore();
+				}
 			} else {
 				gc.setFill(Color.WHITE);
 				gc.fillRect(x - 48 - interval + (i % 2) * (48 + interval * 2),
