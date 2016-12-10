@@ -1,0 +1,33 @@
+package graphic;
+
+import java.util.ArrayList;
+
+import logic_fight.character.pokemon.Pokemon;
+
+public class FightHUD {
+	
+	private static ArrayList<Boolean> skillMenuSelect = new ArrayList<>(4);
+	private static Pokemon currentPokemon;
+	
+	public static void checkInput() {
+		
+	}
+	
+	public static void setCurrentPokemon(Pokemon currentPokemon) {
+		FightHUD.currentPokemon = currentPokemon;
+	}
+	
+	public static ArrayList<Boolean> getSkillMenuSelect() {
+		return skillMenuSelect;
+	}
+	
+	public static int getSelectedSkill() {
+		for (int i = 0; i < 4; i++){
+			if (skillMenuSelect.get(i)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+}
