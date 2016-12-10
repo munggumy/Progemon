@@ -32,15 +32,15 @@ public class WorldObject extends Animation implements Cloneable {
 	private static final String WORLD_OBJECTS_PROP_FILE = "load\\worldobjects_list.csv";
 	private static final String DEFAULT_IMG_PATH = "load\\img\\world\\worldobjects.png";
 	private static final String DEFAULT_IMGPOS_PATH = "load\\img\\world\\imageposition.csv";
-
-	protected int blockX, blockY;
-	protected String objectCode;
+	
 	private static Map<String, WorldObject> allWorldObjects = new HashMap<>();
 	private static Map<String, WorldObjectAction> allObjectFunctions = new HashMap<>();
 	private static Map<String, ArrayList<Image>> objectImagesSet = new HashMap<>();
+
+	protected int blockX, blockY;
+	protected String objectCode;
 	private ArrayList<WorldObjectAction> onEnter = new ArrayList<>(), onExit = new ArrayList<>(),
 			onStep = new ArrayList<>(), onInteract = new ArrayList<>();
-
 	/** Use to tell graphicDepth if objects overlap in worldMap. */
 	private int specialDepth = 0;
 	private ArrayList<ArrayList<String>> functionParameter = new ArrayList<>(4);
@@ -406,9 +406,7 @@ public class WorldObject extends Animation implements Cloneable {
 				Set<Player> players = new HashSet<Player>();
 				players.add(PlayerCharacter.getMe());
 				new GUIFightGameManager(players);
-				MusicUtility.playMusic(WorldManager.getWorldMap().getMapProperties().getProperty("music"));
-
-				
+				MusicUtility.playMusic(WorldManager.getWorldMap().getMapProperties().getProperty("music"), true);
 			}
 		});
 

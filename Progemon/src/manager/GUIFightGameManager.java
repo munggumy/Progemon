@@ -71,7 +71,7 @@ public class GUIFightGameManager {
 
 	private void startFight() {
 
-		MusicUtility.playMusic("battle_wild");
+		MusicUtility.playMusic("battle_wild", false);
 
 		IRenderableHolder.addFightObject(fightMap);
 		spawnPokemons();
