@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import audio.MusicUtility;
 import graphic.DialogBox;
+import graphic.FightHUD;
 import graphic.GameScreen;
 import graphic.IRenderable;
 import graphic.IRenderableHolder;
@@ -28,6 +29,8 @@ import utility.StringUtility;
 
 public class GUIFightGameManager {
 
+	public static GUIFightGameManager instance;
+
 	private ArrayList<Player> players;
 	private ArrayList<Player> currentPlayers;
 	private FightMap fightMap = null;
@@ -39,6 +42,7 @@ public class GUIFightGameManager {
 	private static boolean isWild = true;
 
 	public GUIFightGameManager(Set<Player> players) {
+		instance = this;
 		GlobalPhase.setCurrentPhase(GlobalPhase.FIGHT);
 
 		if (isWild) {
@@ -71,8 +75,6 @@ public class GUIFightGameManager {
 
 	private void startFight() {
 
-		MusicUtility.playMusic("battle_wild", false);
-
 		IRenderableHolder.addFightObject(fightMap);
 		spawnPokemons();
 		fightMap.sortPokemons();
@@ -80,6 +82,7 @@ public class GUIFightGameManager {
 
 		IRenderableHolder.addFightObject(new DialogBox());
 		IRenderableHolder.addFightObject(new QueueBox(this));
+		new FightHUD();
 		System.out.println("Added DialogBox and QueueBox");
 
 		System.out.println("Fight Game loaded without problems.");
@@ -184,13 +187,15 @@ public class GUIFightGameManager {
 
 				double expYield = p.getExpYield() * playerFactor.apply(p) * p.getLevel() / 7;
 				p.getKiller().getOwner().getPokemons().stream().filter(pokemon -> !pokemon.isDead())
-						.forEach(pokemon -> {
+						.forEachOrdered(pokemon -> {
 							// System.out.println("[Pokemon=" +
 							// pokemon.getName() + ":lastExpReq=" +
 							// pokemon.getLastExpRequired() + ", nextExpReq=" +
 							// pokemon.getNextExpRequired() + ", currentExp="+
 							// pokemon.getCurrentExp() + "]");
-							pokemon.addExpAndTryLevelUp(expYield);
+							Clock.delay(10);
+							pokemon.addExp(expYield);
+							Clock.delay(10);
 						});
 				System.out.println(p.getKiller().getOwner().getName() + "'s pokemon gained "
 						+ StringUtility.formatDouble(expYield, 2) + " exp");
@@ -248,6 +253,11 @@ public class GUIFightGameManager {
 
 	public final boolean isWild() {
 		return isWild;
+	}
+
+	public void checkInput() {
+		fightMap.checkInput();
+		FightHUD.checkInput();
 	}
 
 }

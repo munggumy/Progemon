@@ -2,6 +2,8 @@ package utility;
 
 import graphic.Animation;
 import graphic.AnimationHolder;
+import graphic.PsuedoAnimation;
+import graphic.PsuedoAnimationHolder;
 import javafx.scene.input.KeyCode;
 import logic_fight.terrain.FightMap;
 import manager.GUIFightGameManager;
@@ -53,6 +55,12 @@ public class Clock {
 			for (Animation animation : AnimationHolder.getPlayingAnimations()) {
 				animation.update();
 			}
+			for (PsuedoAnimation animation : PsuedoAnimationHolder.getPlayingPsuedoAnimations()) {
+				animation.update();
+			}
+			if (GlobalPhase.getCurrentPhase() == GlobalPhase.FIGHT) {
+				GUIFightGameManager.instance.checkInput();
+			}
 		}
 
 		// InputUtility.clear();
@@ -78,6 +86,13 @@ public class Clock {
 			}
 		}
 		time += periodTime;
+	}
+	
+	public static void delay(int round) {
+		while (round > 0) {
+			tick();
+			round--;
+		}
 	}
 
 	private static void pause() {

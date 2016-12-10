@@ -40,6 +40,7 @@ public class GameStage extends Stage {
 		setScene(normalScene);
 		addListener(normalScene);
 		addListener(fullScene);
+		addFullScreenListener(fullScene);
 		setX(0);
 		setY(0);
 		try {
@@ -129,6 +130,22 @@ public class GameStage extends Stage {
 		});
 
 		System.out.println("Stage Finished Adding Listener");
+	}
+	
+	public void addFullScreenListener(Scene scene) {
+		scene.setOnMouseMoved(mEvent -> {
+			int x = (int) ((mEvent.getX() - FullScreen.X_ORIGIN) / FullScreen.RESIZE_RATE);
+			int y = (int) (mEvent.getY() / FullScreen.RESIZE_RATE);
+			InputUtility.setMouseX(x);
+			InputUtility.setMouseY(y);
+		});
+
+		scene.setOnMouseDragged(mEvent -> {
+			int x = (int) ((mEvent.getX() - FullScreen.X_ORIGIN) / FullScreen.RESIZE_RATE);
+			int y = (int) (mEvent.getY() / FullScreen.RESIZE_RATE);
+			InputUtility.setMouseX(x);
+			InputUtility.setMouseY(y);
+		});
 	}
 
 	public static GameScreen getCanvas() {
