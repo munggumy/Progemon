@@ -1,22 +1,17 @@
 package graphic;
 
-import java.awt.RenderingHints.Key;
-
 import javafx.animation.AnimationTimer;
-import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
-import javafx.scene.image.WritableImage;
-import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import utility.InputUtility;
 
 public class GameStage extends Stage {
@@ -33,22 +28,22 @@ public class GameStage extends Stage {
 		fullCanvas = new FullScreen();
 		Pane root = new Pane();
 		root.getChildren().add(canvas);
+		root.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
+
 		Pane root2 = new Pane();
 		root2.getChildren().add(fullCanvas);
-		normalScene = new Scene(root, GameScreen.WIDTH, GameScreen.HEIGHT, Color.DARKGRAY);
+		root2.setBackground(new Background(new BackgroundFill(Color.BLACK, new CornerRadii(0), new Insets(0))));
+
+		normalScene = new Scene(root, GameScreen.WIDTH, GameScreen.HEIGHT, Color.BLACK);
 		fullScene = new Scene(root2, FullScreen.WIDTH, FullScreen.HEIGHT, Color.BLACK);
+		fullScene.setFill(Color.BLACK);
+
 		setScene(normalScene);
 		addListener(normalScene);
 		addListener(fullScene);
 		addFullScreenListener(fullScene);
 		setX(0);
 		setY(0);
-		try {
-			// TODO Join
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		setResizable(false);
 		setFullScreenExitKeyCombination(new KeyCodeCombination(KeyCode.F12));
 		setFullScreenExitHint("Press F12 to exit full-screen mode.");
@@ -60,14 +55,12 @@ public class GameStage extends Stage {
 				try {
 					GameScreen.repaint();
 				} catch (Exception e) {
-					// TODO: handle exception
 				}
 				if (getScene() == fullScene) {
 					FullScreen.repaint();
 				}
 			}
 		}.start();
-		show();
 	}
 
 	public void addListener(Scene scene) {
@@ -129,9 +122,9 @@ public class GameStage extends Stage {
 			InputUtility.setKeyTriggered(kEvent.getCode(), false);
 		});
 
-		System.out.println("Stage Finished Adding Listener");
+		System.out.println("Scene " + scene + " Finished Adding Listener");
 	}
-	
+
 	public void addFullScreenListener(Scene scene) {
 		scene.setOnMouseMoved(mEvent -> {
 			int x = (int) ((mEvent.getX() - FullScreen.X_ORIGIN) / FullScreen.RESIZE_RATE);

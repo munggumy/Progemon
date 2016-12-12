@@ -3,13 +3,11 @@ package logic_fight.character.activeSkill;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import graphic.Animation;
 import graphic.DrawingUtility;
 import graphic.IRenderable;
-import graphic.IRenderableHolder;
 import javafx.scene.image.Image;
 import logic_fight.character.Element;
 import logic_fight.character.pokemon.Pokemon;
@@ -29,10 +27,15 @@ public class ActiveSkill extends Animation implements IRenderable {
 	private GraphicType graphicType;
 	private Image icon;
 	private static Image nullIcon;
+	private String sfxName;
 
 	static {
-		File file = new File("load\\img\\skill\\null.png");
-		nullIcon = new Image(file.toURI().toString());
+		try {
+			File file = new File("load\\img\\skill\\null.png");
+			nullIcon = new Image(file.toURI().toString());
+		} catch (NullPointerException ex) {
+			System.err.println("Null ActiveSkill Icon File not found");
+		}
 	}
 
 	private ActiveSkill(String skillName, double skillPower) {
@@ -41,7 +44,6 @@ public class ActiveSkill extends Animation implements IRenderable {
 		setPower(skillPower);
 		allActiveSkills.add(this);
 		loadAnimationImage("load/img/skill/Flamethrower/all.png");
-		// loadImage("load/img/skill/Flamethrower/all.png");
 		loadIcon();
 	}
 
@@ -115,7 +117,7 @@ public class ActiveSkill extends Animation implements IRenderable {
 
 	@Override
 	public void draw() {
-		DrawingUtility.drawSkill(this);
+		DrawingUtility.drawActiveSkill(this);
 	}
 
 	@Override
@@ -167,9 +169,17 @@ public class ActiveSkill extends Animation implements IRenderable {
 		try {
 			File file = new File("load\\img\\skill\\" + name + "\\icon.png");
 			icon = new Image(file.toURI().toString());
-		} catch (Exception e) {
-			// TODO: handle exception
+		} catch (NullPointerException ex) {
+			System.err.println("ActiveSkill Icon not found activeSkill=" + name);
 		}
+	}
+
+	public final String getSfxName() {
+		return sfxName;
+	}
+
+	public final void setSfxName(String sfxName) {
+		this.sfxName = sfxName;
 	}
 
 	public Image getIcon() {

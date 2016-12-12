@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
@@ -21,27 +22,34 @@ import javafx.scene.image.WritableImage;
 
 public class WorldMap implements IRenderable {
 
+	private static final String DEFAULT_MUSIC = "littleroot";
+	private static final String DEFAULT_TILE_SET_PATH = "load\\img\\world\\tileset.png";
+	private static List<Image> tilesetList = new ArrayList<Image>();
+
 	private String name;
 	private int[][] map;
-	private static List<Image> tileset = new ArrayList<Image>();
-	private static final String DEFAULT_PATH = "load\\img\\world\\tileset.png";
-	private static WritableImage wimg;
 	private boolean visible = true;
+
 	private List<WorldObject> worldObjects = new ArrayList<>();
 	private List<IRenderable> visibleWorldObjects = new ArrayList<>();
+
+	private List<SpawningPokemonEntry> pokemonSpawningChance = new ArrayList<>();
 
 	private static Properties defaultProperties = new Properties();
 	private Properties mapProperties = new Properties(defaultProperties);
 	static {
-		defaultProperties.setProperty("music", "littleroot");
+		defaultProperties.setProperty("music", DEFAULT_MUSIC);
+		defaultProperties.setProperty("spawning_pokemons", "[pidgey/VERY_COMMON/2/5]");
 	}
 
 	private WorldObject space = WorldObject.createWorldObject("000", -1, -1, new ArrayList<>(), this);
 
 	public WorldMap(String mapName) throws WorldMapException {
 		this.name = mapName;
-		String filePath = "load\\worldmap\\" + mapName + "\\" + mapName + "_map.csv";
-		loadMap(filePath);
+		String propertiesFilePath = "load\\worldmap\\" + mapName + "\\" + mapName + ".properties";
+		loadProperties(propertiesFilePath);
+		String worldMapFilePath = "load\\worldmap\\" + mapName + "\\" + mapName + "_map.csv";
+		loadWorldMap(worldMapFilePath);
 
 		space.hide();
 		space.addOnEnter("-");
@@ -84,7 +92,7 @@ public class WorldMap implements IRenderable {
 		try {
 			return map[y][x];
 		} catch (NullPointerException ex) {
-			throw new WorldMapException("Map not loaded", ex);
+			throw new WorldMapException("Map not loaded ", ex);
 		} catch (IndexOutOfBoundsException ex) {
 			throw new WorldMapException("Cannot find Terrain at [x=" + x + ", y=" + y + "]", ex);
 		}
@@ -96,14 +104,14 @@ public class WorldMap implements IRenderable {
 
 	public static Image getImage(int tileCode) {
 		try {
-			return tileset.get(tileCode - 1);
+			return tilesetList.get(tileCode - 1);
 		} catch (Exception ex) {
 			throw new UnknownTileSetException(ex);
 		}
 	}
 
 	public static List<Image> getTileset() {
-		return tileset;
+		return tilesetList;
 	}
 
 	public int[][] getMap() {
@@ -143,15 +151,23 @@ public class WorldMap implements IRenderable {
 
 	// Load
 
-	/** Loads the tileset image */
-	public static void loadTileset() {
-		Image img = new Image(new File(DEFAULT_PATH).toURI().toString());
-		tileset.add(DrawingUtility.resize(new WritableImage(img.getPixelReader(), 0, 0, 16, 16), 2));
-		tileset.add(DrawingUtility.resize(new WritableImage(img.getPixelReader(), 16, 0, 16, 16), 2));
+	/**
+	 * Loads the tileset image
+	 * 
+	 * @throws WorldMapException
+	 */
+	public static void loadTileset() throws WorldMapException {
+		try {
+			Image img = new Image(new File(DEFAULT_TILE_SET_PATH).toURI().toString());
+			tilesetList.add(DrawingUtility.resize(new WritableImage(img.getPixelReader(), 0, 0, 16, 16), 2));
+			tilesetList.add(DrawingUtility.resize(new WritableImage(img.getPixelReader(), 16, 0, 16, 16), 2));
+		} catch (NullPointerException | IllegalArgumentException ex) {
+			throw new WorldMapException("Exception in WorldMap.loadTileset()", ex);
+		}
 	}
 
-	public void loadMap(String filePath) throws WorldMapException {
-		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(filePath)))) {
+	private void loadWorldMap(String mapFilePath) throws WorldMapException {
+		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(mapFilePath)))) {
 			String delimiter = ",";
 			String[] widthAndHeight = scanner.nextLine().split(delimiter);
 			int width = Integer.parseInt(widthAndHeight[0]);
@@ -178,24 +194,40 @@ public class WorldMap implements IRenderable {
 					map[lineCounter] = mapLine.clone();
 					lineCounter++;
 				} else {
-					throw new WorldMapException("loadMap(): Unmatched pattern : \"" + line + "\", filePath=" + filePath
-							+ ", lineCounter=" + lineCounter);
+					throw new WorldMapException("loadMap(): Unmatched pattern : \"" + line + "\", filePath="
+							+ mapFilePath + ", lineCounter=" + lineCounter);
 				}
 			}
 		} catch (FileNotFoundException ex) {
-			throw new WorldMapException("World Map Load Error [filePath=" + filePath + " not found]", ex);
+			throw new WorldMapException("World Map Load Error [filePath=" + mapFilePath + " not found]", ex);
 		} catch (NumberFormatException ex) {
-			throw new WorldMapException("World Map Load Error [filePath=" + filePath + " not found]", ex);
+			throw new WorldMapException("World Map Load Error [filePath=" + mapFilePath + " ]", ex);
 		}
 	}
 
-	public void loadProperties(String filePath) throws WorldMapException {
+	private void loadProperties(String filePath) throws WorldMapException {
 		try (FileInputStream in = new FileInputStream(filePath)) {
 			mapProperties.load(in);
+			String spawnProperty = mapProperties.getProperty("spawning_pokemons");
+			if (spawnProperty == null || spawnProperty.isEmpty()) {
+				throw new WorldMapException("spawnProperty not set for map=" + name);
+			}
+			String secondaryDelimiter = "/";
+			Pattern pattern = Pattern.compile(String.join(secondaryDelimiter, "\\[(?<pokemonName>\\w+)",
+					"(?<rareness>\\w+)", "(?<minLevel>\\d+)", "(?<maxLevel>\\d+)\\]"));
+			Matcher matcher = pattern.matcher(spawnProperty);
+			while (matcher.find()) {
+				pokemonSpawningChance.add(new SpawningPokemonEntry(matcher.group("pokemonName"),
+						Integer.parseInt(matcher.group("minLevel")), Integer.parseInt(matcher.group("maxLevel")),
+						WildRareness.valueOf(matcher.group("rareness").trim())));
+			}
+
 		} catch (FileNotFoundException ex) {
 			throw new WorldMapException("World Map Properties Load Error [filePath=" + filePath + " not found]", ex);
 		} catch (IOException ex) {
-			throw new WorldMapException("Exception on " + filePath, ex);
+			throw new WorldMapException("IOException on " + filePath, ex);
+		} catch (IllegalArgumentException ex) {
+			throw new WorldMapException("Illegal Argument in WorldMap.loadProperties");
 		}
 	}
 
@@ -221,6 +253,11 @@ public class WorldMap implements IRenderable {
 
 	public void addAllVisibleWorldObject(List<IRenderable> objects) {
 		visibleWorldObjects.addAll(objects);
+	}
+
+	public final List<SpawningPokemonEntry> getSortedPokemonSpawningChance() {
+		Collections.sort(pokemonSpawningChance);
+		return pokemonSpawningChance;
 	}
 
 }

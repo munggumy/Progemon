@@ -99,7 +99,7 @@ public class Main2 extends Application {
 
 				@Override
 				protected Void call() throws Exception {
-					new GUIFightGameManager(players);
+					new GUIFightGameManager(players, false);
 					return null;
 				}
 

@@ -1,22 +1,34 @@
 package main;
 
-import java.util.ArrayList;
-
 import audio.MusicUtility;
 import audio.SFXUtility;
 import graphic.DrawingUtility;
 import graphic.GameStage;
+import item.Items;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
+import javafx.concurrent.Worker;
+import javafx.concurrent.Worker.State;
+import javafx.geometry.Insets;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import logic_fight.character.pokemon.Pokemon;
-import logic_fight.player.AIPlayer;
-import logic_fight.player.HPAIPlayer;
-import logic_fight.player.Player;
 import manager.WorldManager;
+import utility.AnimationUtility;
 import utility.FileUtility;
-import utility.Pokedex;
 import utility.ThreadUtility;
 
 public class Main3 extends Application {
@@ -26,7 +38,7 @@ public class Main3 extends Application {
 		launch(args);
 	}
 
-	private static Thread updateUIThread;
+	// private static Thread updateUIThread;
 
 	@Override
 	public void stop() throws Exception {
@@ -36,34 +48,97 @@ public class Main3 extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		Thread.setDefaultUncaughtExceptionHandler(ThreadUtility::showError);
-		new GameStage();
-		FileUtility.loadAllDefaults();
+		final Group root = new Group();
+		Pane waitingPane = new StackPane();
+		waitingPane.setPrefSize(400, 300);
+		waitingPane.setBackground(
+				new Background(new BackgroundFill(Color.DODGERBLUE, new CornerRadii(1), new Insets(10))));
 
-		Pokemon charlizard = Pokedex.getPokemon("Charlizard");
-		charlizard.setLevel(38);
+		final ProgressBar progress = new ProgressBar(0);
+		progress.setTranslateY(-25);
+		progress.setMinWidth(200);
+		final Label load = new Label("loading...");
+		load.setFont(Font.font("Helvetica Neue", FontWeight.EXTRA_LIGHT, FontPosture.ITALIC, 25));
+		load.setTextFill(Color.ALICEBLUE);
+		load.setTranslateY(25);
+		waitingPane.getChildren().addAll(progress, load);
 
-		Pokemon caterpie = Pokedex.getPokemon("Caterpie");
-		caterpie.setLevel(5);
+		root.getChildren().add(waitingPane);
+		Stage s = new Stage();
+		s.setScene(new Scene(root, 400, 300));
+		s.setX(0);
+		s.setY(0);
 
-		Pokemon wartortle = Pokedex.getPokemon("Wartortle");
-		wartortle.setLevel(34);
+		GameStage gs = new GameStage();
 
-		Pokemon pidgeotto = Pokedex.getPokemon("Pidgeotto");
-		pidgeotto.setLevel(30);
-		pidgeotto.setMoveRange(8);
+		Task<Void> preLoad = new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
 
-		Player p1 = new HPAIPlayer("AI 1", charlizard, Color.RED);
-		p1.addPokemon(caterpie);
-		Player p2 = new AIPlayer("AI 2", pidgeotto, Color.BLUE);
-		p2.addPokemon(wartortle);
+				int num = 8;
+				FileUtility.loadActiveSkills();
+				progress.setProgress(1.00 / num);
+				FileUtility.loadPokedex();
+				progress.setProgress(2.00 / num);
+				FileUtility.loadStrengthWeaknessTable();
+				progress.setProgress(3.00 / num);
+				Items.loadItems();
+				progress.setProgress(4.00 / num);
+				new DrawingUtility();
+				progress.setProgress(5.00 / num);
+				new MusicUtility();
+				progress.setProgress(6.00 / num);
+				new SFXUtility(2);
+				progress.setProgress(7.00 / num);
+				new AnimationUtility();
+				progress.setProgress(1.00);
 
-		ArrayList<Player> players = new ArrayList<Player>();
-		players.add(p1);
-		players.add(p2);
+				return null;
+			}
+		};
 
-		new DrawingUtility();
-		new MusicUtility();
-		new SFXUtility(2);
+		preLoad.setOnFailed(e -> {
+			load.setText("Failed to load...");
+			System.err.println("Stopped Loading at progress = " + progress.getProgress());
+		});
+
+		preLoad.stateProperty().addListener(new ChangeListener<Worker.State>() {
+
+			@Override
+			public void changed(ObservableValue<? extends State> observable, State oldState, State newState) {
+				if (newState == Worker.State.SUCCEEDED) {
+					s.close();
+				}
+			}
+
+		});
+		new Thread(preLoad).start();
+		s.showAndWait();
+
+		// Pokemon charlizard = Pokedex.getPokemon("Charlizard");
+		// charlizard.addActiveSkill(ActiveSkill.getActiveSkill("Flamethrower"));
+		// charlizard.setLevel(38);
+		//
+		// Pokemon caterpie = Pokedex.getPokemon("Caterpie");
+		// charlizard.addActiveSkill(ActiveSkill.getActiveSkill("Tackle"));
+		// caterpie.setLevel(5);
+		//
+		// Pokemon wartortle = Pokedex.getPokemon("Wartortle");
+		// charlizard.addActiveSkill(ActiveSkill.getActiveSkill("Tackle"));
+		// wartortle.setLevel(34);
+		//
+		// Pokemon pidgeotto = Pokedex.getPokemon("Pidgeotto");
+		// pidgeotto.setLevel(30);
+		// pidgeotto.setMoveRange(8);
+		//
+		// Player p1 = new HPAIPlayer("AI 1", charlizard, Color.RED);
+		// p1.addPokemon(caterpie);
+		// Player p2 = new AIPlayer("AI 2", pidgeotto, Color.BLUE);
+		// p2.addPokemon(wartortle);
+		//
+		// ArrayList<Player> players = new ArrayList<Player>();
+		// players.add(p1);
+		// players.add(p2);
 
 		// @SuppressWarnings("unused")
 
@@ -76,6 +151,7 @@ public class Main3 extends Application {
 		 * (this.updateUIThread = new Thread(() -> { GUIFightGameManager gui =
 		 * new GUIFightGameManager(players); })).start();
 		 */
+
 		Thread logic = new Thread(new Task<Void>() {
 
 			@Override
@@ -87,6 +163,7 @@ public class Main3 extends Application {
 		});
 		logic.setName("Logic Thread");
 		logic.start();
+		gs.show();
 	}
 
 }

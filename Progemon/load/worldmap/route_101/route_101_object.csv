@@ -2,10 +2,10 @@
 ##objectcode,blockX,blockY,functionParameter(0[enter],1[interact],2[step],3[exit])
 011,18,23,2[18/5/false/none],0[littleroot]
 011,19,23,2[19/5/false/none],0[littleroot]
-011,16,0,2[16/24/false/none],0[oldale]
-011,17,0,2[17/24/false/none],0[oldale]
-011,18,0,2[18/24/false/none],0[oldale]
-011,19,0,2[19/24/false/none],0[oldale]
+011,16,0,2[16/22/false/none],0[oldale]
+011,17,0,2[17/22/false/none],0[oldale]
+011,18,0,2[18/22/false/none],0[oldale]
+011,19,0,2[19/22/false/none],0[oldale]
 001,0,1
 001,2,1
 001,4,1

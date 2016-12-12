@@ -6,25 +6,16 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Random;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
-import audio.MusicUtility;
 import graphic.Animation;
 import graphic.DrawingUtility;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import logic_fight.player.Player;
-import logic_world.player.PlayerCharacter;
-import manager.GUIFightGameManager;
 import manager.WorldManager;
-import utility.AnimationUtility;
 import utility.Clock;
 
 public class WorldObject extends Animation implements Cloneable {
@@ -32,7 +23,7 @@ public class WorldObject extends Animation implements Cloneable {
 	private static final String WORLD_OBJECTS_PROP_FILE = "load\\worldobjects_list.csv";
 	private static final String DEFAULT_IMG_PATH = "load\\img\\world\\worldobjects.png";
 	private static final String DEFAULT_IMGPOS_PATH = "load\\img\\world\\imageposition.csv";
-	
+
 	private static Map<String, WorldObject> allWorldObjects = new HashMap<>();
 	private static Map<String, WorldObjectAction> allObjectFunctions = new HashMap<>();
 	private static Map<String, ArrayList<Image>> objectImagesSet = new HashMap<>();
@@ -92,7 +83,6 @@ public class WorldObject extends Animation implements Cloneable {
 
 	public WorldObject(String objectCode, String onEnter, String onStep, String onExit, String onInteract,
 			int frameNumber, int frameDelay, boolean loop, boolean autostop) {
-		// TODO Auto-generated constructor stub
 		super(frameNumber, frameDelay, loop, autostop);
 		this.objectCode = objectCode;
 		addOnEnter(onEnter);
@@ -162,6 +152,8 @@ public class WorldObject extends Animation implements Cloneable {
 		this.specialDepth = specialDepth;
 	}
 
+	// Functions
+
 	public void addOnEnter(String actionCodes) {
 		for (String actionCode : actionCodes.split("/")) {
 			this.onEnter.add(allObjectFunctions.get(actionCode));
@@ -193,8 +185,8 @@ public class WorldObject extends Animation implements Cloneable {
 	public void interacted() {
 		parameterCounter = 0;
 		actionType = 1;
-		for (WorldObjectAction function : onInteract) {
-			function.execute(this);
+		for (WorldObjectAction action : onInteract) {
+			action.execute(this);
 		}
 	}
 
@@ -211,8 +203,8 @@ public class WorldObject extends Animation implements Cloneable {
 	public void step() {
 		parameterCounter = 0;
 		actionType = 2;
-		for (WorldObjectAction function : onStep) {
-			function.execute(this);
+		for (WorldObjectAction action : onStep) {
+			action.execute(this);
 		}
 	}
 
@@ -229,8 +221,8 @@ public class WorldObject extends Animation implements Cloneable {
 	public void exit() {
 		parameterCounter = 0;
 		actionType = 3;
-		for (WorldObjectAction function : onExit) {
-			function.execute(this);
+		for (WorldObjectAction action : onExit) {
+			action.execute(this);
 		}
 	}
 
@@ -251,29 +243,27 @@ public class WorldObject extends Animation implements Cloneable {
 				}
 				matcher = pattern.matcher(line);
 				if (matcher.find()) {
-					String objectCode = matcher.group("objectCode");
+					String objectCode = String.format("%03d", Integer.parseInt(matcher.group("objectCode")));
 					int blockX = Integer.parseInt(matcher.group("blockX"));
 					int blockY = Integer.parseInt(matcher.group("blockY"));
 					if (blockX < minX || blockX > maxX || blockY < minY || blockY > maxY) {
-						if (!objectCode.equals("001") && !objectCode.equals("002")) {
-							System.out.println(
-									"WorldObject.java : Rejected object " + objectCode + " in " + owner.getName());
-							System.out.println("[blockX=" + blockX + ", blockY=" + blockY + ", x in [" + minX + ", "
-									+ maxX + "], y in [" + minY + ", " + maxY + "] ]");
-						}
 						continue loop;
 					}
 					blockX += offsetX;
 					blockY += offsetY;
+
+					functionsStr.clear();
 					if (matcher.group("functionParam") != null && !matcher.group("functionParam").isEmpty()) {
-						functionsStr.clear();
 						for (String string : matcher.group("functionParam").trim().split(delimiter)) {
-							if (!string.isEmpty()) {
+							if (string != null && !string.isEmpty()) {
 								functionsStr.add(string);
 							}
 						}
 					}
 					createWorldObject(objectCode, blockX, blockY, functionsStr, owner);
+				} else {
+					throw new WorldMapException(
+							"Unmatched Pattern In WorldObject.java : line=" + line + ", pattern=" + pattern);
 				}
 			}
 		} catch (Exception e) {
@@ -385,42 +375,28 @@ public class WorldObject extends Animation implements Cloneable {
 			target.hide();
 		});
 
-		allObjectFunctions.put("hideplayer", object -> {
+		allObjectFunctions.put("hideplayer", target -> {
 			WorldManager.getPlayer().hide();
 		});
 
-		allObjectFunctions.put("showplayer", object -> {
+		allObjectFunctions.put("showplayer", target -> {
 			WorldManager.getPlayer().show();
 		});
 
-		allObjectFunctions.put("spawn", object -> {
-			Random random = new Random();
-			if (random.nextInt(100) < 8) {
-				MusicUtility.playMusic("battle_wild");
-				AnimationUtility.getLoadScreen01().show();
-				AnimationUtility.getLoadScreen01().play();
-				while (AnimationUtility.getLoadScreen01().isPlaying()) {
-					Clock.tick();
-				}
-
-				System.out.println("to fightmap !!!");
-				Set<Player> players = new HashSet<Player>();
-				players.add(PlayerCharacter.getMe());
-				new GUIFightGameManager(players);
-				MusicUtility.playMusic(WorldManager.getWorldMap().getMapProperties().getProperty("music"), true);
-			}
+		allObjectFunctions.put("spawn", target -> {
+			SpawningUtility.trySpawnPokemon(WorldManager.getWorldMap());
 		});
 
-		allObjectFunctions.put("changemap", object -> {
-			String[] parameters = object.functionParameter.get(object.actionType).get(object.parameterCounter)
+		allObjectFunctions.put("changemap", target -> {
+			String[] parameters = target.functionParameter.get(target.actionType).get(target.parameterCounter)
 					.split("/");
-			object.parameterCounter++;
+			target.parameterCounter++;
 			System.out.println("parameter passed [1] and [2]" + parameters[1] + " " + parameters[2]);
 			WorldManager.changeWorld(parameters[0], Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]),
 					Boolean.parseBoolean(parameters[3]), parameters[4]);
 		});
 
-		allObjectFunctions.put("playerpause", object -> {
+		allObjectFunctions.put("playerpause", target -> {
 			WorldManager.getPlayer().pause();
 		});
 
@@ -428,14 +404,14 @@ public class WorldObject extends Animation implements Cloneable {
 			WorldManager.getPlayer().unpause();
 		});
 
-		allObjectFunctions.put("playerwalk", object -> {
+		allObjectFunctions.put("playerwalk", target -> {
 			WorldManager.getPlayer().walk();
 		});
 
-		allObjectFunctions.put("loadmap", object -> {
-			String[] parameters = object.functionParameter.get(object.actionType).get(object.parameterCounter)
+		allObjectFunctions.put("loadmap", target -> {
+			String[] parameters = target.functionParameter.get(target.actionType).get(target.parameterCounter)
 					.split("/");
-			object.parameterCounter++;
+			target.parameterCounter++;
 			try {
 				WorldManager.setWorldMapBuffer(WorldManager.loadWorld(parameters[0]));
 			} catch (WorldMapException ex) {
@@ -443,10 +419,10 @@ public class WorldObject extends Animation implements Cloneable {
 			}
 		});
 
-		allObjectFunctions.put("usemap", object -> {
-			String[] parameters = object.functionParameter.get(object.actionType).get(object.parameterCounter)
+		allObjectFunctions.put("usemap", target -> {
+			String[] parameters = target.functionParameter.get(target.actionType).get(target.parameterCounter)
 					.split("/");
-			object.parameterCounter++;
+			target.parameterCounter++;
 			try {
 				WorldManager.useBufferedWorld(Integer.parseInt(parameters[0]), Integer.parseInt(parameters[1]));
 			} catch (NumberFormatException | WorldMapException ex) {

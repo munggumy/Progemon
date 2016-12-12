@@ -1,20 +1,21 @@
 package manager;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import audio.MusicUtility;
+import audio.SFXUtility;
 import graphic.DialogBox;
 import graphic.FightHUD;
-import graphic.GameScreen;
-import graphic.IRenderable;
 import graphic.IRenderableHolder;
 import graphic.QueueBox;
 import javafx.scene.paint.Color;
 import logic_fight.FightPhase;
+import logic_fight.character.activeSkill.ActiveSkill;
 import logic_fight.character.pokemon.Pokemon;
 import logic_fight.player.AIPlayer;
 import logic_fight.player.Player;
@@ -29,29 +30,32 @@ import utility.StringUtility;
 
 public class GUIFightGameManager {
 
-	public static GUIFightGameManager instance;
+	public static GUIFightGameManager currentFightManager;
 
-	private ArrayList<Player> players;
-	private ArrayList<Player> currentPlayers;
+	private List<Player> players;
+	private List<Player> currentPlayers;
 	private FightMap fightMap = null;
 	private Pokemon currentPokemon = null;
 	private Player currentPlayer = null;
 	private Player winnerPlayer = null;
 	private FightPhase currentPhase, nextPhase;
 
-	private static boolean isWild = true;
+	private boolean isWild;
 
-	public GUIFightGameManager(Set<Player> players) {
-		instance = this;
-		GlobalPhase.setCurrentPhase(GlobalPhase.FIGHT);
+	/** set of players including the wild player if isWild */
+	public GUIFightGameManager(Set<Player> players, boolean isWild) {
+		
+		currentFightManager = this;
+		this.isWild = isWild;
 
-		if (isWild) {
-			Player wildPlayer = new AIPlayer("God", Color.GREEN);
-			Pokemon pidgey = Pokedex.getPokemon("Pidgey");
-			pidgey.setLevel(3);
-			wildPlayer.addPokemon(pidgey);
-			players.add(wildPlayer);
-		}
+		// if (isWild) {
+		// Player wildPlayer = new AIPlayer("God", Color.GREEN);
+		// Pokemon pidgey = Pokedex.getPokemon("Pidgey");
+		// pidgey.setLevel(3);
+		// pidgey.addActiveSkill(ActiveSkill.getActiveSkill("Gust"));
+		// wildPlayer.addPokemon(pidgey);
+		// players.add(wildPlayer);
+		// }
 
 		this.players = new ArrayList<Player>(players);
 		currentPlayers = new ArrayList<Player>(players);
@@ -64,28 +68,21 @@ public class GUIFightGameManager {
 		});
 
 		players.stream().forEach(p -> p.setCurrentFightManager(this));
-
 		fightMap = new FightMap(FileUtility.loadFightMap());
-		// Load Graphics
-		new Clock();
-		startFight();
-		runFight();
-		endFight();
-	}
-
-	private void startFight() {
-
-		IRenderableHolder.addFightObject(fightMap);
 		spawnPokemons();
 		fightMap.sortPokemons();
-		System.out.println(fightMap.getPokemonsOnMap());
 
+	}
+
+	public void startFight() {
+		GlobalPhase.setCurrentPhase(GlobalPhase.FIGHT);
+		new Clock();
+
+		IRenderableHolder.addFightObject(fightMap);
 		IRenderableHolder.addFightObject(new DialogBox());
 		IRenderableHolder.addFightObject(new QueueBox(this));
 		new FightHUD();
 		System.out.println("Added DialogBox and QueueBox");
-
-		System.out.println("Fight Game loaded without problems.");
 
 		AnimationUtility.getLoadScreen01().setPlayback(true);
 		AnimationUtility.getLoadScreen01().play();
@@ -95,7 +92,10 @@ public class GUIFightGameManager {
 		AnimationUtility.getLoadScreen01().setPlayback(false);
 		AnimationUtility.getLoadScreen01().hide();
 
+		System.out.println("Fight Game loaded without problems.");
 		DialogBox.sentMessage("Press '" + DialogBox.advancingKey.toString() + "' to start!");
+		runFight();
+		endFight();
 	}
 
 	private void runFight() {
@@ -125,7 +125,7 @@ public class GUIFightGameManager {
 	}
 
 	private void endFight() {
-		MusicUtility.playMusic("victory_wild");
+		MusicUtility.playMusic("victory_wild", false);
 		System.out.println("The fight has ended.");
 		System.out.println("The winner is " + winnerPlayer.getName());
 		DialogBox.sentMessage("The winner is " + winnerPlayer.getName());
@@ -178,21 +178,16 @@ public class GUIFightGameManager {
 	}
 
 	private void clearDeadPokemons() {
-		Function<Pokemon, Double> playerFactor = pokemon -> pokemon.getOwner().isGodlike() ? 1 : 1.5;
+		double playerFactor = isWild ? 1 : 1.5;
 
 		for (int i = fightMap.getPokemonsOnMap().size() - 1; i >= 0; i--) {
 			Pokemon p = fightMap.getPokemonsOnMap().get(i);
 			if (p.isDead()) {
 				System.out.println(p.getName() + " is DEAD!");
 
-				double expYield = p.getExpYield() * playerFactor.apply(p) * p.getLevel() / 7;
+				double expYield = p.getExpYield() * playerFactor * p.getLevel() / 7;
 				p.getKiller().getOwner().getPokemons().stream().filter(pokemon -> !pokemon.isDead())
 						.forEachOrdered(pokemon -> {
-							// System.out.println("[Pokemon=" +
-							// pokemon.getName() + ":lastExpReq=" +
-							// pokemon.getLastExpRequired() + ", nextExpReq=" +
-							// pokemon.getNextExpRequired() + ", currentExp="+
-							// pokemon.getCurrentExp() + "]");
 							Clock.delay(10);
 							pokemon.addExp(expYield);
 							Clock.delay(10);
@@ -201,6 +196,7 @@ public class GUIFightGameManager {
 						+ StringUtility.formatDouble(expYield, 2) + " exp");
 
 				fightMap.removePokemonFromMap(p);
+				SFXUtility.playSound("pokemon_faints");
 			}
 		}
 	}
@@ -215,11 +211,11 @@ public class GUIFightGameManager {
 		}
 	}
 
-	public final ArrayList<Player> getPlayers() {
+	public final List<Player> getPlayers() {
 		return players;
 	}
 
-	public final ArrayList<Player> getCurrentPlayers() {
+	public final List<Player> getCurrentPlayers() {
 		return currentPlayers;
 	}
 

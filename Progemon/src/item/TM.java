@@ -11,4 +11,8 @@ public class TM extends Item {
 		this.activeSkill = activeSkill;
 	}
 
+	public ActiveSkill getActiveSkill() {
+		return activeSkill;
+	}
+
 }

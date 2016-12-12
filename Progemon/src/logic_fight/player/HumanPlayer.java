@@ -14,7 +14,6 @@ import logic_fight.character.activeSkill.ActiveSkill;
 import logic_fight.character.pokemon.Pokemon;
 import logic_fight.terrain.FightMap;
 import logic_fight.terrain.FightTerrain;
-import manager.GUIFightGameManager;
 import utility.InputUtility;
 import utility.exception.AbnormalPhaseOrderException;
 
@@ -38,9 +37,13 @@ public class HumanPlayer extends Player {
 	@Override
 	protected boolean inputNextPath(Pokemon pokemon) throws AbnormalPhaseOrderException {
 		KeyCode captureKey = KeyCode.C;
+		KeyCode itemKey = KeyCode.I;
 		if (InputUtility.getKeyTriggered(captureKey) && getCurrentFightManager().canCapturePokemon()) {
 			throw new AbnormalPhaseOrderException(FightPhase.preCapturePhase);
+		} else if (InputUtility.getKeyTriggered(itemKey)) {
+			throw new AbnormalPhaseOrderException(FightPhase.preItemPhase);
 		}
+
 		if (!InputUtility.isMouseLeftClick()) {
 			return false;
 		} else {
@@ -75,12 +78,10 @@ public class HumanPlayer extends Player {
 				super.nextAttackedPokemon = otherPokemon;
 				FightHUD.setShowSkillMenu(true);
 				return true;
-			}
-			else if (otherPokemon.orElse(null) == pokemon) {
+			} else if (otherPokemon.orElse(null) == pokemon) {
 				FightHUD.setShowSkillMenu(true);
 				return false;
-			}
-			else {
+			} else {
 				super.nextAttackedPokemon = Optional.empty();
 				return false;
 			}
@@ -127,15 +128,40 @@ public class HumanPlayer extends Player {
 		if (!InputUtility.isMouseLeftClick()) {
 			return false;
 		}
-		FightTerrain destination = pokemon.getCurrentFightMap().getFightTerrainAt(
-				InputUtility.getMouseX() / FightTerrain.IMG_SIZE_X, InputUtility.getMouseY() / FightTerrain.IMG_SIZE_Y);
+		FightTerrain destination = pokemon.getCurrentFightMap().getFightTerrainAt(FightMap.getCursorX(),
+				FightMap.getCursorY());
 		Optional<Pokemon> otherPokemon = pokemon.getCurrentFightMap().getPokemonAt(destination);
 		otherPokemon.ifPresent(other -> {
 			if (!other.getOwner().equals(pokemon.getOwner())) {
 				captureTarget = other;
 			}
 		});
+		System.out.println("capture target = " + captureTarget);
 		return captureTarget != null;
 	}
 
+	@Override
+	protected boolean inputUseItem(Pokemon pokemon) throws AbnormalPhaseOrderException {
+		return super.inputUseItem(pokemon);
+	}
+
+	@Override
+	protected boolean inputUseItemPokemon(Pokemon pokemon) throws AbnormalPhaseOrderException {
+		KeyCode goBackKey = KeyCode.I;
+		if (InputUtility.getKeyTriggered(goBackKey)) {
+			throw new AbnormalPhaseOrderException(FightPhase.preMovePhase);
+		}
+		if (!InputUtility.isMouseLeftClick()) {
+			return false;
+		}
+		FightTerrain destination = pokemon.getCurrentFightMap().getFightTerrainAt(FightMap.getCursorX(),
+				FightMap.getCursorY());
+		Optional<Pokemon> otherPokemon = pokemon.getCurrentFightMap().getPokemonAt(destination);
+		otherPokemon.ifPresent(other -> {
+			if (other.getOwner().equals(pokemon.getOwner())) {
+				itemTargetPokemon = other;
+			}
+		});
+		return itemTargetPokemon != null;
+	}
 }

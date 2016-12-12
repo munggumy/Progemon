@@ -5,11 +5,14 @@ import java.io.File;
 import audio.SFXUtility;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import utility.Clock;
 import utility.InputUtility;
 
 public class DialogBox implements IRenderable {
+
+	public static final Color FONT_COLOR = Color.BLACK;
 
 	protected static final String DIALOG_BOX_PATH = "load\\img\\dialogbox\\Theme2.png";
 	private static Image dialogBoxImage = null;

@@ -5,6 +5,7 @@ import java.io.File;
 import audio.SFXUtility;
 import graphic.Animation;
 import graphic.DrawingUtility;
+import item.Bag;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
@@ -19,16 +20,21 @@ public class PlayerCharacter extends Animation {
 	private static final String DEFAULT_IMG_PATH = "load\\img\\player\\Boy.png";
 	private static final int FAST_DELAY = 2, MEDIAM_DELAY = 5, SLOW_DELAY = 8, VERYSLOW_DELAY = 11;
 
-	private static float x, y;
-	private static int blockX, blockY;
-	private static WorldDirection direction;
-	private static int frameLimit = 2;
-	private static int legState = 0;
-	private static boolean moving = false, walking = false, turning = false, stucking = false;
+	public static final PlayerCharacter instance = new PlayerCharacter();
 
-	private static HumanPlayer me = new HumanPlayer("Mhee", Color.BROWN);
+	private float x, y;
+	private int blockX, blockY;
+	private WorldDirection direction;
+	private int frameLimit = 2;
+	private int legState = 0;
+	private int repelTime = 0;
+	private boolean moving = false, walking = false, turning = false, stucking = false;
 
-	public PlayerCharacter() {
+	
+	private HumanPlayer me = new HumanPlayer("Mhee", Color.BROWN);
+	private Bag bag = me.getBag();
+
+	private PlayerCharacter() {
 		super(DrawingUtility.resize(new Image(new File(DEFAULT_IMG_PATH).toURI().toString()), 2), 2);
 		setFrameDelay(3);
 
@@ -40,7 +46,7 @@ public class PlayerCharacter extends Animation {
 
 		me.addPokemon(charlizard);
 		me.addPokemon(caterpie);
-		direction = WorldDirection.DOWN;
+		direction = WorldDirection.SOUTH;
 	}
 
 	@Override
@@ -55,6 +61,7 @@ public class PlayerCharacter extends Animation {
 		int x = blockX + (direction.ordinal() - 2) * (direction.ordinal() % 2);
 		int y = blockY + (direction.ordinal() - 1) * (direction.ordinal() % 2 - 1);
 		System.out.println("Player walk --> x : " + x + ", y : " + y);
+		repelTime = repelTime == 0 ? 0 : repelTime - 1;
 		play();
 		walking = true;
 		moving = true;
@@ -77,7 +84,6 @@ public class PlayerCharacter extends Animation {
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
 		if (!playing) {
 			return;
 		}
@@ -92,16 +98,16 @@ public class PlayerCharacter extends Animation {
 
 	public void walkUpdate() {
 		switch (direction) {
-		case DOWN:
+		case SOUTH:
 			y += 32f / (VERYSLOW_DELAY + 1);
 			break;
-		case LEFT:
+		case WEST:
 			x -= 32f / (VERYSLOW_DELAY + 1);
 			break;
-		case UP:
+		case NORTH:
 			y -= 32f / (VERYSLOW_DELAY + 1);
 			break;
-		case RIGHT:
+		case EAST:
 			x += 32f / (VERYSLOW_DELAY + 1);
 			break;
 		}
@@ -122,16 +128,16 @@ public class PlayerCharacter extends Animation {
 			legState++;
 			legState %= 2;
 			switch (direction) {
-			case DOWN:
+			case SOUTH:
 				blockY += 1;
 				break;
-			case LEFT:
+			case WEST:
 				blockX -= 1;
 				break;
-			case UP:
+			case NORTH:
 				blockY -= 1;
 				break;
-			case RIGHT:
+			case EAST:
 				blockX += 1;
 				break;
 			}
@@ -193,59 +199,59 @@ public class PlayerCharacter extends Animation {
 		return wimg;
 	}
 
-	public static double getX() {
+	public double getX() {
 		return x;
 	}
 
-	public static double getY() {
+	public double getY() {
 		return y;
 	}
 
-	public static void setX(float x) {
-		PlayerCharacter.x = x;
+	public void setX(float x) {
+		this.x = x;
 	}
 
-	public static void setY(float y) {
-		PlayerCharacter.y = y;
+	public void setY(float y) {
+		this.y = y;
 	}
 
-	public static int getBlockX() {
+	public int getBlockX() {
 		return blockX;
 	}
 
-	public static int getBlockY() {
+	public int getBlockY() {
 		return blockY;
 	}
 
-	public static void setBlockX(int blockX) {
-		PlayerCharacter.blockX = blockX;
+	public void setBlockX(int blockX) {
+		this.blockX = blockX;
 	}
 
-	public static void setBlockY(int blockY) {
-		PlayerCharacter.blockY = blockY;
+	public void setBlockY(int blockY) {
+		this.blockY = blockY;
 	}
 
-	public static WorldDirection getDirection() {
+	public WorldDirection getDirection() {
 		return direction;
 	}
 
-	public static void setDirection(WorldDirection direction) {
-		PlayerCharacter.direction = direction;
+	public void setDirection(WorldDirection direction) {
+		this.direction = direction;
 	}
 
-	public static boolean isMoving() {
+	public boolean isMoving() {
 		return moving;
 	}
 
-	public static void setMoving(boolean moving) {
-		PlayerCharacter.moving = moving;
+	public void setMoving(boolean moving) {
+		this.moving = moving;
 	}
 
-	public static boolean isWalking() {
+	public boolean isWalking() {
 		return walking;
 	}
 
-	public static boolean isStucking() {
+	public boolean isStucking() {
 		return stucking;
 	}
 
@@ -259,8 +265,18 @@ public class PlayerCharacter extends Animation {
 		DrawingUtility.drawPlayer(this);
 	}
 
-	public static final HumanPlayer getMe() {
+	public final HumanPlayer getMe() {
 		return me;
+	}
+
+	public void setRepelTime(int repelTime) {
+		if (repelTime < 0) {
+			throw new IllegalArgumentException("repelTime cannot be negative");
+		}
+		if (this.repelTime > repelTime) {
+			return;
+		}
+		this.repelTime = repelTime;
 	}
 
 }

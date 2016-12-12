@@ -16,17 +16,14 @@ import java.util.regex.Pattern;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.concurrent.Task;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaPlayer.Status;
 import javafx.util.Duration;
-import utility.Clock;
 
 public final class MusicUtility {
 
 	private static final Duration DEFAULT_FADE_DURATION = Duration.millis(1000);
-	private static final double DEFAULT_VOLUME = 1.0;
+	private static final double DEFAULT_VOLUME = 0.7;
 	private static final String MUSIC_MAP_LOCATION = "load/music_map.txt";
 	private static final String MUSIC_DIRECTORY = "music";
 	private static ExecutorService musicExecutor = Executors.newFixedThreadPool(1);
@@ -67,23 +64,36 @@ public final class MusicUtility {
 		musicMap.put(id, music);
 	}
 
+	public static void loadMusic(String id, URL url, Duration startTime, Duration endTime) {
+		Media media = new Media(url.toExternalForm());
+		BGMusic music = new BGMusic(media, startTime, endTime);
+		musicMap.put(id, music);
+	}
+
 	public static void loadMusicMap(String url) {
 		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(url)))) {
 			String delimiter = "\\s*,\\s*";
 			String fileNameRegex = "[\\d\\w\\s!.()_]+";
-			Pattern pattern = Pattern
-					.compile(String.join(delimiter, "(?<musicCode>[\\w_]+)", "(?<fileName>" + fileNameRegex + ")"));
+			Pattern pattern = Pattern.compile(String.join(delimiter, "(?<musicCode>[\\w_]+)",
+					"(?<fileName>" + fileNameRegex + ")(?<startTime>", "\\d+\\w+)?(?<endTime>", "\\d+[ ]?\\w+)?"));
 			Matcher matcher;
 			while (scanner.hasNextLine()) {
 				matcher = pattern.matcher(scanner.nextLine());
 				if (matcher.find()) {
 					URL musicURL = ClassLoader.getSystemResource(MUSIC_DIRECTORY + "/" + matcher.group("fileName"));
-					loadMusic(matcher.group("musicCode"), musicURL);
+					if (matcher.group("startTime") != null && matcher.group("endTime") != null) {
+						Duration startTime = Duration.valueOf(matcher.group("startTime"));
+						Duration endTime = Duration.valueOf(matcher.group("endTime"));
+						loadMusic(matcher.group("musicCode"), musicURL, startTime, endTime);
+					} else {
+						loadMusic(matcher.group("musicCode"), musicURL);
+					}
 				} else {
 					System.err.println("Unmatched pattern in MusicUtil.loadMusic()");
 				}
 			}
 		} catch (FileNotFoundException ex) {
+			System.err.println("Music Map file not found.");
 			ex.printStackTrace();
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -107,6 +117,7 @@ public final class MusicUtility {
 				}
 				player = new MediaPlayer(musicMap.get(id).getMusic());
 				// player.setStopTime(Duration.millis(61485));
+				player.setVolume(DEFAULT_VOLUME);
 				player.setCycleCount(MediaPlayer.INDEFINITE);
 				// player.setOnRepeat(() -> {
 				// System.out.println("before" + System.currentTimeMillis());
@@ -190,6 +201,10 @@ public final class MusicUtility {
 
 	public static void setPlayerRate(double rate) {
 		player.setRate(rate);
+	}
+
+	public static void setVolume(double volume) {
+		player.setVolume(volume);
 	}
 
 	/**

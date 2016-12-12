@@ -2,6 +2,8 @@ package logic_world.terrain;
 
 public class WorldMapException extends Exception {
 
+	private static final long serialVersionUID = -4953116812646800706L;
+
 	public WorldMapException() {
 		super();
 	}
@@ -17,5 +19,5 @@ public class WorldMapException extends Exception {
 	public WorldMapException(Throwable arg0) {
 		super(arg0);
 	}
-	
+
 }

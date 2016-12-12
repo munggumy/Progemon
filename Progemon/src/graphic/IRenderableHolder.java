@@ -1,12 +1,12 @@
 package graphic;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 import logic_world.terrain.WorldObject;
 import utility.GlobalPhase;
@@ -17,9 +17,9 @@ public class IRenderableHolder {
 	private static final Lock readLock = readWriteLock.readLock();
 	private static final Lock writeLock = readWriteLock.writeLock();
 
-	private static CopyOnWriteArrayList<IRenderable> fightObjects = new CopyOnWriteArrayList<IRenderable>();
-	private static CopyOnWriteArrayList<IRenderable> worldObjects = new CopyOnWriteArrayList<IRenderable>();
-	private static CopyOnWriteArrayList<IRenderable> screenTransitions = new CopyOnWriteArrayList<IRenderable>();
+	private static List<IRenderable> fightObjects = new ArrayList<IRenderable>();
+	private static List<IRenderable> worldObjects = new ArrayList<IRenderable>();
+	private static List<IRenderable> screenTransitions = new ArrayList<IRenderable>();
 
 	public static void addWorldObject(IRenderable object) {
 		writeLock.lock();
@@ -87,7 +87,7 @@ public class IRenderableHolder {
 		}
 	}
 
-	public static CopyOnWriteArrayList<IRenderable> getObjectsOnScreen() {
+	public static List<IRenderable> getObjectsOnScreen() {
 		readLock.lock();
 		try {
 			if (GlobalPhase.getCurrentPhase() == GlobalPhase.WORLD) {
@@ -104,7 +104,7 @@ public class IRenderableHolder {
 		}
 	}
 
-	public static CopyOnWriteArrayList<IRenderable> getScreenTransitions() {
+	public static List<IRenderable> getScreenTransitions() {
 		return screenTransitions;
 	}
 

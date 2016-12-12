@@ -1,7 +1,5 @@
 package graphic;
 
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import javafx.scene.canvas.Canvas;
 
 public class GameScreen extends Canvas {

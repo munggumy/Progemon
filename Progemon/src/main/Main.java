@@ -18,7 +18,7 @@ public class Main {
 
 		FightMap fightMap = new FightMap(FileUtility.loadFightMap());
 		FileUtility.loadPokedex();
-		FileUtility.loadPokemons();
+		FileUtility.loadPokedex();
 
 		Pokemon a = Pokedex.getPokemon("Charlizard");
 		Pokemon b = Pokedex.getPokemon("Ivysaur");

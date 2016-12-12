@@ -115,7 +115,11 @@ public class FightMap implements IRenderable {
 	}
 
 	public Optional<Pokemon> getPokemonAt(FightTerrain fightTerrain) {
-		return getPokemonAt(fightTerrain.getX(), fightTerrain.getY());
+		if (fightTerrain == null) {
+			return Optional.empty();
+		} else {
+			return getPokemonAt(fightTerrain.getX(), fightTerrain.getY());
+		}
 	}
 
 	public boolean outOfMap(int x, int y) {
@@ -186,8 +190,7 @@ public class FightMap implements IRenderable {
 			pokemonsOnMap.add(pokemon);
 			if (pokemon.getOwner() instanceof HumanPlayer) {
 				playerPokemonsOnMap.add(pokemon);
-			}
-			else{
+			} else {
 				enemyPokemonsOnMap.add(pokemon);
 			}
 			return true;
@@ -233,15 +236,15 @@ public class FightMap implements IRenderable {
 			}
 		}
 	}
-	
+
 	public ArrayList<Pokemon> getPlayerPokemonsOnMap() {
 		return playerPokemonsOnMap;
 	}
-	
+
 	public ArrayList<Pokemon> getEnemyPokemonsOnMap() {
 		return enemyPokemonsOnMap;
 	}
-	
+
 	public void checkInput() {
 		int blockSize = getBlockSize();
 		setOrigin(InputUtility.getDragX() + originX, InputUtility.getDragY() + originY);
@@ -251,67 +254,60 @@ public class FightMap implements IRenderable {
 			cursorX = (int) Math.floor(x / blockSize);
 			cursorY = (int) Math.floor(y / blockSize);
 			getFightTerrainAt(cursorX, cursorY).setCursor(true);
-		}
-		else{
+		} else {
 			cursorX = -1;
 			cursorY = -1;
 		}
 	}
-	
+
 	public static int getOriginX() {
 		return originX;
 	}
-	
+
 	public static int getOriginY() {
 		return originY;
 	}
-	
+
 	public void setOrigin(int x, int y) {
 		int blockSize = getBlockSize();
 		if (x + 0.5 * blockSize > GameScreen.WIDTH / 2) {
 			originX = (GameScreen.WIDTH - blockSize) / 2;
-		}
-		else if (x + (sizeX - 0.5) * blockSize < GameScreen.WIDTH / 2) {
+		} else if (x + (sizeX - 0.5) * blockSize < GameScreen.WIDTH / 2) {
 			originX = (int) (GameScreen.WIDTH / 2 - (sizeX - 0.5) * blockSize);
-		}
-		else{
+		} else {
 			originX = x;
 		}
 		if (y + 0.5 * blockSize > GameScreen.HEIGHT / 2) {
 			originY = (GameScreen.HEIGHT - blockSize) / 2;
-		}
-		else if (y + (sizeY + 0.25) * blockSize < GameScreen.HEIGHT / 2) {
+		} else if (y + (sizeY + 0.25) * blockSize < GameScreen.HEIGHT / 2) {
 			originY = (int) (GameScreen.HEIGHT / 2 - (sizeY + 0.25) * blockSize);
-		}
-		else{
+		} else {
 			originY = y;
 		}
 	}
-	
+
 	public static int getZoomLevel() {
 		return zoomLevel;
 	}
-	
+
 	public static void setZoomLevel(int zoomLevel) {
 		if (zoomLevel > 3) {
 			zoomLevel = 3;
-		}
-		else if (zoomLevel < -6) {
+		} else if (zoomLevel < -6) {
 			zoomLevel = -6;
-		}
-		else {
+		} else {
 			FightMap.zoomLevel = zoomLevel;
 		}
 	}
-	
+
 	public static int getBlockSize() {
 		return (int) (ORIGINAL_BLOCK_SIZE * Math.pow(1.1, zoomLevel));
 	}
-	
+
 	public static int getCursorX() {
 		return cursorX;
 	}
-	
+
 	public static int getCursorY() {
 		return cursorY;
 	}

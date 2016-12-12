@@ -16,7 +16,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import logic_fight.character.activeSkill.ActiveSkill;
 import logic_fight.character.pokemon.Pokemon;
-import logic_fight.character.pokemon.Status;
+import logic_fight.character.pokemon.NonVolatileStatus;
 import logic_fight.player.HumanPlayer;
 import logic_fight.terrain.FightMap;
 import logic_fight.terrain.FightTerrain;
@@ -25,10 +25,24 @@ import logic_world.terrain.WorldDirection;
 import logic_world.terrain.WorldMap;
 import logic_world.terrain.WorldMapException;
 import logic_world.terrain.WorldObject;
-import manager.GUIFightGameManager;
 import manager.WorldManager;
 
 public class DrawingUtility {
+
+	private static final double BLOCKS_VISIBLE_SOUTH = 6.5;
+	private static final int BLOCKS_VISIBLE_EAST = 8;
+	private static final double BLOCKS_VISIBLE_NORTH = 5.5;
+	private static final int BLOCKS_VISIBLE_WEST = 7;
+
+	private static final int QUEUE_BOX_HEIGHT = 204;
+	private static final int QUEUE_BOX_WIDTH = 68;
+	private static final Color QUEUE_BOX_TEXT_COLOR = Color.BLACK;
+	private static final int ITEM_ICON_X = 10;
+	private static final int ITEM_ICON_Y = 246;
+	private static final Color FIGHT_MAP_FRAME_COLOR = Color.BLACK;
+	private static final Color EMPTY_EXP_BAR_HUD_COLOR = Color.BLACK;
+	private static final Color EMPTY_HP_BAR_HUD_COLOR = Color.BLACK;
+	private static final Color EXP_COLOR = Color.AQUA;
 
 	private static final int HP_BAR_SIZE_X = 30;
 	private static final int HP_BAR_SIZE_Y = 6;
@@ -41,7 +55,7 @@ public class DrawingUtility {
 	private static Image cursor;
 	private static Image highlight;
 
-	private static Image qimg;
+	private static Image queueBoxImage;
 	private static Image sign;
 	private static Image itemIcon;
 	private static Image pkmnBar;
@@ -49,26 +63,28 @@ public class DrawingUtility {
 	private static GraphicsContext gc;
 
 	public DrawingUtility() {
-		File sfile = new File("load\\img\\terrain\\shadow20.png");
-		shadow = new Image(sfile.toURI().toString());
-		File cfile = new File("load\\img\\terrain\\cursur.png");
-		cursor = new Image(cfile.toURI().toString());
-		File hfile = new File("load\\img\\terrain\\highlight.png");
-		highlight = new Image(hfile.toURI().toString());
-
-		File qfile = new File(QueueBox.QUEUE_BOX_PATH);
-		qimg = resize(new Image(qfile.toURI().toString()), 2);
-
-		File signfile = new File("load\\img\\dialogbox\\Theme1_sign.gif");
-		sign = new Image(signfile.toURI().toString());
-
-		File itemfile = new File("load\\img\\HUD\\itemicon.png");
-		itemIcon = resize(new Image(itemfile.toURI().toString()), 2);
-		File pkmnfile = new File("load\\img\\HUD\\pokemonbar.png");
-		pkmnBar = new Image(pkmnfile.toURI().toString());
-		File backgroundfile = new File("load\\img\\background\\meadow.png");
-		background = new Image(backgroundfile.toURI().toString());
-		System.out.println("Drawing Utility Loaded Successfully.");
+		try {
+			File sfile = new File("load\\img\\terrain\\shadow20.png");
+			shadow = new Image(sfile.toURI().toString());
+			File cfile = new File("load\\img\\terrain\\cursur.png");
+			cursor = new Image(cfile.toURI().toString());
+			File hfile = new File("load\\img\\terrain\\highlight.png");
+			highlight = new Image(hfile.toURI().toString());
+			File qfile = new File(QueueBox.QUEUE_BOX_PATH);
+			queueBoxImage = resize(new Image(qfile.toURI().toString()), 2);
+			File signfile = new File("load\\img\\dialogbox\\Theme1_sign.gif");
+			sign = new Image(signfile.toURI().toString());
+			File itemfile = new File("load\\img\\HUD\\itemicon.png");
+			itemIcon = resize(new Image(itemfile.toURI().toString()), 2);
+			File pkmnfile = new File("load\\img\\HUD\\pokemonbar.png");
+			pkmnBar = new Image(pkmnfile.toURI().toString());
+			File backgroundfile = new File("load\\img\\background\\meadow.png");
+			background = new Image(backgroundfile.toURI().toString());
+			System.out.println("Drawing Utility Loaded Successfully.");
+		} catch (IllegalArgumentException ex) {
+			System.err.println("DrawingUtitity cannot load static files");
+			ex.printStackTrace();
+		}
 
 	}
 
@@ -79,7 +95,7 @@ public class DrawingUtility {
 		// }
 		// }
 		gc.drawImage(background, 0, 0);
-		gc.setFill(Color.BLACK);
+		gc.setFill(FIGHT_MAP_FRAME_COLOR);
 		gc.setLineWidth(3);
 		gc.strokeRect(FightMap.getOriginX(), FightMap.getOriginY(), fightMap.getSizeX() * FightMap.getBlockSize(),
 				fightMap.getSizeY() * FightMap.getBlockSize());
@@ -89,7 +105,7 @@ public class DrawingUtility {
 		// for (int i = 0; i < fightMap.getPokemonsOnMap().size(); i++) {
 		// fightMap.getPokemonsOnMap().get(i).draw();
 		// }
-		gc.drawImage(itemIcon, 10, 246);
+		gc.drawImage(itemIcon, ITEM_ICON_X, ITEM_ICON_Y);
 
 		fightMap.getPokemonsOnMap().forEach(p -> drawPokemonBar(p));
 	}
@@ -121,7 +137,7 @@ public class DrawingUtility {
 		int x = pokemon.getCurrentFightTerrain().getX() * blockSize + FightMap.getOriginX();
 		int y = pokemon.getCurrentFightTerrain().getY() * blockSize + FightMap.getOriginY();
 		if (pokemon.isVisible()) {
-			gc.drawImage(pokemon.getImage(), x, y, blockSize, blockSize);	
+			gc.drawImage(pokemon.getImage(), x, y, blockSize, blockSize);
 		}
 		/*
 		 * Image img = new ImageIcon(pokemon.getImageName()).getImage();
@@ -140,7 +156,7 @@ public class DrawingUtility {
 				(int) (pokemon.getCurrentHP() * HP_BAR_SIZE_X * resizeRate / pokemon.getFullHP()),
 				HP_BAR_SIZE_Y * resizeRate);
 
-		if (pokemon.getStatus().equals(Status.FREEZE)) {
+		if (pokemon.getStatus().equals(NonVolatileStatus.FREEZE)) {
 			gc.setGlobalAlpha(0.4);
 			gc.setFill(Color.ALICEBLUE);
 			gc.fillRect(x, y, FightTerrain.IMG_SIZE_X, FightTerrain.IMG_SIZE_Y);
@@ -161,25 +177,25 @@ public class DrawingUtility {
 			originX = (10 + position * 120);
 			originY = 10;
 		}
-		gc.setFill(Color.BLACK);
+		gc.setFill(EMPTY_HP_BAR_HUD_COLOR);
 		gc.fillRect(originX + 42, originY + 27, 60, 4);
-		gc.setFill(Color.LIMEGREEN);
 		gc.setFill(Color.hsb((pokemon.getCurrentHP() / pokemon.getFullHP()) * 120, 1,
 				1 - (pokemon.getCurrentHP() / pokemon.getFullHP()) * 0.2));
 		gc.fillRect(originX + 42, originY + 27, (pokemon.getCurrentHP() / pokemon.getFullHP()) * 60, 4);
 		gc.drawImage(pkmnBar, originX, originY);
-		gc.drawImage(pokemon.getIcon(), originX, originY);
-		gc.setFill(Color.BLACK);
+		gc.drawImage(pokemon.getIconImage(), originX, originY);
+
+		gc.setFill(EMPTY_EXP_BAR_HUD_COLOR);
 		gc.fillText(pokemon.getName(), originX + 42, originY + 10);
 		gc.fillText("Lv" + pokemon.getLevel(), originX + 44, originY + 23);
 		gc.fillText((int) pokemon.getCurrentHP() + "/" + (int) pokemon.getFullHP(), originX + 98
 				- computeStringWidth((int) pokemon.getCurrentHP() + "/" + (int) pokemon.getFullHP(), gc.getFont()),
 				originY + 23);
-		gc.setFill(Color.AQUA);
+		gc.setFill(EXP_COLOR);
 		gc.fillRect(originX + 33, originY + 37, ((pokemon.getCurrentExp() - pokemon.getLastExpRequired())
 				/ (pokemon.getNextExpRequired() - pokemon.getLastExpRequired())) * 77, 1);
 	}
-	
+
 	public static void drawFightHUD(FightHUD fightHUD) {
 		if (!FightHUD.isShowSkillMenu()) {
 			return;
@@ -222,18 +238,19 @@ public class DrawingUtility {
 		 */
 		gc.save();
 		gc.beginPath();
-		gc.rect(0, DialogBox.getY() + 10, 480, 64);
-
+		gc.rect(0, DialogBox.getY() + 10, GameScreen.WIDTH, 64);
 		gc.drawImage(DialogBox.getDialogBoxImage(), DialogBox.getX(), DialogBox.getY());
 
 		gc.clip();
-		gc.setFill(Color.BLACK);
+		gc.setFill(DialogBox.FONT_COLOR);
 		gc.setFont(DialogBox.getFont());
+
 		double messageHeight = new Text("Test").getLayoutBounds().getHeight();
 		gc.fillText(DialogBox.getMessageOnScreen()[0], DialogBox.getX() + 25,
 				DialogBox.getY() + 15 + messageHeight - DialogBox.getyShift());
 		gc.fillText(DialogBox.getMessageOnScreen()[1], DialogBox.getX() + 25,
 				DialogBox.getY() + 45 + messageHeight - DialogBox.getyShift());
+
 		if (DialogBox.getEndLineWidth() != 0) {
 			gc.drawImage(sign, DialogBox.getX() + 25 + DialogBox.getEndLineWidth(),
 					DialogBox.getY() + DialogBox.getCurrentLine() * 25 + 14);
@@ -247,11 +264,11 @@ public class DrawingUtility {
 		 * Image(qfile.toURI().toString());
 		 */
 		Image img;
-		gc.drawImage(qimg, QueueBox.getBOX_X(), QueueBox.getBOX_Y());
+		gc.drawImage(queueBoxImage, QueueBox.BOX_X, QueueBox.BOX_Y);
 
 		gc.save();
 		gc.beginPath();
-		gc.rect(QueueBox.getOriginX(), QueueBox.getOriginY(), 68, 204);
+		gc.rect(QueueBox.ORIGIN_X, QueueBox.ORIGIN_Y, QUEUE_BOX_WIDTH, QUEUE_BOX_HEIGHT);
 		gc.clip();
 		gc.closePath();
 
@@ -261,117 +278,70 @@ public class DrawingUtility {
 			gc.setFill(pokemonsOnQueue.get(i).getOwner().getColor());
 			gc.fillRect(QueueBox.getOriginX() + QueueBox.getDelta()[i][0] + 6,
 					QueueBox.getOriginY() + QueueBox.getDelta()[i][1] + 2 + i * 40, 6, 36);
-			gc.setFill(Color.BLACK);
+			gc.setFill(QUEUE_BOX_TEXT_COLOR);
 			gc.setFont(DialogBox.getFont());
 			double messageHeight = new Text("LV.").getLayoutBounds().getHeight();
 			gc.fillText("Lv." + pokemonsOnQueue.get(i).getLevel(),
 					QueueBox.getOriginX() + QueueBox.getDelta()[i][0] + 24,
 					QueueBox.getOriginY() + QueueBox.getDelta()[i][1] + 15 + i * 40 + messageHeight);
 
-			// pixel error test
-			// gc.setColor(Color.BLUE);
-			// gc.fillRect(326, 450, 68, 40);
-			// gc.setColor(Color.RED);
-			// gc.fillRect(326, 490, 68, 40);
-			// gc.setColor(Color.GREEN);
-			// gc.fillRect(326, 530, 68, 40);
-			// gc.setColor(Color.BLACK);
-			// gc.drawRect(326, 450, 68, 40);
-			// gc.drawRect(326, 490, 68, 40);
-			// gc.drawRect(326, 530, 68, 40);
-
 			gc.drawImage(img, QueueBox.getOriginX() + QueueBox.getDelta()[i][0],
 					QueueBox.getOriginY() + QueueBox.getDelta()[i][1] + i * 40);
 		}
 		gc.restore();
 
-		// gif test
-		/*
-		 * Image img2 = new
-		 * ImageIcon("load\\img\\pokemon\\Dratini.gif").getImage();
-		 * gc.drawImage(img2, 0, 0, 40, 40, null);
-		 */
 	}
 
-	public static void drawSkill(ActiveSkill skill) {
+	public static void drawActiveSkill(ActiveSkill skill) {
 		// Type = Line
-		int ax = skill.getAttackTerrain().getX();
-		int ay = skill.getAttackTerrain().getY();
-		int tx = skill.getTargetTerrain().getX();
-		int ty = skill.getTargetTerrain().getY();
-		Image img = skill.getCurrentImage();
+		int fromX = skill.getAttackTerrain().getX();
+		int fromY = skill.getAttackTerrain().getY();
+		int toX = skill.getTargetTerrain().getX();
+		int toY = skill.getTargetTerrain().getY();
+		Image skillImage = skill.getCurrentImage();
 
 		gc.save();
-		gc.translate(ax * 40 + 20, ay * 40 + 20);
+		gc.translate(fromX * 40 + 20, fromY * 40 + 20);
 
-		// test skill
-		/*
-		 * ax = 2; ay = 0; tx = 0; ty = 2;
-		 */
-
-		double distance = Math.sqrt((ax - tx) * (ax - tx) + (ay - ty) * (ay - ty));
+		double distance = Math.sqrt((fromX - toX) * (fromX - toX) + (fromY - toY) * (fromY - toY));
 		double angle = 0;
-		angle = Math.acos((tx - ax) / distance) / Math.PI * 180;
-		if (ay - ty < 0) {
+		angle = Math.acos((toX - fromX) / distance) * (180 / Math.PI);
+		if (fromY - toY < 0) {
 			angle = -angle;
 		}
-		if (ax - tx > 0) {
-			img = verticalFlip(img);
+		if (fromX - toX > 0) {
+			skillImage = verticalFlip(skillImage);
 		}
 
 		gc.rotate(-angle);
-		gc.drawImage(img, -20, -20, distance * 40 + 40, 40);
+		gc.drawImage(skillImage, -20, -20, distance * 40 + 40, 40);
 		gc.restore();
 	}
 
 	public static void drawWorldMap(WorldMap worldMap) {
-		double x = WorldManager.getPlayer().getX();
-		double y = WorldManager.getPlayer().getY();
+		double playerX = WorldManager.getPlayer().getX();
+		double playerY = WorldManager.getPlayer().getY();
 		/*
 		 * xoffset = x - (blocksize * 7) yoffset = y - (blocksize * 5.5)
 		 */
-		double xoffset = x - (32 * 7);
-		double yoffset = y - (32 * 5.5);
+		double xOffset = playerX - (32 * BLOCKS_VISIBLE_WEST);
+		double yOffset = playerY - (32 * BLOCKS_VISIBLE_NORTH);
 		/*
 		 * startBlockX = Math.floor(xoffset/blocksize) endBlockX = startBlockX +
 		 * 16 startBlockY = Math.floor(yoffset/blocksize) endBlockY =
 		 * startBlockX + 13
 		 */
-		int startBlockX = (int) Math.floor(xoffset / 32);
-		int endBlockX = (int) Math.floor((x + (32 * 8) - 1) / 32);
-		int startBlockY = (int) Math.floor(yoffset / 32);
-		int endBlockY = (int) Math.floor((y + (32 * 6.5) - 1) / 32);
+		int startBlockX = (int) Math.floor(xOffset / 32);
+		int endBlockX = (int) Math.floor((playerX + (32 * BLOCKS_VISIBLE_EAST) - 1) / 32);
+		int startBlockY = (int) Math.floor(yOffset / 32);
+		int endBlockY = (int) Math.floor((playerY + (32 * BLOCKS_VISIBLE_SOUTH) - 1) / 32);
 		int tileCode;
-		int offset, trim;
-		WorldMap worldToDraw;
 		for (int i = startBlockY; i <= endBlockY; i++) {
 			for (int j = startBlockX; j <= endBlockX; j++) {
 				try {
-					if (i < 0) {
-						worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.UP);
-						offset = Integer.parseInt(worldToDraw.getMapProperties().getProperty("up_offset", "0"));
-						trim = Integer.parseInt(worldMap.getMapProperties().getProperty("up_trim", "0"));
-						tileCode = worldToDraw.getTerrainAt(j - offset, i + worldToDraw.getHeight() - trim);
-					} else if (i >= worldMap.getHeight()) {
-						worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.DOWN);
-						offset = Integer.parseInt(worldToDraw.getMapProperties().getProperty("down_offset", "0"));
-						trim = Integer.parseInt(worldMap.getMapProperties().getProperty("down_trim", "0"));
-						tileCode = worldToDraw.getTerrainAt(j - offset, i - worldMap.getHeight() + trim);
-					} else if (j < 0) {
-						worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.LEFT);
-						offset = Integer.parseInt(worldToDraw.getMapProperties().getProperty("left_offset", "0"));
-						trim = Integer.parseInt(worldMap.getMapProperties().getProperty("down_trim", "0"));
-						tileCode = worldToDraw.getTerrainAt(j + worldToDraw.getWidth() - trim, i - offset);
-					} else if (j >= worldMap.getWidth()) {
-						worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.RIGHT);
-						offset = Integer.parseInt(worldToDraw.getMapProperties().getProperty("right_offset", "0"));
-						trim = Integer.parseInt(worldMap.getMapProperties().getProperty("down_trim", "0"));
-						tileCode = worldToDraw.getTerrainAt(j - worldMap.getWidth() + trim, i - offset);
-					} else {
-						tileCode = worldMap.getTerrainAt(j, i);
-					}
+					tileCode = getTileCode(worldMap, i, j);
 					if (tileCode != 0) {
-						gc.drawImage(WorldMap.getImage(Math.abs(tileCode)), j * 32 - xoffset, i * 32 - yoffset, 32, 32);
+						gc.drawImage(WorldMap.getImage(Math.abs(tileCode)), j * 32 - xOffset, i * 32 - yOffset, 32, 32);
 					}
 				} catch (WorldMapException e) {
 					e.printStackTrace();
@@ -381,29 +351,60 @@ public class DrawingUtility {
 		}
 	}
 
+	private static int getTileCode(WorldMap worldMap, int i, int j) throws WorldMapException {
+		int tileCode;
+		int mapOffset;
+		int mapTrim;
+		WorldMap worldToDraw;
+		if (i < 0) {
+			worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.NORTH);
+			mapOffset = Integer.parseInt(worldMap.getMapProperties().getProperty("north_offset", "0"));
+			mapTrim = Integer.parseInt(worldMap.getMapProperties().getProperty("north_trim", "0"));
+			tileCode = worldToDraw.getTerrainAt(j - mapOffset, i + worldToDraw.getHeight() - mapTrim);
+		} else if (i >= worldMap.getHeight()) {
+			worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.SOUTH);
+			mapOffset = Integer.parseInt(worldMap.getMapProperties().getProperty("south_offset", "0"));
+			mapTrim = Integer.parseInt(worldMap.getMapProperties().getProperty("south_trim", "0"));
+			tileCode = worldToDraw.getTerrainAt(j - mapOffset, i - worldMap.getHeight() + mapTrim);
+		} else if (j < 0) {
+			worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.WEST);
+			mapOffset = Integer.parseInt(worldMap.getMapProperties().getProperty("west_offset", "0"));
+			mapTrim = Integer.parseInt(worldMap.getMapProperties().getProperty("west_trim", "0"));
+			tileCode = worldToDraw.getTerrainAt(j + worldToDraw.getWidth() - mapTrim, i - mapOffset);
+		} else if (j >= worldMap.getWidth()) {
+			worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.EAST);
+			mapOffset = Integer.parseInt(worldMap.getMapProperties().getProperty("east_offset", "0"));
+			mapTrim = Integer.parseInt(worldMap.getMapProperties().getProperty("east_trim", "0"));
+			tileCode = worldToDraw.getTerrainAt(j - worldMap.getWidth() + mapTrim, i - mapOffset);
+		} else {
+			tileCode = worldMap.getTerrainAt(j, i);
+		}
+		return tileCode;
+	}
+
 	public static void drawPlayer(PlayerCharacter player) {
 		// x = blocksize * 7, y = blocksize * 5.5 - (6/16 * blocksize)
 		gc.drawImage(player.getCurrentImage(), 224, 164, 32, 44);
 	}
 
 	public static void drawWorldObject(WorldObject worldObject) {
-		int height = (int) worldObject.getCurrentImage().getHeight();
-		int width = (int) worldObject.getCurrentImage().getWidth();
+		int objectImageHeight = (int) worldObject.getCurrentImage().getHeight();
+		int objectImageWidth = (int) worldObject.getCurrentImage().getWidth();
 		int blockX = worldObject.getBlockX();
 		int blockY = worldObject.getBlockY();
 		double x = WorldManager.getPlayer().getX();
 		double y = WorldManager.getPlayer().getY();
-		double xoffset = x - (32 * 7);
-		double yoffset = y - (32 * 5.5);
-		int startBlockX = (int) Math.floor(xoffset / 32);
-		int endBlockX = (int) Math.floor((x + (32 * 8) - 1) / 32);
-		int startBlockY = (int) Math.floor(yoffset / 32);
-		int endBlockY = (int) Math.floor((y + (32 * 6.5) - 1) / 32);
+		double xOffset = x - (32 * BLOCKS_VISIBLE_WEST);
+		double yOffset = y - (32 * BLOCKS_VISIBLE_NORTH);
+		int startBlockX = (int) Math.floor(xOffset / 32);
+		int endBlockX = (int) Math.floor((x + (32 * BLOCKS_VISIBLE_EAST) - 1) / 32);
+		int startBlockY = (int) Math.floor(yOffset / 32);
+		int endBlockY = (int) Math.floor((y + (32 * BLOCKS_VISIBLE_SOUTH) - 1) / 32);
 		if (blockX > endBlockX || blockY < startBlockY) {
 			return;
-		} else if (blockX * 32 + width > xoffset || (blockY + 1) * 32 - height < yoffset + 384) {
-			gc.drawImage(worldObject.getCurrentImage(), blockX * 32 - xoffset, (blockY + 1) * 32 - height - yoffset,
-					width, height);
+		} else if (blockX * 32 + objectImageWidth > xOffset || (blockY + 1) * 32 - objectImageHeight < yOffset + 384) {
+			gc.drawImage(worldObject.getCurrentImage(), blockX * 32 - xOffset,
+					(blockY + 1) * 32 - objectImageHeight - yOffset, objectImageWidth, objectImageHeight);
 		}
 	}
 
@@ -411,16 +412,16 @@ public class DrawingUtility {
 		gc.drawImage(screenEffect.getCurrentImage(), 0, 0);
 	}
 
-	public static double computeStringWidth(String str, Font font) {
-		if (str.length() == 0 || gc == null) {
+	public static double computeStringWidth(String text, Font font) {
+		if (text.length() == 0 || gc == null) {
 			return 0;
 		} else {
-			return Toolkit.getToolkit().getFontLoader().computeStringWidth(str, font);
+			return Toolkit.getToolkit().getFontLoader().computeStringWidth(text, font);
 		}
 	}
 
-	public static double computeStringHeight(String str, Font font) {
-		if (str.length() == 0 || gc == null) {
+	public static double computeStringHeight(String ÐÓ»Ð, Font font) {
+		if (ÐÓ»Ð.length() == 0 || gc == null) {
 			return 0;
 		} else {
 			return Toolkit.getToolkit().getFontLoader().getFontMetrics(font).getLineHeight();
@@ -435,15 +436,15 @@ public class DrawingUtility {
 		return gc;
 	}
 
-	public static Image verticalFlip(Image img) {
-		int height = (int) img.getHeight();
-		int width = (int) img.getWidth();
-		PixelReader pr = img.getPixelReader();
+	public static Image verticalFlip(Image image) {
+		int height = (int) image.getHeight();
+		int width = (int) image.getWidth();
+		PixelReader pixelReader = image.getPixelReader();
 		WritableImage wimg = new WritableImage(width, height);
-		PixelWriter pw = wimg.getPixelWriter();
+		PixelWriter pixelWriter = wimg.getPixelWriter();
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				pw.setColor(x, height - 1 - y, pr.getColor(x, y));
+				pixelWriter.setColor(x, height - 1 - y, pixelReader.getColor(x, y));
 			}
 		}
 		return wimg;
@@ -452,12 +453,12 @@ public class DrawingUtility {
 	public static Image horizontalFlip(Image img) {
 		int height = (int) img.getHeight();
 		int width = (int) img.getWidth();
-		PixelReader pr = img.getPixelReader();
+		PixelReader pixelReader = img.getPixelReader();
 		WritableImage wimg = new WritableImage(width, height);
-		PixelWriter pw = wimg.getPixelWriter();
+		PixelWriter pixelWriter = wimg.getPixelWriter();
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				pw.setColor(width - 1 - x, y, pr.getColor(x, y));
+				pixelWriter.setColor(width - 1 - x, y, pixelReader.getColor(x, y));
 			}
 		}
 		return wimg;
@@ -466,12 +467,12 @@ public class DrawingUtility {
 	public static Image resize(Image img, int i) {
 		int height = (int) img.getHeight() * i;
 		int width = (int) img.getWidth() * i;
-		PixelReader pr = img.getPixelReader();
+		PixelReader pixelReader = img.getPixelReader();
 		WritableImage wimg = new WritableImage(width, height);
-		PixelWriter pw = wimg.getPixelWriter();
+		PixelWriter pixelWriter = wimg.getPixelWriter();
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				pw.setColor(x, y, pr.getColor((int) Math.floor(x / i), (int) Math.floor(y / i)));
+				pixelWriter.setColor(x, y, pixelReader.getColor((int) Math.floor(x / i), (int) Math.floor(y / i)));
 			}
 		}
 		return wimg;
