@@ -12,16 +12,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import audio.SFXUtility;
 import graphic.DrawingUtility;
-import graphic.GameScreen;
 import graphic.IRenderable;
 import graphic.IRenderableHolder;
-import graphic.PsuedoAnimation;
+import graphic.PseudoAnimation;
+import item.Item;
 import javafx.scene.image.Image;
 import logic_fight.character.HPStat;
 import logic_fight.character.PassiveSkill;
@@ -32,11 +31,10 @@ import logic_fight.filters.Filter;
 import logic_fight.filters.MoveNoOverlapFilter;
 import logic_fight.player.Player;
 import logic_fight.terrain.FightMap;
+import logic_fight.terrain.FightMap.Direction;
 import logic_fight.terrain.FightTerrain;
 import logic_fight.terrain.Path;
-import logic_fight.terrain.FightMap.Direction;
 import utility.Clock;
-import utility.Pokedex;
 import utility.RandomUtility;
 import utility.StringUtility;
 
@@ -46,16 +44,20 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 
 	private static final String DEFAULT_IMAGE_FILE_LOCATION = "load/img/pokemon";
 	public static final int MAX_ACTIVE_SKILLS = 4;
+	public static final int MIN_LEVEL = 1;
+	public static final int MAX_LEVEL = 100;
+
+	public static final int DEFAULT_POKEMON_LEVEL = 5;
 
 	private double currentHP, nextTurnTime;
 	private Player owner;
 	private List<ActiveSkill> activeSkills = new ArrayList<ActiveSkill>();
 	private List<PassiveSkill> passiveSkills = new ArrayList<PassiveSkill>();
-	private Stat attack, defense, speed;
-	private HPStat hp;
+	// private Stat attack, defense, speed;
+	// private HPStat hp;
 	private Map<String, Stat> stats = new HashMap<String, Stat>();
 	/** Individual value */
-	private Status status = Status.NORMAL;
+	private NonVolatileStatus status = NonVolatileStatus.NORMAL;
 	private Pokemon killer;
 	private boolean visible = true;
 
@@ -71,99 +73,8 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 	private double currentExp;
 	private double lastExpRequired;
 	private double nextExpRequired;
-	
-	//PsuedoAnimation (may be static in future)
-	private static PsuedoAnimation<Pokemon> changeHP = new PsuedoAnimation<Pokemon>(120, 0) {
-		
-		@Override
-		public void update() {
-			// TODO Auto-generated method stub
-			if (delayCounter == frameDelay) {
-				currentFrame++;
-				double delta = target.hpChangeBuffer / 120.0;
-				if (Math.abs(delta) > target.getFullHP() * 0.02) {
-					delta = target.getFullHP() * 0.02 * (Math.abs(delta) / delta);
-				}
-				target.currentHP = target.lastHpBuffer + currentFrame * delta;
-				if (target.currentHP < 0) {
-					target.currentHP = 0;
-					stop();
-				}
-				else if (target.currentHP > target.getFullHP()) {
-					target.currentHP = target.getFullHP();
-					stop();
-				}
-				else if (currentFrame == amountOfFrame) {
-					stop();
-				}
-				delayCounter = 0;
-			}
-			else{
-				delayCounter++;
-			}
-		}
-	};
-	private static PsuedoAnimation<Pokemon> increaseExp = new PsuedoAnimation<Pokemon>(0, 0) {
-		
-		@Override
-		public void update() {
-			// TODO Auto-generated method stub
-			if (delayCounter == frameDelay) {
-				double expGap = target.nextExpRequired - target.lastExpRequired;
-				double delta = expGap * 0.01;
-				if (target.nextExpRequired - target.currentExp < delta) {
-					delta = target.nextExpRequired - target.currentExp;
-				}
-				if (target.expChangeBuffer < delta) {
-					target.addExpAndTryLevelUp(target.expChangeBuffer);
-					stop();
-				}
-				target.addExpAndTryLevelUp(delta);
-				target.expChangeBuffer -= delta;
-				delayCounter = 0;
-			}
-			else {
-				delayCounter++;
-			}
-		}
-	};
-	private static PsuedoAnimation<Pokemon> blink = new PsuedoAnimation<Pokemon>(6, 8) {
-		
-		@Override
-		public void update() {
-			// TODO Auto-generated method stub
-			if (delayCounter == frameDelay) {
-				currentFrame++;
-				if (currentFrame % 2 == 1) {
-					target.hide();
-				}
-				else {
-					target.show();
-				}
-				if (currentFrame == amountOfFrame) {
-					stop();
-				}
-				delayCounter = 0;
-			}
-			else {
-				delayCounter++;
-			}
-		}
-	};
-	private double lastHpBuffer, hpChangeBuffer, lastExpBuffer, expChangeBuffer;
 
 	// Enums and inner classes
-
-	/** This inner class is used to hold pokemon stats (base and current). */
-	// @Deprecated
-	// public class Stat implements Cloneable {
-	// public double attackStat, defenceStat, speed, fullHP;
-	//
-	// @Override
-	// public Object clone() throws CloneNotSupportedException {
-	// return (Stat) super.clone();
-	// }
-	// }
 
 	/** Type of relocation on <code>fightMap</code>. */
 	public static enum MoveType {
@@ -186,15 +97,20 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 
 	// Constructors
 
-	public Pokemon(PokemonTemplate pokemonTemplate, int level) {
+	public Pokemon(PokemonTemplate pokemonTemplate, int level, boolean useDefaultActiveSkill) {
 		Objects.requireNonNull(pokemonTemplate, "pokemonTemplate Required in Pokemon Constructor");
+		if (level < MIN_LEVEL || level > MAX_LEVEL) {
+			throw new IllegalArgumentException("Pokemon Constructor : Illegal level for Pokemon "
+					+ pokemonTemplate.getName() + ", level=" + level);
+		}
 		id = pokemonTemplate.id;
 		this.level = level;
+		this.name = pokemonTemplate.name;
 
-		attack = new Stat(pokemonTemplate.getBaseAttack(), level);
-		defense = new Stat(pokemonTemplate.getBaseDefense(), level);
-		speed = new Stat(pokemonTemplate.getBaseSpeed(), level);
-		hp = new HPStat(pokemonTemplate.getBaseHP(), level);
+		Stat attack = new Stat(pokemonTemplate.getBaseAttack(), level);
+		Stat defense = new Stat(pokemonTemplate.getBaseDefense(), level);
+		Stat speed = new Stat(pokemonTemplate.getBaseSpeed(), level);
+		HPStat hp = new HPStat(pokemonTemplate.getBaseHP(), level);
 
 		moveRange = pokemonTemplate.moveRange;
 		attackRange = pokemonTemplate.attackRange;
@@ -209,14 +125,24 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 		secondaryElement = pokemonTemplate.secondaryElement;
 		levelingRate = pokemonTemplate.levelingRate;
 		expYield = pokemonTemplate.expYield;
+		catchRate = pokemonTemplate.catchRate;
 
 		updateExpRequired();
 		currentExp = levelingRate.getRequiredExperience(level);
+
+		if (useDefaultActiveSkill) {
+			pokemonTemplate.getDefaultActiveSkill().stream().forEachOrdered(as -> this.addActiveSkill(as));
+		}
 
 		nextTurnTime = 0;
 		calculateNextTurnTime();
 		resetHP();
 		setImageFileLocation();
+		loadImage();
+	}
+
+	public Pokemon(PokemonTemplate pokemonTemplate, int level) {
+		this(pokemonTemplate, level, true);
 	}
 
 	public Pokemon(PokemonTemplate pokemonTemplate, int level, Player owner) {
@@ -282,10 +208,10 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 	public void showStats() {
 		System.out.println("name : " + getName());
 		System.out.println("level : " + level);
-		System.out.println(" - attack" + attack);
-		System.out.println(" - defense" + defense);
-		System.out.println(" - speed" + speed);
-		System.out.println(" - hp" + hp);
+		System.out.println(" - attack" + stats.get("attack"));
+		System.out.println(" - defense" + stats.get("defense"));
+		System.out.println(" - speed" + stats.get("speed"));
+		System.out.println(" - hp" + stats.get("hp"));
 	}
 
 	/** Use to reset pokemon before entering fight */
@@ -320,29 +246,35 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 	}
 
 	public void attack(Pokemon other, ActiveSkill selectedSkill) {
-		
+
 		if (selectedSkill == null || !activeSkills.contains(selectedSkill)) {
 			throw new IllegalArgumentException("Invalid selectedSkill : " + selectedSkill.getName());
 		}
 		if (other == null) {
 			throw new IllegalArgumentException("Other Pokemon is null!");
 		}
-		
+
+		System.out.println("selected=" + selectedSkill.getName());
+		String sfxName = selectedSkill.getSfxName();
+		if (!sfxName.isEmpty()) {
+			SFXUtility.playSound(sfxName);
+		}
+
 		selectedSkill.applySkillEffect(this, other);
 		selectedSkill.setAttackTerrain(currentFightTerrain);
 		selectedSkill.setTargetTerrain(other.currentFightTerrain);
 		selectedSkill.play();
-		
+
 		IRenderableHolder.addFightObject(selectedSkill);
 		while (selectedSkill.isPlaying()) {
 			Clock.tick();
 		}
 		IRenderableHolder.removeFightObject(selectedSkill);
-		
-		double damage = ((((2 * level + 10) * selectedSkill.getPower() * attack.current / other.defense.current)
-				* 0.004) + 2) * SWTable.instance.getFactor(selectedSkill.getElement(), other.getPrimaryElement())
-				* RandomUtility.randomPercent(85, 100);
-		
+
+		double damage = ((((2 * level + 10) * selectedSkill.getPower() * getAttack() / other.getDefense() * 0.004) + 2)
+				* SWTable.instance.getFactor(selectedSkill.getElement(), other.getPrimaryElement())
+				* RandomUtility.randomPercent(85, 100));
+
 		Clock.delay(10);
 		processEffectiveness(other, selectedSkill);
 		other.getHit();
@@ -362,6 +294,7 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 	private void processEffectiveness(Pokemon other, ActiveSkill selectedSkill) {
 		switch (SWTable.instance.getSW(selectedSkill.getElement(), other.getPrimaryElement())) {
 		case N:
+			SFXUtility.playSound("attack_normal_effective");
 			break;
 		case S:
 			SFXUtility.playSound("attack_super_effective");
@@ -372,14 +305,22 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 			System.out.println("It's not very effective...");
 			break;
 		case Z:
+			SFXUtility.playSound("attack_not_effective");
+			System.out.println("It had no effect.");
 			break;
 		default:
 			break;
 		}
 	}
 
-	public Predicate<Pokemon> isEnemy = (Pokemon other) -> !other.getOwner().equals(this.getOwner());
-	public Predicate<Pokemon> isFriendly = (Pokemon other) -> other.getOwner().equals(this.getOwner());
+	public void useItem(Item item) {
+		if (item != null && item.getOnPokemonUse() != null) {
+			SFXUtility.playSound("potion_use");
+			item.getOnPokemonUse().use(this);
+		} else {
+			System.err.println("unusable item " + item);
+		}
+	}
 
 	// Comparators
 
@@ -558,7 +499,7 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 	}
 
 	public void calculateNextTurnTime() {
-		nextTurnTime += (1.0 / speed.current);
+		nextTurnTime += (1.0 / stats.get("speed").current);
 	}
 
 	public void sortPaths() {
@@ -570,6 +511,78 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 	public static Optional<MoveType> toMoveType(String moveTypeString) {
 		return Stream.of(MoveType.values()).filter(mt -> mt.toString().equalsIgnoreCase(moveTypeString)).findAny();
 	}
+
+	// Pseudo Animations
+
+	private double lastHpBuffer, hpChangeBuffer, lastExpBuffer, expChangeBuffer;
+
+	private static PseudoAnimation<Pokemon> changeHP = new PseudoAnimation<Pokemon>(120, 0) {
+		@Override
+		public void update() {
+			if (delayCounter == frameDelay) {
+				currentFrame++;
+				double delta = target.hpChangeBuffer / 120.0;
+				if (Math.abs(delta) > target.getFullHP() * 0.02) {
+					delta = target.getFullHP() * 0.02 * (Math.abs(delta) / delta);
+				}
+				target.currentHP = target.lastHpBuffer + currentFrame * delta;
+				if (target.currentHP < 0) {
+					target.currentHP = 0;
+					stop();
+				} else if (target.currentHP > target.getFullHP()) {
+					target.currentHP = target.getFullHP();
+					stop();
+				} else if (currentFrame == amountOfFrame) {
+					stop();
+				}
+				delayCounter = 0;
+			} else {
+				delayCounter++;
+			}
+		}
+	};
+
+	private static PseudoAnimation<Pokemon> increaseExp = new PseudoAnimation<Pokemon>(0, 0) {
+		@Override
+		public void update() {
+			if (delayCounter == frameDelay) {
+				double expGap = target.nextExpRequired - target.lastExpRequired;
+				double delta = expGap * 0.01;
+				if (target.nextExpRequired - target.currentExp < delta) {
+					delta = target.nextExpRequired - target.currentExp;
+				}
+				if (target.expChangeBuffer < delta) {
+					target.addExpAndTryLevelUp(target.expChangeBuffer);
+					stop();
+				}
+				target.addExpAndTryLevelUp(delta);
+				target.expChangeBuffer -= delta;
+				delayCounter = 0;
+			} else {
+				delayCounter++;
+			}
+		}
+	};
+
+	private static PseudoAnimation<Pokemon> blink = new PseudoAnimation<Pokemon>(6, 8) {
+		@Override
+		public void update() {
+			if (delayCounter == frameDelay) {
+				currentFrame++;
+				if (currentFrame % 2 == 1) {
+					target.hide();
+				} else {
+					target.show();
+				}
+				if (currentFrame == amountOfFrame) {
+					stop();
+				}
+				delayCounter = 0;
+			} else {
+				delayCounter++;
+			}
+		}
+	};
 
 	// Graphics
 
@@ -586,26 +599,22 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 
 	@Override
 	public boolean isVisible() {
-		// TODO Auto-generated method stub
 		return visible;
 	}
 
 	@Override
 	public void setVisible(boolean visible) {
-		// TODO Auto-generated method stub
 		this.visible = visible;
 	}
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
 		visible = false;
 		IRenderableHolder.removeFightObject(this);
 	}
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
 		IRenderableHolder.addFightObject(this);
 		visible = true;
 	}
@@ -614,10 +623,10 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 		File file = new File(imageFileName);
 		image = new Image(file.toURI().toString());
 		file = new File("load\\img\\pokemon\\icon\\" + getName() + ".png");
+		System.out.println(file);
 		try {
-			icon = new Image(file.toURI().toString());			
+			icon = new Image(file.toURI().toString());
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		}
 	}
@@ -625,11 +634,7 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 	// Getters and Setters
 
 	public void resetHP() {
-		currentHP = hp.getFull();
-	}
-
-	public double getHP() {
-		return currentHP;
+		currentHP = ((HPStat) stats.get("hp")).getFull();
 	}
 
 	public void setHp(double hp) {
@@ -641,6 +646,11 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 	}
 
 	public void changeHP(double change) {
+		if (change + currentHP > getFullHP()) {
+			change = getFullHP() - currentHP;
+		} else if (change + currentHP < 0) {
+			change = -currentHP;
+		}
 		hpChangeBuffer = change;
 		lastHpBuffer = currentHP;
 		changeHP.setTarget(this);
@@ -648,9 +658,9 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 		while (changeHP.isPlaying()) {
 			Clock.tick();
 		}
-		//currentHP = currentHP + change < 0 ? 0 : currentHP + change;
+		// currentHP = currentHP + change < 0 ? 0 : currentHP + change;
 	}
-	
+
 	public void getHit() {
 		blink.setTarget(this);
 		blink.play();
@@ -665,10 +675,6 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 
 	public final int getID() {
 		return id;
-	}
-
-	public String getName() {
-		return Pokedex.getPokemonName(id);
 	}
 
 	public final Player getOwner() {
@@ -688,15 +694,15 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 	}
 
 	public final int getAttack() {
-		return attack.current;
+		return stats.get("attack").current;
 	}
 
 	public final int getDefense() {
-		return defense.current;
+		return stats.get("defense").current;
 	}
 
 	public final int getSpeed() {
-		return speed.current;
+		return stats.get("speed").current;
 	}
 
 	public final double getCurrentHP() {
@@ -704,7 +710,7 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 	}
 
 	public final double getFullHP() {
-		return hp.getFull();
+		return ((HPStat) stats.get("hp")).getFull();
 	}
 
 	public final int getLevel() {
@@ -717,6 +723,10 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 	}
 
 	public final void setLevel(int level) {
+		if (level < MIN_LEVEL || level > MAX_LEVEL) {
+			throw new IllegalArgumentException(
+					"Pokemon.setLevel() : Illegal level for Pokemon " + this.getName() + ", level=" + level);
+		}
 		this.level = level;
 		stats.values().forEach(s -> s.calculateCurrent(level));
 		updateExpRequired();
@@ -725,6 +735,10 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 	}
 
 	public final void levelUp() {
+		if (level == MAX_LEVEL) {
+			return;
+		}
+		SFXUtility.playSound("pokemon_exp_bar_full");
 		System.out.println(getName() + " level up!");
 		level++;
 		stats.values().forEach(s -> s.calculateCurrent(level));
@@ -742,14 +756,16 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 		currentExp += change;
 		tryLevelUp();
 	}
-	
+
 	public final void addExp(double change) {
+		SFXUtility.playSound("exp_increase");
 		expChangeBuffer = change;
 		increaseExp.setTarget(this);
 		increaseExp.play();
 		while (increaseExp.isPlaying()) {
 			Clock.tick();
 		}
+		SFXUtility.stopSound("exp_increase");
 	}
 
 	public final double getExp() {
@@ -796,11 +812,11 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 		return DEFAULT_IMAGE_FILE_LOCATION;
 	}
 
-	public final Status getStatus() {
+	public final NonVolatileStatus getStatus() {
 		return status;
 	}
 
-	public final void setStatus(Status status) {
+	public final void setStatus(NonVolatileStatus status) {
 		this.status = status;
 	}
 

@@ -5,7 +5,7 @@ import java.util.Objects;
 import org.omg.PortableInterceptor.SUCCESSFUL;
 
 import logic_fight.character.pokemon.Pokemon;
-import logic_fight.character.pokemon.Status;
+import logic_fight.character.pokemon.NonVolatileStatus;
 import utility.RandomUtility;
 import utility.StringUtility;
 import utility.exception.InvalidStatStage;
@@ -25,7 +25,7 @@ public interface SkillEffect {
 		return arg1;
 	};
 
-	public static SkillEffect status(Status status) {
+	public static SkillEffect status(NonVolatileStatus status) {
 		return (arg1, arg2, arg3) -> {
 			arg3.setStatus(status);
 			return arg1;

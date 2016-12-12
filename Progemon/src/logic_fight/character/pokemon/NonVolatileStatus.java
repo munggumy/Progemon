@@ -1,33 +1,37 @@
 package logic_fight.character.pokemon;
 
-public enum Status {
+public enum NonVolatileStatus {
 	NORMAL {
 		@Override
 		public void effect(Pokemon p) {
-			
+
 		}
-	}, FREEZE {
+	},
+	FREEZE {
 		@Override
 		public void effect(Pokemon p) {
-			
+
 		}
-	}, BURN {
+	},
+	BURN {
 		@Override
 		public void effect(Pokemon p) {
-			
+
 		}
-	}, POISON {
+	},
+	POISON {
 		@Override
 		public void effect(Pokemon p) {
-			
+
 		}
-	}, PARALYZED {
+	},
+	PARALYZED {
 		@Override
 		public void effect(Pokemon p) {
-			
+
 		}
 	};
 
-	public abstract void effect(Pokemon p);	
-	
+	public abstract void effect(Pokemon p);
+
 }

@@ -21,6 +21,7 @@ import javafx.scene.media.MediaException;
 
 public class SFXUtility {
 
+	private static final double DEFAULT_SFX_VOLUME = 1.00;
 	private static final String SFX_MAP_LOCATION = "load/sfx_map.csv";
 	private static final String SFX_DIRECTORY = "sfx";
 	private static final String FILE_TYPE = ".wav";
@@ -68,6 +69,7 @@ public class SFXUtility {
 	 */
 	public static void loadSoundEffect(String id, URL url) {
 		AudioClip sound = new AudioClip(url.toExternalForm());
+		sound.setVolume(DEFAULT_SFX_VOLUME);
 		soundEffectsMap.put(id, sound);
 	}
 
@@ -101,11 +103,32 @@ public class SFXUtility {
 		Runnable soundPlay = new Runnable() {
 			@Override
 			public void run() {
-				soundEffectsMap.get(id).play();
+				try {
+					soundEffectsMap.get(id).play();
+				} catch (Exception ex) {
+					System.err.println("Error playing SFX id=" + id);
+					ex.printStackTrace();
+				}
 			}
 		};
 
 		soundPool.execute(soundPlay);
+	}
+
+	public static void stopSound(final String id) {
+		Runnable soundStop = new Runnable() {
+			@Override
+			public void run() {
+				try {
+					soundEffectsMap.get(id).stop();
+				} catch (Exception ex) {
+					System.err.println("Error stoping SFX id=" + id);
+					ex.printStackTrace();
+				}
+			}
+		};
+
+		soundPool.execute(soundStop);
 	}
 
 	/**

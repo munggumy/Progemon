@@ -3,6 +3,7 @@ package test;
 import java.util.ArrayList;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javafx.scene.paint.Color;
@@ -15,6 +16,7 @@ import manager.DOSFightGameManager;
 import utility.FileUtility;
 import utility.Pokedex;
 
+@Deprecated
 public class TestFightGameManager {
 	
 	static FightMap map;
@@ -23,7 +25,7 @@ public class TestFightGameManager {
 
 	@Before
 	public void setUp() throws Exception {
-		FileUtility.loadPokemons();
+		FileUtility.loadPokedex();
 		FileUtility.loadPokedex();
 		FileUtility.loadActiveSkills();
 		map = new FightMap(FileUtility.loadFightMap());

@@ -1,12 +1,11 @@
 package manager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import audio.MusicUtility;
 import audio.SFXUtility;
-import graphic.DialogBox;
-import graphic.IRenderable;
 import graphic.IRenderableHolder;
 import javafx.scene.input.KeyCode;
 import logic_world.player.PlayerCharacter;
@@ -23,37 +22,46 @@ public class WorldManager {
 
 	// private static ArrayList<WorldObject> worldObjects = new ArrayList<>();
 	private static WorldMap currentWorldMap;
-	private static HashMap<WorldDirection, WorldMap> nextWorldMaps = new HashMap<>();
+	private static Map<WorldDirection, WorldMap> nextWorldMaps = new HashMap<>();
 	private static WorldMap worldMapBuffer;
+	private static PlayerCharacter player;
 
 	public WorldManager() {
-
-		GlobalPhase.setCurrentPhase(GlobalPhase.WORLD);
-		new AnimationUtility();
 		try {
-			WorldObject.loadObjectFunctions();
-			WorldObject.loadWorldObjects();
-			WorldObject.loadObjectImages();
-		} catch (WorldMapException e) {
-			e.printStackTrace();
-		}
+			GlobalPhase.setCurrentPhase(GlobalPhase.WORLD);
 
-		WorldMap.loadTileset();
+			// try {
+			// WorldObject.loadObjectFunctions();
+			// WorldObject.loadWorldObjects();
+			// WorldObject.loadObjectImages();
+			// WorldMap.loadTileset();
+			// } catch (WorldMapException e) {
+			// e.printStackTrace();
+			// }
 
-		new Clock();
-		/*
-		 * WorldObject.loadMapObjects(
-		 * "load\\worldmap\\littleroot\\littleroot_object.txt"); worldMap = new
-		 * WorldMap("load\\worldmap\\littleroot\\littleroot_map.txt");
-		 */
-		try {
+			new Clock();
+			System.out.println("reach-1S");
+			player = PlayerCharacter.instance;
+			player.show();
+
+			// player.show();
+
+			System.out.println("reach-1B");
+			/*
+			 * WorldObject.loadMapObjects(
+			 * "load\\worldmap\\littleroot\\littleroot_object.txt"); worldMap =
+			 * new WorldMap("load\\worldmap\\littleroot\\littleroot_map.txt");
+			 */
+
 			WorldMap map = loadWorld("route_101");
+			System.out.println("reach-1Q");
 			System.out.println(map.getName() + ", size=" + map.getWorldObjects().size());
 			useWorld(map, 18, 19);
 		} catch (WorldMapException ex) {
 			ex.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		PlayerCharacter.instance.show();
 		run();
 	}
 
@@ -65,20 +73,19 @@ public class WorldManager {
 		 */
 		while (true) {
 			try {
+				// if(IRenderableHolder.getObjectsOnScreen().contains(player)){
+				// System.out.println("player depth =" + player.getDepth());
+				// }
 				if (InputUtility.getKeyPressed(KeyCode.DOWN)) {
-					processPlayer(WorldDirection.DOWN);
+					processPlayer(WorldDirection.SOUTH);
 				} else if (InputUtility.getKeyPressed(KeyCode.LEFT)) {
-					processPlayer(WorldDirection.LEFT);
+					processPlayer(WorldDirection.WEST);
 				} else if (InputUtility.getKeyPressed(KeyCode.UP)) {
-					processPlayer(WorldDirection.UP);
+					processPlayer(WorldDirection.NORTH);
 				} else if (InputUtility.getKeyPressed(KeyCode.RIGHT)) {
-					processPlayer(WorldDirection.RIGHT);
-				} else if (!PlayerCharacter.instance.isStucking() && !PlayerCharacter.instance.isWalking()) {
-					PlayerCharacter.instance.setMoving(false);
-				}
-				if (InputUtility.getKeyTriggered(KeyCode.Z)) {
-					currentWorldMap.getObjectAt(PlayerCharacter.instance.getBlockX() + PlayerCharacter.instance.getDirection().getX(),
-							PlayerCharacter.instance.getBlockY() + PlayerCharacter.instance.getDirection().getY()).interacted();
+					processPlayer(WorldDirection.EAST);
+				} else if (!player.isStucking() && !player.isWalking()) {
+					player.setMoving(false);
 				}
 			} catch (WorldMapException ex) {
 				ex.printStackTrace();
@@ -88,24 +95,24 @@ public class WorldManager {
 	}
 
 	private static void processPlayer(WorldDirection wd) throws WorldMapException {
-		if (PlayerCharacter.instance.getDirection() == wd) {
-			if (!PlayerCharacter.instance.isPlaying()) {
-				if (currentWorldMap.getTerrainAt(PlayerCharacter.instance.getBlockX(), PlayerCharacter.instance.getBlockY(), wd) <= 0) {
-					PlayerCharacter.instance.stuck();
+		if (player.getDirection() == wd) {
+			if (!player.isPlaying()) {
+				if (currentWorldMap.getTerrainAt(player.getBlockX(), player.getBlockY(), wd) <= 0) {
+					player.stuck();
 				} else {
-					PlayerCharacter.instance.walk();
+					player.walk();
 				}
 			}
-		} else if (PlayerCharacter.instance.isMoving() && !PlayerCharacter.instance.isWalking()) {
-			if (currentWorldMap.getTerrainAt(PlayerCharacter.instance.getBlockX(), PlayerCharacter.instance.getBlockY(), wd) <= 0) {
-				PlayerCharacter.instance.setDirection(wd);
-				PlayerCharacter.instance.stuck();
+		} else if (player.isMoving() && !player.isWalking()) {
+			if (currentWorldMap.getTerrainAt(player.getBlockX(), player.getBlockY(), wd) <= 0) {
+				player.setDirection(wd);
+				player.stuck();
 			} else {
-				PlayerCharacter.instance.setDirection(wd);
-				PlayerCharacter.instance.walk();
+				player.setDirection(wd);
+				player.walk();
 			}
-		} else if (!PlayerCharacter.instance.isPlaying()) {
-			PlayerCharacter.instance.turn(wd);
+		} else if (!player.isPlaying()) {
+			player.turn(wd);
 		}
 
 	}
@@ -125,33 +132,19 @@ public class WorldManager {
 
 	public static WorldMap loadWorld(String mapName) throws WorldMapException {
 		WorldMap temp = new WorldMap(mapName);
-		try {
-			System.out.println(
-					"loading properties at : " + "load\\worldmap\\" + mapName + "\\" + mapName + ".properties");
-			temp.loadProperties("load\\worldmap\\" + mapName + "\\" + mapName + ".properties");
-		} catch (WorldMapException ex) {
-			ex.printStackTrace();
-		}
 		WorldObject.loadMapObjects("load\\worldmap\\" + temp.getName() + "\\" + temp.getName() + "_object.csv", temp, 0,
 				0, 0, 0, temp.getWidth(), temp.getHeight());
 		System.out.println("WorldManager.java size=" + temp.getWorldObjects().size());
 		return temp;
 	}
 
-	public static void setWorldMapBuffer(WorldMap worldMapBuffer) {
-		WorldManager.worldMapBuffer = worldMapBuffer;
+	public static WorldMap loadNeighbourWorld(String mapName) throws WorldMapException {
+		WorldMap temp = new WorldMap(mapName);
+		return temp;
 	}
 
-	public static WorldMap loadSideWorld(String mapName) throws WorldMapException {
-		WorldMap temp = new WorldMap(mapName);
-		try {
-			System.out.println(
-					"loading properties at : " + "load\\worldmap\\" + mapName + "\\" + mapName + ".properties");
-			temp.loadProperties("load\\worldmap\\" + mapName + "\\" + mapName + ".properties");
-		} catch (WorldMapException ex) {
-			ex.printStackTrace();
-		}
-		return temp;
+	public static void setWorldMapBuffer(WorldMap worldMapBuffer) {
+		WorldManager.worldMapBuffer = worldMapBuffer;
 	}
 
 	public static void useBufferedWorld(int playerStartX, int playerStartY) throws WorldMapException {
@@ -161,59 +154,61 @@ public class WorldManager {
 		useWorld(worldMapBuffer, playerStartX, playerStartY);
 	}
 
-	public static void useWorld(WorldMap worldMap, int playerStartX, int playerStartY) throws WorldMapException {
+	public static void useWorld(WorldMap centerWorldMap, int playerStartX, int playerStartY) throws WorldMapException {
 		// currentWorldMap.clearWorldObjects();
 		// nextWorldMaps.values().forEach(WorldMap::clearWorldObjects);
 		IRenderableHolder.getWritelock().lock();
 		try {
 			for (WorldDirection wd : WorldDirection.values()) {
-				String nextMapName = worldMap.getMapProperties().getProperty(wd.toString().toLowerCase());
-				if (nextMapName != null) {
-					WorldMap nextMap = loadSideWorld(nextMapName);
-					int offsetX = 0, offsetY = 0, minX = 0, maxX = nextMap.getWidth(), minY = 0, maxY = nextMap.getHeight();
+				String neighbourMapName = centerWorldMap.getMapProperties().getProperty(wd.toString().toLowerCase());
+				if (neighbourMapName != null) {
+					WorldMap neighbourMap = loadNeighbourWorld(neighbourMapName);
+					int offsetX = 0, offsetY = 0, minX = 0, maxX = neighbourMap.getWidth(), minY = 0,
+							maxY = neighbourMap.getHeight();
 
 					switch (wd) {
-					case DOWN:
-						minY += Integer.parseInt(worldMap.getMapProperties().getProperty("down_trim", "0"));
-						offsetX = Integer.parseInt(nextMap.getMapProperties().getProperty("down_offset", "0"));
-						offsetY = worldMap.getHeight() - minY;
+					case SOUTH:
+						minY += Integer.parseInt(centerWorldMap.getMapProperties().getProperty("south_trim", "0"));
+						offsetX = Integer.parseInt(centerWorldMap.getMapProperties().getProperty("south_offset", "0"));
+						offsetY = centerWorldMap.getHeight() - minY;
+						System.out.println("WorldManager.java offset case DOWN : " + offsetX + ", " + offsetY);
 						break;
-					case LEFT:
-						maxX -= Integer.parseInt(worldMap.getMapProperties().getProperty("left_trim", "0"));
+					case WEST:
+						maxX -= Integer.parseInt(centerWorldMap.getMapProperties().getProperty("west_trim", "0"));
 						offsetX = -maxX;
-						offsetY = Integer.parseInt(nextMap.getMapProperties().getProperty("left_offset", "0"));
+						offsetY = Integer.parseInt(centerWorldMap.getMapProperties().getProperty("west_offset", "0"));
 						break;
-					case RIGHT:
-						minX += Integer.parseInt(worldMap.getMapProperties().getProperty("right_trim", "0"));
-						offsetX = worldMap.getWidth() - minX;
-						offsetY = Integer.parseInt(nextMap.getMapProperties().getProperty("right_offset", "0"));
+					case EAST:
+						minX += Integer.parseInt(centerWorldMap.getMapProperties().getProperty("east_trim", "0"));
+						offsetX = centerWorldMap.getWidth() - minX;
+						offsetY = Integer.parseInt(centerWorldMap.getMapProperties().getProperty("east_offset", "0"));
 						break;
-					case UP:
-						maxY -= Integer.parseInt(worldMap.getMapProperties().getProperty("up_trim", "0"));
-						offsetX = Integer.parseInt(nextMap.getMapProperties().getProperty("up_offset", "0"));
+					case NORTH:
+						maxY -= Integer.parseInt(centerWorldMap.getMapProperties().getProperty("north_trim", "0"));
+						offsetX = Integer.parseInt(centerWorldMap.getMapProperties().getProperty("north_offset", "0"));
 						offsetY = -maxY;
 						break;
 					}
 
 					WorldObject.loadMapObjects(
-							"load\\worldmap\\" + nextMap.getName() + "\\" + nextMap.getName() + "_object.csv", nextMap,
-							offsetX, offsetY, minX, minY, maxX, maxY);
-					nextWorldMaps.put(wd, nextMap);
-					worldMap.addAllVisibleWorldObject(nextMap.getVisibleWorldObjects());
+							"load\\worldmap\\" + neighbourMap.getName() + "\\" + neighbourMap.getName() + "_object.csv",
+							neighbourMap, offsetX, offsetY, minX, minY, maxX, maxY);
+					nextWorldMaps.put(wd, neighbourMap);
+					centerWorldMap.addAllVisibleWorldObject(neighbourMap.getVisibleWorldObjects());
 				} else {
 					nextWorldMaps.put(wd, null);
 
 				}
 			}
-			MusicUtility.playMusic(worldMap.getMapProperties().getProperty("music"));
-			worldMap.getVisibleWorldObjects().add(worldMap);
-			IRenderableHolder.setWorldObjects(worldMap.getVisibleWorldObjects());
-			currentWorldMap = worldMap;
-			PlayerCharacter.instance.setX(playerStartX * 32);
-			PlayerCharacter.instance.setY(playerStartY * 32);
-			PlayerCharacter.instance.setBlockX(playerStartX);
-			PlayerCharacter.instance.setBlockY(playerStartY);
-			IRenderableHolder.addWorldObject(PlayerCharacter.instance);
+			MusicUtility.playMusic(centerWorldMap.getMapProperties().getProperty("music"));
+			centerWorldMap.getVisibleWorldObjects().add(centerWorldMap);
+			IRenderableHolder.setWorldObjects(centerWorldMap.getVisibleWorldObjects());
+			currentWorldMap = centerWorldMap;
+			player.setX(playerStartX * 32);
+			player.setY(playerStartY * 32);
+			player.setBlockX(playerStartX);
+			player.setBlockY(playerStartY);
+			IRenderableHolder.addWorldObject(player);
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		} finally {
@@ -254,12 +249,18 @@ public class WorldManager {
 		return currentWorldMap;
 	}
 
-	public static final WorldMap getNextWorldMaps(WorldDirection wd) throws WorldMapException {
-		/*if (nextWorldMaps.get(wd) == null) {
-			throw new WorldMapException("WorldManager.getNextWorldMaps() : map is null [wd=" + wd + ", currentMap="
-					+ currentWorldMap.getName() + "]");
-		}*/
+	public static final WorldMap getNextWorldMaps(WorldDirection wd) {
+		// /*
+		// * if (nextWorldMaps.get(wd) == null) { throw new
+		// * WorldMapException("WorldManager.getNextWorldMaps() : map is null
+		// [wd="
+		// * + wd + ", currentMap=" + currentWorldMap.getName() + "]"); }
+		// */
 		return nextWorldMaps.get(wd);
+	}
+
+	public static PlayerCharacter getPlayer() {
+		return player;
 	}
 
 }

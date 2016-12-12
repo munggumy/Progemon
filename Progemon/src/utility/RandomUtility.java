@@ -19,7 +19,11 @@ public class RandomUtility {
 
 	/** Gets random element from array */
 	public static <T extends Object> T randomElement(List<T> array) {
-		return array.get(random.nextInt(array.size()));
+		try {
+			return array.get(random.nextInt(array.size()));
+		} catch (IllegalArgumentException ex) {
+			throw new IllegalArgumentException("array is empty", ex);
+		}
 	}
 
 	/**

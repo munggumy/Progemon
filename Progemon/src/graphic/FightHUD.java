@@ -1,6 +1,7 @@
 package graphic;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import logic_fight.character.pokemon.Pokemon;
 import logic_fight.terrain.FightMap;
@@ -9,15 +10,14 @@ import utility.InputUtility;
 
 public class FightHUD implements IRenderable {
 
-	private static ArrayList<Boolean> skillMenuSelect = new ArrayList<>(4);
+	private static List<Boolean> skillMenuSelect = new ArrayList<>(4);
 	private static int skillMenuInterval = 15;
 	private static Pokemon currentPokemon;
 	private static boolean visible = true, showSkillMenu = false;
-	private static PsuedoAnimation<FightHUD> skillMenuInit = new PsuedoAnimation<FightHUD>(15, 0) {
-		
+	private static PseudoAnimation<FightHUD> skillMenuInit = new PseudoAnimation<FightHUD>(15, 0) {
+
 		@Override
 		public void update() {
-			// TODO Auto-generated method stub
 			if (delayCounter == frameDelay) {
 				currentFrame++;
 				skillMenuInterval = currentFrame;
@@ -25,23 +25,21 @@ public class FightHUD implements IRenderable {
 					stop();
 				}
 				delayCounter = 0;
-			}
-			else {
+			} else {
 				delayCounter++;
 			}
 		}
 	};
 
 	public FightHUD() {
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < Pokemon.MAX_ACTIVE_SKILLS; i++) {
 			skillMenuSelect.add(false);
 		}
-		// TODO Auto-generated constructor stub
 		show();
 	}
 
 	public static void checkInput() {
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < Pokemon.MAX_ACTIVE_SKILLS; i++) {
 			skillMenuSelect.set(i, false);
 		}
 		if (currentPokemon == null) {
@@ -50,8 +48,9 @@ public class FightHUD implements IRenderable {
 		int blockSize = FightMap.getBlockSize();
 		int x = (int) (InputUtility.getMouseX() - FightMap.getOriginX()
 				- (currentPokemon.getCurrentFightTerrain().getX() + 0.5) * blockSize);
-		int y = (int) (InputUtility.getMouseY() - FightMap.getOriginY()
-				- (currentPokemon.getCurrentFightTerrain().getY() + 0.5) * blockSize);
+		int y = (int) (InputUtility.getMouseY() - FightMap.getOriginY() - (
+
+		currentPokemon.getCurrentFightTerrain().getY() + 0.5) * blockSize);
 		if (x < skillMenuInterval && x >= -skillMenuInterval) {
 			return;
 		}
@@ -85,7 +84,7 @@ public class FightHUD implements IRenderable {
 		FightHUD.currentPokemon = currentPokemon;
 	}
 
-	public static ArrayList<Boolean> getSkillMenuSelect() {
+	public static List<Boolean> getSkillMenuSelect() {
 		return skillMenuSelect;
 	}
 
@@ -104,38 +103,32 @@ public class FightHUD implements IRenderable {
 
 	@Override
 	public void draw() {
-		// TODO Auto-generated method stub
 		DrawingUtility.drawFightHUD(this);
 	}
 
 	@Override
 	public int getDepth() {
-		// TODO Auto-generated method stub
 		return Integer.MAX_VALUE;
 	}
 
 	@Override
 	public boolean isVisible() {
-		// TODO Auto-generated method stub
 		return visible;
 	}
 
 	@Override
 	public void setVisible(boolean visible) {
-		// TODO Auto-generated method stub
-		this.visible = visible;
+		FightHUD.visible = visible;
 	}
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
 		visible = true;
 		IRenderableHolder.addFightObject(this);
 	}
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
 		visible = false;
 		IRenderableHolder.removeFightObject(this);
 	}

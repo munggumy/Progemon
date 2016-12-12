@@ -7,6 +7,10 @@ import logic_fight.character.pokemon.Pokemon.MoveType;
 /** Abstract class for Pokemon and PokemonTemplate */
 public abstract class AbstractPokemon {
 
+	public static int MIN_CATCH_RATE = 0;
+	public static int MAX_CATCH_RATE = 255;
+
+	protected String name;
 	protected MoveType moveType;
 	protected Element primaryElement, secondaryElement;
 	protected int moveRange, attackRange, id;
@@ -72,11 +76,11 @@ public abstract class AbstractPokemon {
 	public final void setImage(Image image) {
 		this.image = image;
 	}
-	
-	public Image getIcon() {
+
+	public Image getIconImage() {
 		return icon;
 	}
-	
+
 	public void setIcon(Image icon) {
 		this.icon = icon;
 	}
@@ -84,7 +88,9 @@ public abstract class AbstractPokemon {
 	public final int getCatchRate() {
 		return catchRate;
 	}
-	
-	
+
+	public final String getName() {
+		return name;
+	}
 
 }
