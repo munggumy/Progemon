@@ -1,7 +1,7 @@
 package logic_world.terrain;
 
 public enum WorldDirection {
-	DOWN(0, 1), LEFT(-1, 0), UP(0, -1), RIGHT(1, 0);
+	SOUTH(0, 1), WEST(-1, 0), NORTH(0, -1), EAST(1, 0);
 
 	private int x, y;
 

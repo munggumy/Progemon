@@ -99,7 +99,7 @@ public class TestFileUtitlity {
 	@Test
 	public void testLoadPokemonList() {
 		FileUtility.loadActiveSkills();
-		FileUtility.loadPokemons();
+		FileUtility.loadPokedex();
 
 		assertEquals("All Pokemons = 18", 18, Pokedex.getAllPokemons().size());
 

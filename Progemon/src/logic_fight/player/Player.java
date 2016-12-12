@@ -3,8 +3,15 @@ package logic_fight.player;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import audio.SFXUtility;
 import graphic.FightHUD;
+import item.Bag;
+import item.Item;
+import item.Items;
+import item.Pokeball;
+import item.PokeballType;
 import javafx.scene.paint.Color;
+import logic_fight.CaptureUtility;
 import logic_fight.FightPhase;
 import logic_fight.character.activeSkill.ActiveSkill;
 import logic_fight.character.pokemon.Pokemon;
@@ -13,23 +20,29 @@ import logic_fight.filters.MoveFilter;
 import logic_fight.terrain.Path;
 import manager.GUIFightGameManager;
 import utility.Clock;
-import utility.RandomUtility;
 import utility.exception.AbnormalPhaseOrderException;
 import utility.exception.UnknownPhaseException;
 
 public abstract class Player {
+
+	private static final int NO_OF_CAPTURE_WIGGLES = 3;
 	private String name;
 	private Color color;
 	private ArrayList<Pokemon> pokemons;
 	private boolean godlike;
+	private Bag bag;
 
 	protected Optional<Pokemon> nextAttackedPokemon;
 	protected Optional<ActiveSkill> nextAttackSkill;
 	protected Pokemon captureTarget;
-
+	protected Item itemToUse;
+	protected Pokemon itemTargetPokemon;
 	protected Optional<Path> nextPath;
+
 	private int moveCounter = 1;
 	private int moveDelay = 5, moveDelayCounter = 0;
+	private int captureCounter = 0;
+	private int captureDelay = 60, captureDelayCounter = 0;
 	private int tokenx, tokeny;
 
 	private GUIFightGameManager currentFightManager;
@@ -78,6 +91,7 @@ public abstract class Player {
 						nextAttackedPokemon = Optional.empty();
 						nextAttackSkill = Optional.empty();
 						captureTarget = null;
+						itemToUse = null;
 						phaseIsFinished = true;
 						break;
 
@@ -139,37 +153,44 @@ public abstract class Player {
 						phaseIsFinished = inputCapturePokemon(pokemon);
 						break;
 					case capturePhase:
-						if (captureTarget == null) {
-							System.err.println("Capture Target not Set!");
-							break;
-						}
-						pokemon.getCurrentFightMap().unshadowAllBlocks();
-						captureTarget.getCurrentFightTerrain().setHighlight(true);
-						boolean captured = RandomUtility.randomPercent(100) <= 0.2;
-						if (captured) {
-							pokemon.getCurrentFightMap().removePokemonFromMap(captureTarget);
-							captureTarget.getOwner().removePokemon(captureTarget);
-							pokemon.getOwner().addPokemon(captureTarget);
-							System.out.println("(Player.java:145) CAPTURED!");
-						} else {
-							System.out.println("(Player.java:147) NOT CAPTURED!");
-						}
-						phaseIsFinished = true;
+						phaseIsFinished = capture(pokemon);
 						break;
 					case postCapturePhase:
 						pokemon.getCurrentFightMap().unshadowAllBlocks();
 						phaseIsFinished = true;
 						break;
+					case preItemPhase:
+						pokemon.getCurrentFightMap().unshadowAllBlocks();
+						pokemon.getCurrentFightMap().getPokemonsOnMap().stream()
+								.filter(p -> p.getOwner().equals(pokemon.getOwner()))
+								.map(Pokemon::getCurrentFightTerrain).forEach(ft -> ft.setHighlight(true));
+						phaseIsFinished = true;
+						break;
+					case inputItemPhase:
+						itemToUse = Items.getItem("potion");
+						phaseIsFinished = inputUseItem(pokemon);
+						break;
+					case inputItemPokemonPhase:
+						phaseIsFinished = inputUseItemPokemon(pokemon);
+						break;
+					case useItemPhase:
+						itemTargetPokemon.useItem(itemToUse);
+						phaseIsFinished = true;
+						break;
+					case postItemPhase:
+						pokemon.getCurrentFightMap().unshadowAllBlocks();
+						phaseIsFinished = true;
+						break;
 					default:
-						throw new UnknownPhaseException("Unknown Phase in Player.java[" + this.name + "].");
+						throw new UnknownPhaseException("Unknown Phase in Player.java[" + currentPhase + "].");
 					}
 					if (phaseIsFinished) {
 						currentFightManager.setNextPhase(currentPhase.nextPhase());
 					} else {
 						currentFightManager.setNextPhase(currentPhase);
 					}
-				} catch (AbnormalPhaseOrderException e) {
-					currentFightManager.setNextPhase(e.getNextPhase());
+				} catch (AbnormalPhaseOrderException ex) {
+					currentFightManager.setNextPhase(ex.getNextPhase());
 				}
 				currentFightManager.nextPhase();
 				Clock.tick();
@@ -190,14 +211,8 @@ public abstract class Player {
 	protected abstract boolean inputNextPath(Pokemon pokemon) throws AbnormalPhaseOrderException;
 
 	protected final boolean move(Pokemon pokemon) {
-		// <<<<<<< HEAD
-		// if (moveCounter == nextPath.get().size()) {
-		// System.out.println("Pokemon " + pokemon.getName() + " moved from (" +
-		// x + ", " + y + ") to ("
-		// =======
 		if (moveCounter == nextPath.get().size()) {
 			System.out.println("Pokemon " + pokemon.getName() + " moved from (" + tokenx + ", " + tokeny + ") to ("
-			// >>>>>>> 510768d529f4fdb8b001f678c37730aaa55ef038
 					+ pokemon.getCurrentFightTerrain().getX() + ", " + pokemon.getCurrentFightTerrain().getY() + ").");
 			moveCounter = 1;
 			moveDelayCounter = 0;
@@ -230,6 +245,68 @@ public abstract class Player {
 	}
 
 	protected boolean inputCapturePokemon(Pokemon pokemon) throws AbnormalPhaseOrderException {
+		return true;
+	}
+
+	protected final boolean capture(Pokemon attackingPokemon) {
+		if (captureTarget == null) {
+			System.err.println("Capture Target not Set!");
+			throw new IllegalStateException("captureTarget not set before capture()");
+		}
+		attackingPokemon.getCurrentFightMap().unshadowAllBlocks();
+		captureTarget.getCurrentFightTerrain().setHighlight(true);
+
+		if (captureCounter == 0 && captureDelayCounter == 0) {
+			SFXUtility.playSound("pokeball_throw");
+			captureDelayCounter++;
+			return false;
+		} else if (captureCounter == 1 && captureDelayCounter == 0) {
+			SFXUtility.playSound("pokeball_suck");
+			captureDelayCounter++;
+			return false;
+		} else if (captureDelay == captureDelayCounter) {
+			if (captureCounter <= 1) {
+				captureCounter++;
+				captureDelayCounter = 0;
+				return false;
+			}
+			if (captureCounter >= NO_OF_CAPTURE_WIGGLES + 2) {
+				SFXUtility.playSound("pokeball_captured");
+				captureCounter = 0;
+				captureDelayCounter = 0;
+				attackingPokemon.getCurrentFightMap().removePokemonFromMap(captureTarget);
+				captureTarget.getOwner().removePokemon(captureTarget);
+				attackingPokemon.getOwner().addPokemon(captureTarget);
+				System.out.println("(Player.java:145) CAPTURED!");
+				return true;
+			}
+			captureDelayCounter = 0;
+			double modifiedCatchRate = CaptureUtility.getModifiedCatchRate(captureTarget,
+					new Pokeball(PokeballType.POKEBALL));
+			if (CaptureUtility.isShakeSuccessful(modifiedCatchRate)) {
+				SFXUtility.playSound("pokeball_wiggles");
+				captureCounter++;
+				System.out.println("Player.java Pokeball Wiggles");
+				return false;
+			} else {
+				SFXUtility.playSound("pokemon_out_of_ball");
+				captureCounter = 0;
+				System.out.println("(Player.java:147) NOT CAPTURED!");
+				return true;
+			}
+
+		} else {
+			System.out.print(".");
+			captureDelayCounter++;
+			return false;
+		}
+	}
+
+	protected boolean inputUseItem(Pokemon pokemon) throws AbnormalPhaseOrderException {
+		return true;
+	}
+
+	protected boolean inputUseItemPokemon(Pokemon pokemon) throws AbnormalPhaseOrderException {
 		return true;
 	}
 
@@ -276,6 +353,10 @@ public abstract class Player {
 
 	public final void setCurrentFightManager(GUIFightGameManager currentFightManager) {
 		this.currentFightManager = currentFightManager;
+	}
+
+	public final Bag getBag() {
+		return bag;
 	}
 
 }

@@ -19,7 +19,6 @@ public class FullScreen extends Canvas {
 	private static GraphicsContext gc;
 	
 	public FullScreen() {
-		// TODO Auto-generated constructor stub
 		super(SCREEN_WIDTH, SCREEN_HEIGHT);
 		gc = getGraphicsContext2D();
 	}

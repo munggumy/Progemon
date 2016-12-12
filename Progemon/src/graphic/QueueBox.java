@@ -9,10 +9,11 @@ import utility.Clock;
 
 public class QueueBox implements IRenderable {
 
+	public static final int ORIGIN_X = 396, ORIGIN_Y = 18, WIDTH = 68, HEIGHT = 40;
+	public static final int BOX_X = 390, BOX_Y = 0;
+
 	protected static final String QUEUE_BOX_PATH = "load\\img\\HUD\\queuebox.png";
 
-	private static final int ORIGIN_X = 396, ORIGIN_Y = 18, WIDTH = 68, HEIGHT = 40;
-	private static final int BOX_X = 390, BOX_Y = 0;
 	private static ArrayList<Pokemon> pokemonsOnQueue = new ArrayList<Pokemon>();
 	private static List<Pokemon> pokemonsOnMap;
 	private static int[][] delta = new int[10][2];
@@ -22,7 +23,7 @@ public class QueueBox implements IRenderable {
 	private static boolean remove = false, move = false, insert = false;
 	private static boolean isQueue = true;
 	private static boolean visible = true;
-	
+
 	private static GUIFightGameManager currentFightManager;
 
 	public QueueBox(GUIFightGameManager currentFightManager) {

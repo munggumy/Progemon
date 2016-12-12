@@ -1,6 +1,6 @@
 package item;
 
 @FunctionalInterface
-public interface ItemAction {
-	public void use(Object target);
+public interface ItemAction<T> {
+	public void use(T target);
 }

@@ -11,6 +11,7 @@ public enum Element {
 		private double factor;
 
 		SW(double factor) {
+			
 			this.factor = factor;
 		}
 

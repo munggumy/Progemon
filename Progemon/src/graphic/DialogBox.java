@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import audio.SFXUtility;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import utility.Clock;
 import utility.InputUtility;
@@ -16,6 +17,8 @@ import utility.InputUtility;
 public class DialogBox implements IRenderable {
 	
 	public static final DialogBox instance = new DialogBox();
+
+	public static final Color FONT_COLOR = Color.BLACK;
 
 	protected static final String DIALOG_BOX_PATH = "load\\img\\dialogbox\\Theme2.png";
 	private Image dialogBoxImage = null;

@@ -5,6 +5,7 @@ import java.io.File;
 import audio.SFXUtility;
 import graphic.Animation;
 import graphic.DrawingUtility;
+import item.Bag;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
@@ -15,7 +16,7 @@ import manager.WorldManager;
 import utility.Pokedex;
 
 public class PlayerCharacter extends Animation {
-	
+
 	public static final PlayerCharacter instance = new PlayerCharacter();
 
 	private static final String DEFAULT_IMG_PATH = "load\\img\\player\\Boy.png";
@@ -26,9 +27,11 @@ public class PlayerCharacter extends Animation {
 	private WorldDirection direction;
 	private int frameLimit = 2;
 	private int legState = 0;
+	private int repelTime = 0;
 	private boolean moving = false, walking = false, turning = false, stucking = false;
 
 	private HumanPlayer me = new HumanPlayer("Mhee", Color.BROWN);
+	private Bag bag = me.getBag();
 
 	public PlayerCharacter() {
 		super(DrawingUtility.resize(new Image(new File(DEFAULT_IMG_PATH).toURI().toString()), 2), 2);
@@ -42,7 +45,7 @@ public class PlayerCharacter extends Animation {
 
 		me.addPokemon(charlizard);
 		me.addPokemon(caterpie);
-		direction = WorldDirection.DOWN;
+		direction = WorldDirection.SOUTH;
 	}
 
 	@Override
@@ -58,6 +61,7 @@ public class PlayerCharacter extends Animation {
 		int x = blockX + (direction.ordinal() - 2) * (direction.ordinal() % 2);
 		int y = blockY + (direction.ordinal() - 1) * (direction.ordinal() % 2 - 1);
 		System.out.println("Player walk --> x : " + x + ", y : " + y);
+		repelTime = repelTime == 0 ? 0 : repelTime - 1;
 		play();
 		walking = true;
 		moving = true;
@@ -80,7 +84,6 @@ public class PlayerCharacter extends Animation {
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
 		if (!playing) {
 			return;
 		}
@@ -95,16 +98,16 @@ public class PlayerCharacter extends Animation {
 
 	public void walkUpdate() {
 		switch (direction) {
-		case DOWN:
+		case SOUTH:
 			y += 32f / (VERYSLOW_DELAY + 1);
 			break;
-		case LEFT:
+		case WEST:
 			x -= 32f / (VERYSLOW_DELAY + 1);
 			break;
-		case UP:
+		case NORTH:
 			y -= 32f / (VERYSLOW_DELAY + 1);
 			break;
-		case RIGHT:
+		case EAST:
 			x += 32f / (VERYSLOW_DELAY + 1);
 			break;
 		}
@@ -125,16 +128,16 @@ public class PlayerCharacter extends Animation {
 			legState++;
 			legState %= 2;
 			switch (direction) {
-			case DOWN:
+			case SOUTH:
 				blockY += 1;
 				break;
-			case LEFT:
+			case WEST:
 				blockX -= 1;
 				break;
-			case UP:
+			case NORTH:
 				blockY -= 1;
 				break;
-			case RIGHT:
+			case EAST:
 				blockX += 1;
 				break;
 			}
@@ -264,6 +267,16 @@ public class PlayerCharacter extends Animation {
 
 	public final HumanPlayer getMe() {
 		return me;
+	}
+
+	public void setRepelTime(int repelTime) {
+		if (repelTime < 0) {
+			throw new IllegalArgumentException("repelTime cannot be negative");
+		}
+		if (this.repelTime > repelTime) {
+			return;
+		}
+		this.repelTime = repelTime;
 	}
 
 }

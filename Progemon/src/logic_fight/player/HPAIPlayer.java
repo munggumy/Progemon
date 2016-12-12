@@ -22,7 +22,6 @@ public class HPAIPlayer extends AIPlayer {
 	@Override
 	protected Optional<Path> calculateNextPath(Pokemon pokemon) {
 		Pokemon lowestHP = null;
-		// find pokemon with lowest HP
 		ArrayList<Pokemon> sortedList = new ArrayList<Pokemon>(pokemon.getCurrentFightMap().getPokemonsOnMap());
 		Collections.sort(sortedList, Pokemon.byHP);
 		for (Pokemon other : sortedList) {
@@ -44,13 +43,6 @@ public class HPAIPlayer extends AIPlayer {
 		Path out = new Path();
 		boolean overlap = false;
 		for (FightTerrain fightTerrain : subPath) {
-			// for (Pokemon otherPokemon :
-			// pokemon.getCurrentFightMap().getPokemonsOnMap()) {
-			// if (otherPokemon != pokemon &&
-			// otherPokemon.getCurrentFightTerrain().equals(fightTerrain)) {
-			// overlap = true;
-			// }
-			// }
 			overlap = pokemon.getCurrentFightMap().getPokemonsOnMap().stream().anyMatch(other -> {
 				return other != pokemon && other.getCurrentFightTerrain().equals(fightTerrain);
 			});

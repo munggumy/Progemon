@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,7 @@ import logic_fight.character.activeSkill.SkillEffect;
 import logic_fight.character.pokemon.LevelingRate;
 import logic_fight.character.pokemon.Pokemon;
 import logic_fight.character.pokemon.PokemonTemplate;
-import logic_fight.character.pokemon.Status;
+import logic_fight.character.pokemon.NonVolatileStatus;
 import logic_fight.character.pokemon.Pokemon.MoveType;
 import logic_fight.terrain.FightTerrain;
 import utility.exception.FileWrongFormatException;
@@ -33,15 +34,14 @@ public class FileUtility {
 
 	private static final String DEFAULT_PATH = "load";
 	private static final String DEFAULT_LOAD_POKEMON = DEFAULT_PATH + "/pokemon_list.csv";
-	private static final String DEFAULT_LOAD_POKEDEX = DEFAULT_PATH + "/pokedex.csv";
 	private static final String DEFAULT_LOAD_FIGHT_MAP = DEFAULT_PATH + "/fight_map.txt";
 	private static final String DEFAULT_ACTIVE_SKILLS = DEFAULT_PATH + "/active_skills.csv";
 	private static final String DEFAULT_SW_TABLE = DEFAULT_PATH + "/strengthWeaknessTable.csv";
 
+	@Deprecated
 	public static void loadAllDefaults() {
 		loadActiveSkills();
 		loadPokedex();
-		loadPokemons();
 		loadStrengthWeaknessTable();
 	}
 
@@ -50,20 +50,20 @@ public class FileUtility {
 	 * 
 	 * @throws IOException
 	 */
-	public static void loadPokemons(String filePath) {
+	public static void loadPokedex(String filePath) {
 		String primaryDelimiter = "\\s*,\\s*", secondaryDelimiter = "/";
 		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(filePath)))) {
-			Pattern pattern = Pattern.compile(String.join(primaryDelimiter, "(\\d+|\\w+)", "(?<attack>\\d+(\\.\\d*)?)",
-					"(?<defense>\\d+(\\.\\d*)?)", "(?<speed>\\d+(\\.\\d*)?)", "(?<hp>\\d+(\\.\\d*)?)",
-					"(?<moveRange>\\d+)", "(?<attackRange>\\d+)", "(?<moveType>\\w+)",
+			Pattern pattern = Pattern.compile(String.join(primaryDelimiter, "(?<id>\\d+)", "(?<name>\\w+)",
+					"(?<attack>\\d+(\\.\\d*)?)", "(?<defense>\\d+(\\.\\d*)?)", "(?<speed>\\d+(\\.\\d*)?)",
+					"(?<hp>\\d+(\\.\\d*)?)", "(?<moveRange>\\d+)", "(?<attackRange>\\d+)", "(?<moveType>\\w+)",
 					"(?<attackSkills>[a-zA-z" + secondaryDelimiter + " ]+)",
 					"(?<elements>[a-zA-Z" + secondaryDelimiter + " ]+)", "(?<levelingType>[\\w_]+)",
 					"(?<expYield>\\d+)", "(?<catchRate>\\d+)"));
-			
+
 			Matcher matcher;
 			while (scanner.hasNextLine()) {
 				String nextLine = scanner.nextLine();
-				if(nextLine.matches("^#+.*")){
+				if (nextLine.matches("^#+.*")) {
 					continue;
 				}
 				matcher = pattern.matcher(nextLine);
@@ -71,62 +71,55 @@ public class FileUtility {
 					System.err.println("pattern : " + pattern.toString());
 					System.err.println(pattern.split(",").length);
 					System.err.println("this line : " + nextLine);
-					throw new FileWrongFormatException("Needs at least 8 parameters per pokemon!");
+					throw new FileWrongFormatException("FileUtility.java loadPokemon() unmatched pattern");
 				}
-				String[] args = { matcher.group(1), matcher.group("attack"), matcher.group("defense"),
-						matcher.group("speed"), matcher.group("hp"), matcher.group("moveRange"),
-						matcher.group("attackRange"), matcher.group("moveType"), matcher.group("levelingType"),
-						matcher.group("expYield"), matcher.group("catchRate") };
-				if (matcher.group(1).matches("\\d+")) {
-					loadPokemonByID(args, matcher.group("attackSkills").split(secondaryDelimiter),
-							matcher.group("elements").split(secondaryDelimiter));
-				} else if (matcher.group(1).matches("\\w+")) {
-					args[0] = Integer.toString(Pokedex.getPokemonID(matcher.group(1)));
-					loadPokemonByID(args, matcher.group("attackSkills").split(secondaryDelimiter),
-							matcher.group("elements").split(secondaryDelimiter));
-				} else {
-					throw new FileWrongFormatException("Unknown File Format");
-				}
+				String[] args = { matcher.group("id"), matcher.group("name"), matcher.group("attack"),
+						matcher.group("defense"), matcher.group("speed"), matcher.group("hp"),
+						matcher.group("moveRange"), matcher.group("attackRange"), matcher.group("moveType"),
+						matcher.group("levelingType"), matcher.group("expYield"), matcher.group("catchRate") };
+
+				loadPokemonSubroutine(args, matcher.group("attackSkills").split(secondaryDelimiter),
+						matcher.group("elements").split(secondaryDelimiter));
+
 			}
-		} catch (FileNotFoundException | FileWrongFormatException e) {
-			e.printStackTrace();
+		} catch (FileNotFoundException | FileWrongFormatException ex) {
+			ex.printStackTrace();
 		}
 	}
 
-	public static void loadPokemons() {
-		loadPokemons(DEFAULT_LOAD_POKEMON);
+	public static void loadPokedex() {
+		loadPokedex(DEFAULT_LOAD_POKEMON);
 	}
 
-	private static void loadPokemonByID(String[] args, String[] activeSkills, String[] elements) {
+	private static void loadPokemonSubroutine(String[] args, String[] activeSkills, String[] elements) {
 		if (activeSkills.length == 0 || activeSkills.length > Pokemon.MAX_ACTIVE_SKILLS || elements.length == 0
 				|| elements.length > 2) {
 			throw new IllegalArgumentException("Illegal Argument in loadPokemonByID() : activeSkills.length="
 					+ activeSkills.length + ", elements.length=" + elements.length);
 		}
 		PokemonTemplate np = new PokemonTemplate();
+		String name = args[1];
 		np.setID(Integer.parseInt(args[0]));
-		np.setBaseAttack(Integer.parseInt(args[1]));
-		np.setBaseDefense(Integer.parseInt(args[2]));
-		np.setBaseSpeed(Integer.parseInt(args[3]));
-		np.setBaseHP(Integer.parseInt(args[4]));
-		np.setMoveRange(Integer.parseInt(args[5]));
-		np.setAttackRange(Integer.parseInt(args[6]));
-		np.setMoveType(MoveType.valueOf(args[7]));
-		np.setLevelingRate(LevelingRate.valueOf(args[8]));
-		np.setExpYield(Integer.parseInt(args[9]));
+		np.setName(name);
+		np.setBaseAttack(Integer.parseInt(args[2]));
+		np.setBaseDefense(Integer.parseInt(args[3]));
+		np.setBaseSpeed(Integer.parseInt(args[4]));
+		np.setBaseHP(Integer.parseInt(args[5]));
+		np.setMoveRange(Integer.parseInt(args[6]));
+		np.setAttackRange(Integer.parseInt(args[7]));
+		np.setMoveType(MoveType.valueOf(args[8]));
+		np.setLevelingRate(LevelingRate.valueOf(args[9]));
+		np.setExpYield(Integer.parseInt(args[10]));
 		np.setPrimaryElement(Element.valueOf(elements[0].trim()));
 		if (elements.length == 2) {
 			np.setSecondaryElement(Element.valueOf(elements[1].trim()));
 		} else {
 			np.setSecondaryElement(null);
 		}
-		np.setCatchRate(Integer.parseInt(args[10]));
-
-		Pokemon new_pokemon = new Pokemon(np, 5);
-		Stream.of(activeSkills).filter(as -> !as.isEmpty()).forEachOrdered(as -> new_pokemon.addActiveSkill(as.trim()));
-		new_pokemon.loadImage();
-		Pokedex.addPokemonToList(new_pokemon);
-		System.out.println("added pokemon " + new_pokemon.getName());
+		np.setCatchRate(Integer.parseInt(args[11]));
+		Stream.of(activeSkills).filter(as -> !as.isEmpty())
+				.forEachOrdered(as -> np.addDefaultActiveSkill(ActiveSkill.getActiveSkill(as.trim())));
+		Pokedex.addPokemonToPokedex(name, np);
 	}
 
 	// private static void loadPokemonByName(String[] args, String[]
@@ -144,29 +137,30 @@ public class FileUtility {
 	 * 
 	 * @throws IOException
 	 */
-	public static void loadPokedex(String filePath) {
-		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(filePath)))) {
-			Pattern pattern = Pattern.compile("(\\d+),([\\w\\s]+)");
-			Matcher matcher;
-			int temp_id;
-			String temp_name;
-			while (scanner.hasNextLine()) {
-				String line = scanner.nextLine();
-				matcher = pattern.matcher(line);
-				if (matcher.find()) {
-					temp_id = Integer.parseInt(matcher.group(1));
-					temp_name = matcher.group(2);
-					Pokedex.addPokemonToPokedex(temp_id, temp_name);
-				}
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static void loadPokedex() {
-		loadPokedex(DEFAULT_LOAD_POKEDEX);
-	}
+	// public static void loadPokedex(String filePath) {
+	// try (Scanner scanner = new Scanner(new BufferedReader(new
+	// FileReader(filePath)))) {
+	// Pattern pattern = Pattern.compile("(\\d+),([\\w\\s]+)");
+	// Matcher matcher;
+	// int temp_id;
+	// String temp_name;
+	// while (scanner.hasNextLine()) {
+	// String line = scanner.nextLine();
+	// matcher = pattern.matcher(line);
+	// if (matcher.find()) {
+	// temp_id = Integer.parseInt(matcher.group(1));
+	// temp_name = matcher.group(2);
+	// Pokedex.addPokemonToPokedex(temp_id, temp_name);
+	// }
+	// }
+	// } catch (FileNotFoundException e) {
+	// e.printStackTrace();
+	// }
+	// }
+	//
+	// public static void loadPokedex() {
+	// loadPokedex(DEFAULT_LOAD_POKEDEX);
+	// }
 
 	// Load Fight Map
 	/** Fightmap fm = new Fightmap(loadFightMap()); */
@@ -226,7 +220,8 @@ public class FileUtility {
 		String delimiter = "\\s*,\\s*";
 		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(filePath)))) {
 			Pattern pattern = Pattern.compile(String.join(delimiter, "(?<skillName>[\\w\\s]+)", "(?<power>\\d+)",
-					"(?<element>\\w*)", "(?<graphicType>\\w*)", "(?<areaType>\\w*)", "(?<skillEffect>.*)"));
+					"(?<element>\\w*)", "(?<graphicType>\\w*)", "(?<areaType>\\w*)", "(?<sfxName>[\\w_]*)",
+					"(?<skillEffect>[\\w\\d.()%/-]*)"));
 			Matcher matcher;
 			String skillName;
 			while (scanner.hasNextLine()) {
@@ -236,29 +231,22 @@ public class FileUtility {
 				}
 				matcher = pattern.matcher(line);
 				if (matcher.find()) {
-					skillName = matcher.group(1);
-					ActiveSkill activeSkill = ActiveSkill.getActiveSkill(skillName, Integer.parseInt(matcher.group(2)),
-							false);
-					try {
-						activeSkill.setElement(Element.valueOf(matcher.group(3).toUpperCase()));
-					} catch (IllegalArgumentException e) {
-						System.err.println(skillName + " : Element not set");
-						activeSkill.setElement(Element.NORMAL);
-					}
-					try {
-						activeSkill.setGraphicType(GraphicType.valueOf(matcher.group(4).toUpperCase()));
-						activeSkill.setAreaType(AreaType.valueOf(matcher.group(5).toUpperCase()));
-					} catch (IllegalArgumentException e) {
-						System.err.println(skillName + " : Properties not set");
-						activeSkill.setGraphicType(null);
-						activeSkill.setAreaType(null);
-					}
-					activeSkill.setOnAttack(decodeSkillEffect(matcher.group(6)).orElse(SkillEffect.normal));
+					skillName = matcher.group("skillName");
+					ActiveSkill activeSkill = ActiveSkill.getActiveSkill(skillName,
+							Integer.parseInt(matcher.group("power")), false);
+					String elementString = matcher.group("element").toUpperCase();
+					activeSkill.setElement(Element.valueOf(elementString.isEmpty() ? "NORMAL" : elementString));
+					String graphicString = matcher.group("graphicType").toUpperCase();
+					activeSkill.setGraphicType(GraphicType.valueOf(graphicString.isEmpty() ? "BALL" : graphicString));
+					String areaString = matcher.group("areaType").toUpperCase();
+					activeSkill.setAreaType(AreaType.valueOf(areaString.isEmpty() ? "SINGLE" : areaString));
+					activeSkill.setSfxName(matcher.group("sfxName"));
+					activeSkill.setOnAttack(decodeSkillEffect(matcher.group("skillEffect")).orElse(SkillEffect.normal));
 				} else {
 					System.err.println("Unmatched Pattern \"" + line + "\" in loadActiveSkills().");
 				}
 			}
-		} catch (FileNotFoundException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -293,10 +281,10 @@ public class FileUtility {
 	public static Map<String, SkillEffect> effectDictionary = new HashMap<String, SkillEffect>();
 	static {
 		effectDictionary.put("", SkillEffect.normal);
-		effectDictionary.put("paralysis", SkillEffect.status(Status.PARALYZED));
-		effectDictionary.put("freeze", SkillEffect.status(Status.FREEZE));
-		effectDictionary.put("burn", SkillEffect.status(Status.BURN));
-		effectDictionary.put("poison", SkillEffect.status(Status.POISON));
+		effectDictionary.put("paralysis", SkillEffect.status(NonVolatileStatus.PARALYZED));
+		effectDictionary.put("freeze", SkillEffect.status(NonVolatileStatus.FREEZE));
+		effectDictionary.put("burn", SkillEffect.status(NonVolatileStatus.BURN));
+		effectDictionary.put("poison", SkillEffect.status(NonVolatileStatus.POISON));
 	}
 
 	public static void loadActiveSkills() {
@@ -322,8 +310,6 @@ public class FileUtility {
 		} catch (FileNotFoundException | NullPointerException e) {
 			e.printStackTrace();
 		}
-		System.out.println("::SWTable::");
-		System.out.println(SWTable.instance.getFactor(Element.WATER, Element.FIRE));
 	}
 
 	public static void loadStrengthWeaknessTable() {

@@ -1,12 +1,12 @@
 package graphic;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 import logic_world.terrain.WorldObject;
 import utility.GlobalPhase;
@@ -104,7 +104,7 @@ public class IRenderableHolder {
 		}
 	}
 
-	public static CopyOnWriteArrayList<IRenderable> getScreenTransitions() {
+	public static List<IRenderable> getScreenTransitions() {
 		return screenTransitions;
 	}
 

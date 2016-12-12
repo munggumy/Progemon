@@ -2,13 +2,14 @@ package logic_fight.character;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import logic_fight.character.Element.SW;
 
 /** Singleton Class of Strength and Weakness Table. */
 public class SWTable extends HashMap<Element, HashMap<Element, SW>> {
+
+	private static final long serialVersionUID = -6106900769888560758L;
 
 	public static SWTable instance = new SWTable();
 
