@@ -41,7 +41,6 @@ public class ActiveSkill extends Animation implements IRenderable {
 		setPower(skillPower);
 		allActiveSkills.add(this);
 		loadAnimationImage("load/img/skill/Flamethrower/all.png");
-		// loadImage("load/img/skill/Flamethrower/all.png");
 		loadIcon();
 	}
 
