@@ -15,18 +15,20 @@ import manager.WorldManager;
 import utility.Pokedex;
 
 public class PlayerCharacter extends Animation {
+	
+	public static final PlayerCharacter instance = new PlayerCharacter();
 
 	private static final String DEFAULT_IMG_PATH = "load\\img\\player\\Boy.png";
 	private static final int FAST_DELAY = 2, MEDIAM_DELAY = 5, SLOW_DELAY = 8, VERYSLOW_DELAY = 11;
 
-	private static float x, y;
-	private static int blockX, blockY;
-	private static WorldDirection direction;
-	private static int frameLimit = 2;
-	private static int legState = 0;
-	private static boolean moving = false, walking = false, turning = false, stucking = false;
+	private float x, y;
+	private int blockX, blockY;
+	private WorldDirection direction;
+	private int frameLimit = 2;
+	private int legState = 0;
+	private boolean moving = false, walking = false, turning = false, stucking = false;
 
-	private static HumanPlayer me = new HumanPlayer("Mhee", Color.BROWN);
+	private HumanPlayer me = new HumanPlayer("Mhee", Color.BROWN);
 
 	public PlayerCharacter() {
 		super(DrawingUtility.resize(new Image(new File(DEFAULT_IMG_PATH).toURI().toString()), 2), 2);
@@ -47,6 +49,7 @@ public class PlayerCharacter extends Animation {
 	public void play() {
 		frameDelay = FAST_DELAY;
 		frameLimit = 2;
+		walking = false;
 		stucking = false;
 		super.play();
 	}
@@ -193,59 +196,59 @@ public class PlayerCharacter extends Animation {
 		return wimg;
 	}
 
-	public static double getX() {
+	public double getX() {
 		return x;
 	}
 
-	public static double getY() {
+	public double getY() {
 		return y;
 	}
 
-	public static void setX(float x) {
-		PlayerCharacter.x = x;
+	public void setX(float x) {
+		this.x = x;
 	}
 
-	public static void setY(float y) {
-		PlayerCharacter.y = y;
+	public void setY(float y) {
+		this.y = y;
 	}
 
-	public static int getBlockX() {
+	public int getBlockX() {
 		return blockX;
 	}
 
-	public static int getBlockY() {
+	public int getBlockY() {
 		return blockY;
 	}
 
-	public static void setBlockX(int blockX) {
-		PlayerCharacter.blockX = blockX;
+	public void setBlockX(int blockX) {
+		this.blockX = blockX;
 	}
 
-	public static void setBlockY(int blockY) {
-		PlayerCharacter.blockY = blockY;
+	public void setBlockY(int blockY) {
+		this.blockY = blockY;
 	}
 
-	public static WorldDirection getDirection() {
+	public WorldDirection getDirection() {
 		return direction;
 	}
 
-	public static void setDirection(WorldDirection direction) {
-		PlayerCharacter.direction = direction;
+	public void setDirection(WorldDirection direction) {
+		this.direction = direction;
 	}
 
-	public static boolean isMoving() {
+	public boolean isMoving() {
 		return moving;
 	}
 
-	public static void setMoving(boolean moving) {
-		PlayerCharacter.moving = moving;
+	public void setMoving(boolean moving) {
+		this.moving = moving;
 	}
 
-	public static boolean isWalking() {
+	public boolean isWalking() {
 		return walking;
 	}
 
-	public static boolean isStucking() {
+	public boolean isStucking() {
 		return stucking;
 	}
 
@@ -259,7 +262,7 @@ public class PlayerCharacter extends Animation {
 		DrawingUtility.drawPlayer(this);
 	}
 
-	public static final HumanPlayer getMe() {
+	public final HumanPlayer getMe() {
 		return me;
 	}
 

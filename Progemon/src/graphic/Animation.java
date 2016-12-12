@@ -158,7 +158,7 @@ public abstract class Animation implements IRenderable{
 		else{
 			width = (int) (animationImage.getWidth() / 5);
 		}
-		int height = (int) Math.floor(animationImage.getHeight() / amountOfFrame);
+		int height = (int) (animationImage.getHeight() / Math.ceil(amountOfFrame / 5.0));
 		for (int i = 0; i < amountOfFrame; i++) {
 			animationImages.add(new WritableImage(animationImage.getPixelReader(), i % 5 * width, (int) (Math.floor(i / 5) * height), width, height));
 		}

@@ -47,6 +47,8 @@ public class DrawingUtility {
 	private static Image pkmnBar;
 	private static Image background;
 	private static GraphicsContext gc;
+	
+	private static double playerX, playerY;
 
 	public DrawingUtility() {
 		File sfile = new File("load\\img\\terrain\\shadow20.png");
@@ -222,21 +224,21 @@ public class DrawingUtility {
 		 */
 		gc.save();
 		gc.beginPath();
-		gc.rect(0, DialogBox.getY() + 10, 480, 64);
+		gc.rect(0, DialogBox.instance.getY() + 10, 480, 64);
 
-		gc.drawImage(DialogBox.getDialogBoxImage(), DialogBox.getX(), DialogBox.getY());
+		gc.drawImage(DialogBox.instance.getDialogBoxImage(), DialogBox.instance.getX(), DialogBox.instance.getY());
 
 		gc.clip();
 		gc.setFill(Color.BLACK);
-		gc.setFont(DialogBox.getFont());
+		gc.setFont(DialogBox.instance.getFont());
 		double messageHeight = new Text("Test").getLayoutBounds().getHeight();
-		gc.fillText(DialogBox.getMessageOnScreen()[0], DialogBox.getX() + 25,
-				DialogBox.getY() + 15 + messageHeight - DialogBox.getyShift());
-		gc.fillText(DialogBox.getMessageOnScreen()[1], DialogBox.getX() + 25,
-				DialogBox.getY() + 45 + messageHeight - DialogBox.getyShift());
-		if (DialogBox.getEndLineWidth() != 0) {
-			gc.drawImage(sign, DialogBox.getX() + 25 + DialogBox.getEndLineWidth(),
-					DialogBox.getY() + DialogBox.getCurrentLine() * 25 + 14);
+		gc.fillText(DialogBox.instance.getMessageOnScreen()[0], DialogBox.instance.getX() + 25,
+				DialogBox.instance.getY() + 15 + messageHeight - DialogBox.instance.getyShift());
+		gc.fillText(DialogBox.instance.getMessageOnScreen()[1], DialogBox.instance.getX() + 25,
+				DialogBox.instance.getY() + 45 + messageHeight - DialogBox.instance.getyShift());
+		if (DialogBox.instance.isShowSign()) {
+			gc.drawImage(sign, DialogBox.instance.getX() + 25 + DialogBox.instance.getEndLineWidth(),
+					DialogBox.instance.getY() + DialogBox.instance.getCurrentLine() * 25 + 14);
 		}
 		gc.restore();
 	}
@@ -262,7 +264,7 @@ public class DrawingUtility {
 			gc.fillRect(QueueBox.getOriginX() + QueueBox.getDelta()[i][0] + 6,
 					QueueBox.getOriginY() + QueueBox.getDelta()[i][1] + 2 + i * 40, 6, 36);
 			gc.setFill(Color.BLACK);
-			gc.setFont(DialogBox.getFont());
+			gc.setFont(DialogBox.instance.getFont());
 			double messageHeight = new Text("LV.").getLayoutBounds().getHeight();
 			gc.fillText("Lv." + pokemonsOnQueue.get(i).getLevel(),
 					QueueBox.getOriginX() + QueueBox.getDelta()[i][0] + 24,
@@ -295,6 +297,9 @@ public class DrawingUtility {
 
 	public static void drawSkill(ActiveSkill skill) {
 		// Type = Line
+		int blockSize = FightMap.getBlockSize();
+		int x = FightMap.getOriginX();
+		int y = FightMap.getOriginY();
 		int ax = skill.getAttackTerrain().getX();
 		int ay = skill.getAttackTerrain().getY();
 		int tx = skill.getTargetTerrain().getX();
@@ -302,7 +307,7 @@ public class DrawingUtility {
 		Image img = skill.getCurrentImage();
 
 		gc.save();
-		gc.translate(ax * 40 + 20, ay * 40 + 20);
+		gc.translate((ax + 0.5) * blockSize + x, (ay + 0.5) * blockSize + y);
 
 		// test skill
 		/*
@@ -320,53 +325,57 @@ public class DrawingUtility {
 		}
 
 		gc.rotate(-angle);
-		gc.drawImage(img, -20, -20, distance * 40 + 40, 40);
+		gc.drawImage(img, -blockSize / 2, -blockSize / 2, (distance + 1) * blockSize, blockSize);
 		gc.restore();
 	}
 
 	public static void drawWorldMap(WorldMap worldMap) {
-		double x = WorldManager.getPlayer().getX();
-		double y = WorldManager.getPlayer().getY();
+		playerX = PlayerCharacter.instance.getX();
+		playerY = PlayerCharacter.instance.getY();
 		/*
 		 * xoffset = x - (blocksize * 7) yoffset = y - (blocksize * 5.5)
 		 */
-		double xoffset = x - (32 * 7);
-		double yoffset = y - (32 * 5.5);
+		double xoffset = playerX - (32 * 7);
+		double yoffset = playerY - (32 * 5.5);
+		int width = worldMap.getWidth();
+		int height = worldMap.getHeight();
 		/*
 		 * startBlockX = Math.floor(xoffset/blocksize) endBlockX = startBlockX +
 		 * 16 startBlockY = Math.floor(yoffset/blocksize) endBlockY =
 		 * startBlockX + 13
 		 */
 		int startBlockX = (int) Math.floor(xoffset / 32);
-		int endBlockX = (int) Math.floor((x + (32 * 8) - 1) / 32);
+		int endBlockX = (int) Math.floor((playerX + (32 * 8) - 1) / 32);
 		int startBlockY = (int) Math.floor(yoffset / 32);
-		int endBlockY = (int) Math.floor((y + (32 * 6.5) - 1) / 32);
+		int endBlockY = (int) Math.floor((playerY + (32 * 6.5) - 1) / 32);
+		
 		int tileCode;
 		int offset, trim;
 		WorldMap worldToDraw;
 		for (int i = startBlockY; i <= endBlockY; i++) {
 			for (int j = startBlockX; j <= endBlockX; j++) {
 				try {
-					if (i < 0) {
-						worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.UP);
+					if (i < 0 && (worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.UP)) != null) {
 						offset = Integer.parseInt(worldToDraw.getMapProperties().getProperty("up_offset", "0"));
 						trim = Integer.parseInt(worldMap.getMapProperties().getProperty("up_trim", "0"));
 						tileCode = worldToDraw.getTerrainAt(j - offset, i + worldToDraw.getHeight() - trim);
-					} else if (i >= worldMap.getHeight()) {
+					} else if (i >= worldMap.getHeight() && (worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.DOWN)) != null) {
 						worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.DOWN);
 						offset = Integer.parseInt(worldToDraw.getMapProperties().getProperty("down_offset", "0"));
 						trim = Integer.parseInt(worldMap.getMapProperties().getProperty("down_trim", "0"));
 						tileCode = worldToDraw.getTerrainAt(j - offset, i - worldMap.getHeight() + trim);
-					} else if (j < 0) {
+					} else if (j < 0 && (worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.LEFT)) != null) {
 						worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.LEFT);
 						offset = Integer.parseInt(worldToDraw.getMapProperties().getProperty("left_offset", "0"));
 						trim = Integer.parseInt(worldMap.getMapProperties().getProperty("down_trim", "0"));
 						tileCode = worldToDraw.getTerrainAt(j + worldToDraw.getWidth() - trim, i - offset);
-					} else if (j >= worldMap.getWidth()) {
+					} else if (j >= worldMap.getWidth() && (worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.RIGHT)) != null) {
 						worldToDraw = WorldManager.getNextWorldMaps(WorldDirection.RIGHT);
 						offset = Integer.parseInt(worldToDraw.getMapProperties().getProperty("right_offset", "0"));
 						trim = Integer.parseInt(worldMap.getMapProperties().getProperty("down_trim", "0"));
 						tileCode = worldToDraw.getTerrainAt(j - worldMap.getWidth() + trim, i - offset);
+					} else if (i < 0 || j < 0 || i >= height || j >= width) {
+						tileCode = 0;
 					} else {
 						tileCode = worldMap.getTerrainAt(j, i);
 					}
@@ -391,14 +400,12 @@ public class DrawingUtility {
 		int width = (int) worldObject.getCurrentImage().getWidth();
 		int blockX = worldObject.getBlockX();
 		int blockY = worldObject.getBlockY();
-		double x = WorldManager.getPlayer().getX();
-		double y = WorldManager.getPlayer().getY();
-		double xoffset = x - (32 * 7);
-		double yoffset = y - (32 * 5.5);
+		double xoffset = playerX - (32 * 7);
+		double yoffset = playerY - (32 * 5.5);
 		int startBlockX = (int) Math.floor(xoffset / 32);
-		int endBlockX = (int) Math.floor((x + (32 * 8) - 1) / 32);
+		int endBlockX = (int) Math.floor((playerX + (32 * 8) - 1) / 32);
 		int startBlockY = (int) Math.floor(yoffset / 32);
-		int endBlockY = (int) Math.floor((y + (32 * 6.5) - 1) / 32);
+		int endBlockY = (int) Math.floor((playerY + (32 * 6.5) - 1) / 32);
 		if (blockX > endBlockX || blockY < startBlockY) {
 			return;
 		} else if (blockX * 32 + width > xoffset || (blockY + 1) * 32 - height < yoffset + 384) {
