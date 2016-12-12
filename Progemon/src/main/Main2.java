@@ -7,6 +7,7 @@ import audio.MusicUtility;
 import audio.SFXUtility;
 import graphic.DrawingUtility;
 import graphic.GameStage;
+import item.Items;
 import javafx.application.Application;
 import javafx.concurrent.Task;
 import javafx.scene.paint.Color;
@@ -15,7 +16,10 @@ import logic_fight.character.pokemon.Pokemon;
 import logic_fight.player.HPAIPlayer;
 import logic_fight.player.HumanPlayer;
 import logic_fight.player.Player;
+import logic_world.terrain.WorldMap;
+import logic_world.terrain.WorldObject;
 import manager.GUIFightGameManager;
+import utility.AnimationUtility;
 import utility.FileUtility;
 import utility.Pokedex;
 import utility.ThreadUtility;
@@ -46,8 +50,30 @@ public class Main2 extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			Thread.setDefaultUncaughtExceptionHandler(ThreadUtility::showError);
-			new GameStage();
-			FileUtility.loadAllDefaults();
+			GameStage gs = new GameStage();
+			FileUtility.loadActiveSkills();
+			FileUtility.loadPokedex();
+			FileUtility.loadStrengthWeaknessTable();
+
+			Items.loadItems();
+
+			new DrawingUtility();
+
+			new MusicUtility();
+
+			new SFXUtility(2);
+
+			new AnimationUtility();
+
+			WorldObject.loadObjectFunctions();
+
+			WorldObject.loadWorldObjects();
+
+			WorldObject.loadObjectImages();
+
+			WorldMap.loadTileset();
+
+			System.out.println("s=" + WorldObject.objectImagesSet.entrySet().size());
 
 			Pokemon charlizard = Pokedex.getPokemon("Charlizard");
 			charlizard.setLevel(40);
@@ -62,10 +88,10 @@ public class Main2 extends Application {
 			Pokemon pidgeotto = Pokedex.getPokemon("Pidgeotto");
 			pidgeotto.setLevel(30);
 			pidgeotto.setMoveRange(8);
-			
+
 			Pokemon pidgey1 = Pokedex.getPokemon("Pidgey");
 			pidgey1.setLevel(20);
-			
+
 			Pokemon pidgey2 = Pokedex.getPokemon("Pidgey");
 			pidgey2.setLevel(20);
 
@@ -95,19 +121,24 @@ public class Main2 extends Application {
 			 * (this.updateUIThread = new Thread(() -> { GUIFightGameManager gui
 			 * = new GUIFightGameManager(players); })).start();
 			 */
-			Thread logic = new Thread(new Task<Void>() {
+			Task<Void> main = new Task<Void>() {
 
 				@Override
 				protected Void call() throws Exception {
-					new GUIFightGameManager(players, false);
+					GUIFightGameManager g = new GUIFightGameManager(players, false);
+					g.startFight();
 					return null;
 				}
 
+			};
+			gs.show();
+			main.setOnFailed(e -> {
+				main.getException().printStackTrace();
 			});
+			Thread logic = new Thread(main);
 			logic.setName("Logic Thread");
 			logic.start();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

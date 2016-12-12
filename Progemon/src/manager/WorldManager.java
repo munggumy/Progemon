@@ -2,6 +2,7 @@ package manager;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import audio.MusicUtility;
 import audio.SFXUtility;
@@ -19,43 +20,48 @@ import utility.InputUtility;
 
 public class WorldManager {
 
-	private static PlayerCharacter player;
 	// private static ArrayList<WorldObject> worldObjects = new ArrayList<>();
 	private static WorldMap currentWorldMap;
 	private static Map<WorldDirection, WorldMap> nextWorldMaps = new HashMap<>();
 	private static WorldMap worldMapBuffer;
-
-	public static PlayerCharacter getPlayer() {
-		return player;
-	}
+	private static PlayerCharacter player;
 
 	public WorldManager() {
-		GlobalPhase.setCurrentPhase(GlobalPhase.WORLD);
-
 		try {
-			WorldObject.loadObjectFunctions();
-			WorldObject.loadWorldObjects();
-			WorldObject.loadObjectImages();
-			WorldMap.loadTileset();
-		} catch (WorldMapException e) {
-			e.printStackTrace();
-		}
+			GlobalPhase.setCurrentPhase(GlobalPhase.WORLD);
 
-		new Clock();
-		player = PlayerCharacter.instance;
-		/*
-		 * WorldObject.loadMapObjects(
-		 * "load\\worldmap\\littleroot\\littleroot_object.txt"); worldMap = new
-		 * WorldMap("load\\worldmap\\littleroot\\littleroot_map.txt");
-		 */
-		try {
-			WorldMap map = loadWorld("route_103");
+			// try {
+			// WorldObject.loadObjectFunctions();
+			// WorldObject.loadWorldObjects();
+			// WorldObject.loadObjectImages();
+			// WorldMap.loadTileset();
+			// } catch (WorldMapException e) {
+			// e.printStackTrace();
+			// }
+
+			new Clock();
+			System.out.println("reach-1S");
+			player = PlayerCharacter.instance;
+			player.show();
+
+			// player.show();
+
+			System.out.println("reach-1B");
+			/*
+			 * WorldObject.loadMapObjects(
+			 * "load\\worldmap\\littleroot\\littleroot_object.txt"); worldMap =
+			 * new WorldMap("load\\worldmap\\littleroot\\littleroot_map.txt");
+			 */
+
+			WorldMap map = loadWorld("route_101");
+			System.out.println("reach-1Q");
 			System.out.println(map.getName() + ", size=" + map.getWorldObjects().size());
 			useWorld(map, 18, 19);
 		} catch (WorldMapException ex) {
 			ex.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		player.show();
 		run();
 	}
 
@@ -67,6 +73,9 @@ public class WorldManager {
 		 */
 		while (true) {
 			try {
+				// if(IRenderableHolder.getObjectsOnScreen().contains(player)){
+				// System.out.println("player depth =" + player.getDepth());
+				// }
 				if (InputUtility.getKeyPressed(KeyCode.DOWN)) {
 					processPlayer(WorldDirection.SOUTH);
 				} else if (InputUtility.getKeyPressed(KeyCode.LEFT)) {
@@ -240,12 +249,18 @@ public class WorldManager {
 		return currentWorldMap;
 	}
 
-	public static final WorldMap getNextWorldMaps(WorldDirection wd) throws WorldMapException {
-		if (nextWorldMaps.get(wd) == null) {
-			throw new WorldMapException("WorldManager.getNextWorldMaps() : map is null [wd=" + wd + ", currentMap="
-					+ currentWorldMap.getName() + "]");
-		}
+	public static final WorldMap getNextWorldMaps(WorldDirection wd) {
+		// /*
+		// * if (nextWorldMaps.get(wd) == null) { throw new
+		// * WorldMapException("WorldManager.getNextWorldMaps() : map is null
+		// [wd="
+		// * + wd + ", currentMap=" + currentWorldMap.getName() + "]"); }
+		// */
 		return nextWorldMaps.get(wd);
+	}
+
+	public static PlayerCharacter getPlayer() {
+		return player;
 	}
 
 }

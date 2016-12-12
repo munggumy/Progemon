@@ -17,9 +17,9 @@ public class IRenderableHolder {
 	private static final Lock readLock = readWriteLock.readLock();
 	private static final Lock writeLock = readWriteLock.writeLock();
 
-	private static List<IRenderable> fightObjects = new ArrayList<IRenderable>();
-	private static List<IRenderable> worldObjects = new ArrayList<IRenderable>();
-	private static List<IRenderable> screenTransitions = new ArrayList<IRenderable>();
+	private static CopyOnWriteArrayList<IRenderable> fightObjects = new CopyOnWriteArrayList<IRenderable>();
+	private static CopyOnWriteArrayList<IRenderable> worldObjects = new CopyOnWriteArrayList<IRenderable>();
+	private static CopyOnWriteArrayList<IRenderable> screenTransitions = new CopyOnWriteArrayList<IRenderable>();
 
 	public static void addWorldObject(IRenderable object) {
 		writeLock.lock();
@@ -87,7 +87,7 @@ public class IRenderableHolder {
 		}
 	}
 
-	public static List<IRenderable> getObjectsOnScreen() {
+	public static CopyOnWriteArrayList<IRenderable> getObjectsOnScreen() {
 		readLock.lock();
 		try {
 			if (GlobalPhase.getCurrentPhase() == GlobalPhase.WORLD) {

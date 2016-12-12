@@ -1,6 +1,8 @@
 package graphic;
 
 import javafx.scene.canvas.Canvas;
+import logic_world.player.PlayerCharacter;
+import logic_world.terrain.WorldObject;
 
 public class GameScreen extends Canvas {
 
@@ -16,7 +18,8 @@ public class GameScreen extends Canvas {
 
 	public static void repaint() {
 		DrawingUtility.getGC().clearRect(0, 0, WIDTH, HEIGHT);
-		IRenderableHolder.getObjectsOnScreen().stream().forEach(renderable -> renderable.draw());
+		IRenderableHolder.getObjectsOnScreen().stream().filter(ren -> true)
+				.forEach(renderable -> renderable.draw());
 		IRenderableHolder.getScreenTransitions().stream().forEach(renderable -> renderable.draw());
 	}
 

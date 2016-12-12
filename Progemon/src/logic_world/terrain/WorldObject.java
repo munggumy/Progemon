@@ -12,11 +12,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import graphic.Animation;
+import graphic.DialogBox;
 import graphic.DrawingUtility;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import manager.WorldManager;
 import utility.Clock;
+import utility.exception.FileWrongFormatException;
 
 public class WorldObject extends Animation implements Cloneable {
 
@@ -24,9 +26,9 @@ public class WorldObject extends Animation implements Cloneable {
 	private static final String DEFAULT_IMG_PATH = "load\\img\\world\\worldobjects.png";
 	private static final String DEFAULT_IMGPOS_PATH = "load\\img\\world\\imageposition.csv";
 
-	private static Map<String, WorldObject> allWorldObjects = new HashMap<>();
-	private static Map<String, WorldObjectAction> allObjectFunctions = new HashMap<>();
-	private static Map<String, ArrayList<Image>> objectImagesSet = new HashMap<>();
+	public static Map<String, WorldObject> allWorldObjects = new HashMap<>();
+	public static Map<String, WorldObjectAction> allObjectFunctions = new HashMap<>();
+	public static Map<String, ArrayList<Image>> objectImagesSet = new HashMap<>();
 
 	protected int blockX, blockY;
 	protected String objectCode;
@@ -41,9 +43,16 @@ public class WorldObject extends Animation implements Cloneable {
 			WorldMap owner) {
 		try {
 			WorldObject worldObject;
+
 			worldObject = (WorldObject) allWorldObjects.get(objectCode).clone();
 			worldObject.blockX = blockX;
 			worldObject.blockY = blockY;
+			// if (objectCode.equals("008")) {
+			// System.err.println("01245678913215621321");
+			// System.out.println("x = " + blockX);
+			// System.out.println("y = " + blockY);
+			// // System.out.println("param = " + parameters.get(0));
+			// }
 			for (int i = 0; i < 4; i++) {
 				worldObject.functionParameter.add(new ArrayList<>());
 			}
@@ -62,10 +71,12 @@ public class WorldObject extends Animation implements Cloneable {
 				worldObject.visible = true;
 				owner.addVisibleWorldObject(worldObject);
 			}
-
+			if (worldObject.objectCode.equals("008")) {
+				System.out.println("yay");
+			}
 			owner.addWorldObjects(worldObject);
 			return worldObject;
-		} catch (CloneNotSupportedException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -231,12 +242,18 @@ public class WorldObject extends Animation implements Cloneable {
 	public static void loadMapObjects(String datapath, WorldMap owner, int offsetX, int offsetY, int minX, int minY,
 			int maxX, int maxY) {
 		String delimiter = "\\s*,\\s*";
+		/*
+		 * if (true) { System.err.println(
+		 * "kuykuykuykuykukuykuykuykuykuykuykuykuykuykuyykuykkuykuykuykuykuykuykuykuykuykuyuykuykuykuy"
+		 * ); }
+		 */
 		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(datapath)))) {
 			Pattern pattern = Pattern.compile(String.join(delimiter, "(?<objectCode>\\d+)", "(?<blockX>\\d+)",
-					"(?<blockY>\\d+)(?<functionParam>(", "\\d\\[.+\\])+)?"));
+					"(?<blockY>\\d+)(?<functionParam>(", "\"?\\d\\[.+\\]\"?)+)?"));
 			Matcher matcher;
 			ArrayList<String> functionsStr = new ArrayList<String>();
 			loop: while (scanner.hasNextLine()) {
+				functionsStr.clear();
 				String line = scanner.nextLine();
 				if (line.matches("^#+.*")) { // comment line ##hey hey heys
 					continue loop;
@@ -255,15 +272,36 @@ public class WorldObject extends Animation implements Cloneable {
 					functionsStr.clear();
 					if (matcher.group("functionParam") != null && !matcher.group("functionParam").isEmpty()) {
 						for (String string : matcher.group("functionParam").trim().split(delimiter)) {
-							if (string != null && !string.isEmpty()) {
+
+							ArrayList<String> str = new ArrayList<>();
+							if (string.matches("\".+\"")) {
+								while (true) {
+									str.add(string.substring(string.indexOf("\"") + 1, string.indexOf("\"", 1)));
+									if (string.indexOf("\"", 1) == string.lastIndexOf("\"")) {
+										break;
+									}
+									string = string.substring(string.indexOf("\"", 1) + 1, string.length());
+								}
+							} else if (string != null && !string.isEmpty()) {
 								functionsStr.add(string);
+							}
+							if (str.size() != 0) {
+								String buffer = "";
+								for (String string2 : str) {
+									if (!buffer.equals("")) {
+										buffer = buffer + "\"" + string2;
+									} else {
+										buffer = buffer + string2;
+									}
+								}
+								functionsStr.add(buffer);
 							}
 						}
 					}
 					createWorldObject(objectCode, blockX, blockY, functionsStr, owner);
 				} else {
-					throw new WorldMapException(
-							"Unmatched Pattern In WorldObject.java : line=" + line + ", pattern=" + pattern);
+					System.err.println("WARNING : Unmatched Pattern In WorldObject.java : line=" + line + "\npattern=" + pattern
+							+ "\nfile=" + datapath);
 				}
 			}
 		} catch (Exception e) {
@@ -295,7 +333,9 @@ public class WorldObject extends Animation implements Cloneable {
 					for (int i = 0; i < 12; i++) {
 						args[i] = matcher.group(i + 1);
 					}
-					allWorldObjects.put(args[0], new WorldObject(args));
+					String objectCode = String.format("%03d", Integer.parseInt(args[0]));
+					args[0] = objectCode;
+					allWorldObjects.put(objectCode, new WorldObject(args));
 				} else {
 					throw new WorldMapException("loadWorldObjects() : Unmatched pattern=" + line);
 				}
@@ -305,10 +345,10 @@ public class WorldObject extends Animation implements Cloneable {
 		}
 	}
 
-	public static void loadObjectImages() {
-		Image img = new Image(new File(DEFAULT_IMG_PATH).toURI().toString());
-		System.out.println(img);
+	public static void loadObjectImages() throws WorldMapException {
 		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(DEFAULT_IMGPOS_PATH)))) {
+			Image img = new Image(new File(DEFAULT_IMG_PATH).toURI().toString());
+
 			String delimiter = "\\s*,\\s*";
 			Pattern pattern = Pattern.compile(String.join(delimiter, "(?<objectCode>\\d+)", "(?<xPos>\\d+)",
 					"(?<yPos>\\d+)", "(?<width>\\d+)", "(?<height>\\d+)"));
@@ -320,20 +360,32 @@ public class WorldObject extends Animation implements Cloneable {
 				}
 				matcher = pattern.matcher(line);
 				if (matcher.find()) {
-					int amountOfFrame = allWorldObjects.get(matcher.group("objectCode")).amountOfFrame;
-					ArrayList<Image> array = new ArrayList<>();
-					int xPos = Integer.parseInt(matcher.group("xPos")), yPos = Integer.parseInt(matcher.group("yPos")),
-							width = Integer.parseInt(matcher.group("width")),
-							height = Integer.parseInt(matcher.group("height"));
-					for (int i = 0; i < amountOfFrame; i++) {
-						array.add(DrawingUtility.resize(new WritableImage(img.getPixelReader(),
-								xPos + (width / amountOfFrame) * i, yPos, (width / amountOfFrame), height), 2));
+
+					String objectCode = String.format("%03d", Integer.parseInt(matcher.group("objectCode")));
+					if (allWorldObjects.get(objectCode) != null) {
+						int amountOfFrame = allWorldObjects.get(objectCode).amountOfFrame;
+						ArrayList<Image> array = new ArrayList<>();
+						int xPos = Integer.parseInt(matcher.group("xPos")),
+								yPos = Integer.parseInt(matcher.group("yPos")),
+								width = Integer.parseInt(matcher.group("width")),
+								height = Integer.parseInt(matcher.group("height"));
+						for (int i = 0; i < amountOfFrame; i++) {
+							array.add(DrawingUtility.resize(new WritableImage(img.getPixelReader(),
+									xPos + (width / amountOfFrame) * i, yPos, (width / amountOfFrame), height), 2));
+						}
+						objectImagesSet.put(objectCode, array);
 					}
-					objectImagesSet.put(matcher.group("objectCode"), array);
+
+				} else {
+					throw new FileWrongFormatException("Unmatched pattern : " + line);
 				}
 			}
+		} catch (NullPointerException e) {
+			System.err.println("error in loadObjectImage()");
+			// e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new WorldMapException(e);
 		}
 	}
 
@@ -377,14 +429,17 @@ public class WorldObject extends Animation implements Cloneable {
 
 		allObjectFunctions.put("hideplayer", target -> {
 			WorldManager.getPlayer().hide();
+			// PlayerCharacter.instance.hide();
 		});
 
 		allObjectFunctions.put("showplayer", target -> {
 			WorldManager.getPlayer().show();
+			// PlayerCharacter.instance.show();
 		});
 
 		allObjectFunctions.put("spawn", target -> {
 			SpawningUtility.trySpawnPokemon(WorldManager.getWorldMap());
+
 		});
 
 		allObjectFunctions.put("changemap", target -> {
@@ -398,14 +453,17 @@ public class WorldObject extends Animation implements Cloneable {
 
 		allObjectFunctions.put("playerpause", target -> {
 			WorldManager.getPlayer().pause();
+			// PlayerCharacter.instance.pause();
 		});
 
 		allObjectFunctions.put("playerunpause", object -> {
 			WorldManager.getPlayer().unpause();
+			// PlayerCharacter.instance.unpause();
 		});
 
 		allObjectFunctions.put("playerwalk", target -> {
 			WorldManager.getPlayer().walk();
+			// PlayerCharacter.instance.walk();
 		});
 
 		allObjectFunctions.put("loadmap", target -> {
@@ -430,6 +488,30 @@ public class WorldObject extends Animation implements Cloneable {
 			}
 		});
 
+		allObjectFunctions.put("showdialog", object -> {
+			DialogBox.instance.show();
+		});
+
+		allObjectFunctions.put("sentmessage", object -> {
+			System.out.println("WorldObj (463) : x = " + object.getBlockX());
+			System.out.println("WorldObj (464) : y = " + object.getBlockY());
+			String[] parameters = object.processParameters();
+			DialogBox.instance.sentDialog(parameters[0]);
+		});
+
+		allObjectFunctions.put("hidedialog", object -> {
+			DialogBox.instance.hide();
+		});
+
+	}
+
+	private final String[] processParameters() {
+		try {
+			return functionParameter.get(actionType).get(parameterCounter).split("/");
+		} finally {
+			// TODO: handle finally clause
+			parameterCounter++;
+		}
 	}
 
 }

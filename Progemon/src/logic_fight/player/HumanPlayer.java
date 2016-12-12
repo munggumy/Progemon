@@ -110,7 +110,7 @@ public class HumanPlayer extends Player {
 				return true;
 			}
 		}
-		if (FightHUD.getSelectedSkill() >= 0) {
+		if (FightHUD.getSelectedSkill() >= 0 && FightHUD.getSelectedSkill() < attackSkills.size()) {
 			System.out.println("Attack Skill setted");
 			super.nextAttackSkill = Optional.of(attackSkills.get(FightHUD.getSelectedSkill()));
 			FightHUD.setShowSkillMenu(false);

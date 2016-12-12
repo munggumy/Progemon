@@ -3,6 +3,7 @@ package graphic;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
@@ -20,6 +21,7 @@ public abstract class Animation implements IRenderable {
 	}
 
 	public Animation(Image image, int frameNumber) {
+		Objects.requireNonNull(image);
 		this.animationImage = image;
 		this.amountOfFrame = frameNumber;
 		frameDelay = 1;
@@ -149,7 +151,7 @@ public abstract class Animation implements IRenderable {
 		} else {
 			width = (int) (animationImage.getWidth() / 5);
 		}
-		int height = (int) Math.floor(animationImage.getHeight() / amountOfFrame);
+		int height = (int) (animationImage.getHeight() / Math.ceil(amountOfFrame / 5.0));
 		for (int i = 0; i < amountOfFrame; i++) {
 			animationImages.add(new WritableImage(animationImage.getPixelReader(), i % 5 * width,
 					(int) (Math.floor(i / 5) * height), width, height));

@@ -17,10 +17,10 @@ import utility.Pokedex;
 
 public class PlayerCharacter extends Animation {
 
+	public static final PlayerCharacter instance = new PlayerCharacter();
+
 	private static final String DEFAULT_IMG_PATH = "load\\img\\player\\Boy.png";
 	private static final int FAST_DELAY = 2, MEDIAM_DELAY = 5, SLOW_DELAY = 8, VERYSLOW_DELAY = 11;
-
-	public static final PlayerCharacter instance = new PlayerCharacter();
 
 	private float x, y;
 	private int blockX, blockY;
@@ -30,11 +30,10 @@ public class PlayerCharacter extends Animation {
 	private int repelTime = 0;
 	private boolean moving = false, walking = false, turning = false, stucking = false;
 
-	
 	private HumanPlayer me = new HumanPlayer("Mhee", Color.BROWN);
 	private Bag bag = me.getBag();
 
-	private PlayerCharacter() {
+	public PlayerCharacter() {
 		super(DrawingUtility.resize(new Image(new File(DEFAULT_IMG_PATH).toURI().toString()), 2), 2);
 		setFrameDelay(3);
 
@@ -53,6 +52,7 @@ public class PlayerCharacter extends Animation {
 	public void play() {
 		frameDelay = FAST_DELAY;
 		frameLimit = 2;
+		walking = false;
 		stucking = false;
 		super.play();
 	}

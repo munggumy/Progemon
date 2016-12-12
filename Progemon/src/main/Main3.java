@@ -11,6 +11,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -26,6 +28,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import logic_world.terrain.WorldMap;
+import logic_world.terrain.WorldObject;
 import manager.WorldManager;
 import utility.AnimationUtility;
 import utility.FileUtility;
@@ -75,7 +79,7 @@ public class Main3 extends Application {
 			@Override
 			protected Void call() throws Exception {
 
-				int num = 8;
+				int num = 12;
 				FileUtility.loadActiveSkills();
 				progress.setProgress(1.00 / num);
 				FileUtility.loadPokedex();
@@ -91,15 +95,30 @@ public class Main3 extends Application {
 				new SFXUtility(2);
 				progress.setProgress(7.00 / num);
 				new AnimationUtility();
-				progress.setProgress(1.00);
+				progress.setProgress(8.00 / num);
+				WorldObject.loadObjectFunctions();
+				progress.setProgress(9.00 / num);
+				WorldObject.loadWorldObjects();
+				progress.setProgress(10.00 / num);
+				WorldObject.loadObjectImages();
+				progress.setProgress(11.00 / num);
+				WorldMap.loadTileset();
+				progress.setProgress(12.00 / num);
+				System.out.println("s=" + WorldObject.objectImagesSet.entrySet().size());
 
 				return null;
 			}
 		};
 
-		preLoad.setOnFailed(e -> {
-			load.setText("Failed to load...");
-			System.err.println("Stopped Loading at progress = " + progress.getProgress());
+		preLoad.setOnFailed(new EventHandler<WorkerStateEvent>() {
+
+			@Override
+			public void handle(WorkerStateEvent arg0) {
+				load.setText("Failed to load...");
+				preLoad.getException().printStackTrace();
+				System.err.println("Stopped Loading at progress = " + progress.getProgress());
+			}
+
 		});
 
 		preLoad.stateProperty().addListener(new ChangeListener<Worker.State>() {
@@ -112,6 +131,7 @@ public class Main3 extends Application {
 			}
 
 		});
+
 		new Thread(preLoad).start();
 		s.showAndWait();
 
@@ -152,7 +172,7 @@ public class Main3 extends Application {
 		 * new GUIFightGameManager(players); })).start();
 		 */
 
-		Thread logic = new Thread(new Task<Void>() {
+		Task<Void> main = new Task<Void>() {
 
 			@Override
 			protected Void call() throws Exception {
@@ -160,7 +180,13 @@ public class Main3 extends Application {
 				return null;
 			}
 
+		};
+
+		main.setOnFailed(e -> {
+			main.getException().printStackTrace();
 		});
+
+		Thread logic = new Thread(main);
 		logic.setName("Logic Thread");
 		logic.start();
 		gs.show();

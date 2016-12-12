@@ -105,8 +105,8 @@ public class GameStage extends Stage {
 		scene.setOnKeyPressed(kEvent -> {
 			// System.out.println("KEY PRESSED : " +
 			// kEvent.getCode().toString());
-			InputUtility.setKeyPressed(kEvent.getCode(), true);
 			InputUtility.setKeyTriggered(kEvent.getCode(), true);
+			InputUtility.setKeyPressed(kEvent.getCode(), true);
 			if (kEvent.getCode() == KeyCode.F12) {
 				if (getScene().equals(normalScene)) {
 					setScene(fullScene);
