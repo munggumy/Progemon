@@ -95,7 +95,7 @@ public class GUIFightGameManager {
 		AnimationUtility.getLoadScreen01().setPlayback(false);
 		AnimationUtility.getLoadScreen01().hide();
 
-		DialogBox.sentMessage("Press '" + DialogBox.advancingKey.toString() + "' to start!");
+		DialogBox.instance.sentDialog("Press '" + DialogBox.advancingKey.toString() + "' to start!");
 	}
 
 	private void runFight() {
@@ -128,14 +128,13 @@ public class GUIFightGameManager {
 		MusicUtility.playMusic("victory_wild");
 		System.out.println("The fight has ended.");
 		System.out.println("The winner is " + winnerPlayer.getName());
-		DialogBox.sentMessage("The winner is " + winnerPlayer.getName());
+		DialogBox.instance.sentDialog("The winner is " + winnerPlayer.getName());
 
 		while (true) {
-			if (DialogBox.hasSentMessage()) {
+			if (DialogBox.instance.hasSentMessage()) {
 				break;
 			}
 			QueueBox.sort();
-			DialogBox.update();
 			Clock.tick();
 		}
 		players.forEach(p -> p.setCurrentFightManager(null));

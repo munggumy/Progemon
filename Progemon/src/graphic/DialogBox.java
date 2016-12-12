@@ -1,6 +1,10 @@
 package graphic;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import audio.SFXUtility;
 import javafx.scene.image.Image;
@@ -10,24 +14,32 @@ import utility.Clock;
 import utility.InputUtility;
 
 public class DialogBox implements IRenderable {
+	
+	public static final DialogBox instance = new DialogBox();
 
 	protected static final String DIALOG_BOX_PATH = "load\\img\\dialogbox\\Theme2.png";
-	private static Image dialogBoxImage = null;
+	private Image dialogBoxImage = null;
 
 	private static final int x = 2, y = 294;
 	// private static final Font DEFAULT_FONT = new Font(Font.MONOSPACED,
 	// Font.PLAIN, 15);
 	private static final Font DEFAULT_FONT = new Font("Monospaced", 20);
-	private static String message = "", nextWord = "";
-	private static String[] messageOnScreen = { "", "" };
-	private static Font font = DEFAULT_FONT;
-	private static int textDelay = 5, textDelayCounter = 5, newLineDelay = 0, newLineDelayCounter = 0, currentLine = 0;
-	private static int yShift = 0;
-	private static boolean hasSentMessage = true;
-	private static int endLineWidth;
-	private static boolean visible = true;
+	private String line = "", nextWord = "";
+	private ArrayList<String> messages = new ArrayList<>(), lines = new ArrayList<>();
+	private String[] messageOnScreen = { "", "" };
+	private Font font = new Font("Monospaced", 20);
+	private int textDelay = 5, textDelayCounter = 5, newLineDelay = 0, newLineDelayCounter = 0, currentLine = 0;
+	private int yShift = 0;
+	private boolean hasSentDialog = true, hasSentLine = true;
+	private int endLineWidth;
+	private boolean visible = false, showSign = false;
 
-	public static final KeyCode advancingKey = KeyCode.A;
+	public static final KeyCode advancingKey = KeyCode.Z;
+	
+	public DialogBox() {
+		// TODO Auto-generated constructor stub
+		hide();
+	}
 
 	@Override
 	public void draw() {
@@ -36,7 +48,7 @@ public class DialogBox implements IRenderable {
 
 	@Override
 	public int getDepth() {
-		return 0;
+		return Integer.MAX_VALUE;
 	}
 
 	@Override
@@ -46,27 +58,30 @@ public class DialogBox implements IRenderable {
 
 	@Override
 	public void setVisible(boolean visible) {
-		DialogBox.visible = visible;
+		this.visible = visible;
 	}
 
 	@Override
 	public void hide() {
 		visible = false;
+		IRenderableHolder.removeFightObject(this);
 		IRenderableHolder.removeWorldObject(this);
 	}
 
 	@Override
 	public void show() {
+		IRenderableHolder.addFightObject(this);
 		IRenderableHolder.addWorldObject(this);
 		visible = true;
 	}
 
-	public static void update() {
+	public void sentWord() {
 		// KeyEvent kEvent = InputUtility.getLastKeyEvent();
 		// if (kEvent != null && kEvent.getCode().equals(advancingKey)) {
 		// textDelay = 0;
 		// }
-		if (InputUtility.getKeyTriggered(advancingKey)) {
+		textDelay = 5;
+		if (InputUtility.getKeyPressed(advancingKey)) {
 			textDelay = 0;
 		}
 		if (nextWord.length() > 0) {
@@ -77,128 +92,166 @@ public class DialogBox implements IRenderable {
 			} else {
 				textDelayCounter++;
 			}
-		} else if (message.length() > 0) {
-			if (DrawingUtility.computeStringWidth(messageOnScreen[currentLine] + message.split(" ")[0], font) > 280) {
-				if (currentLine < 1) {
-					currentLine += 1;
-				} else {
-					toNewLine();
-				}
+		} else if (line.length() > 0) {
+			if (DrawingUtility.computeStringWidth(messageOnScreen[currentLine] + line.split(" ")[0], font) > 360) {	
+				toNewLine();
 			} else {
-				nextWord = message.split(" ")[0];
-				message = message.substring(nextWord.length(), message.length());
-				if (message.split(" ").length > 0 && message.length() > 0) {
-					message = message.substring(1, message.length());
+				nextWord = line.split(" ")[0];
+				line = line.substring(nextWord.length(), line.length());
+				if (line.split(" ").length > 0 && line.length() > 0) {
+					line = line.substring(1, line.length());
 					nextWord += " ";
 				}
 			}
 			// } else if (kEvent != null &&
 			// kEvent.getCode().equals(advancingKey)) {
-		} else if (InputUtility.getKeyTriggered(advancingKey)) {
-			SFXUtility.playSound("dialog_box_next");
-			clear();
-			hasSentMessage = true;
-		} else if (endLineWidth == 0) {
-			endLineWidth = (int) DrawingUtility.computeStringWidth(messageOnScreen[currentLine], font);
-		}
-	}
-
-	private static void toNewLine() {
-		if (newLineDelayCounter == newLineDelay) {
-			if (yShift >= 25) {
-				messageOnScreen[0] = messageOnScreen[1];
-				messageOnScreen[1] = "";
-				yShift = 0;
-				textDelay = 5;
-			} else {
-				yShift += 5;
-			}
-			newLineDelayCounter = 0;
 		} else {
-			newLineDelayCounter++;
+			hasSentLine = true;
 		}
 	}
 
-	public static Image getDialogBoxImage() {
+	private void toNewLine() {
+		if (currentLine < 1) {
+			currentLine += 1;
+			return;
+		}
+		waitForResponse(true);
+		while (messageOnScreen[1].length() > 0) {
+			if (newLineDelayCounter == newLineDelay) {
+				if (yShift >= 25) {
+					messageOnScreen[0] = messageOnScreen[1];
+					messageOnScreen[1] = "";
+					yShift = 0;
+					textDelay = 5;
+				} else {
+					yShift += 5;
+				}
+				newLineDelayCounter = 0;
+			} else {
+				newLineDelayCounter++;
+			}
+			Clock.tick();
+		}
+	}
+	
+	private void waitForResponse(boolean showSign) {
+		endLineWidth = (int) DrawingUtility.computeStringWidth(messageOnScreen[currentLine], font);
+		this.showSign = showSign;
+		while (!InputUtility.getKeyTriggered(advancingKey)) {
+			Clock.tick();
+		}
+		SFXUtility.playSound("dialog_box_next");
+		this.showSign = false;
+	}
+
+	public Image getDialogBoxImage() {
 		if (dialogBoxImage == null) {
 			loadDialogBoxImage();
 		}
 		return dialogBoxImage;
 	}
 
-	public static void setDialogBoxImage(Image dialogBoxImage) {
-		DialogBox.dialogBoxImage = dialogBoxImage;
+	public void setDialogBoxImage(Image dialogBoxImage) {
+		this.dialogBoxImage = dialogBoxImage;
 	}
 
-	public static void loadDialogBoxImage() {
+	public void loadDialogBoxImage() {
 		File file = new File(DialogBox.DIALOG_BOX_PATH);
 		dialogBoxImage = DrawingUtility.resize(new Image(file.toURI().toString()), 2);
 	}
 
-	public static int getX() {
+	public int getX() {
 		return x;
 	}
 
-	public static int getY() {
+	public int getY() {
 		return y;
 	}
-
-	public static String getMessage() {
-		return message;
+	
+	public void sentDialog(String dialog) {
+		hasSentDialog = false;
+		for (String string : dialog.split("(@@@n)+")) {
+			if (!string.equals("")) {
+				messages.add(string);
+			}
+		}
+		while (messages.size() > 0) {
+			sentMessage(messages.get(0));
+			messages.remove(0);
+			waitForResponse(messages.size() > 0);
+			clear();
+		}
+		hasSentDialog = true;
 	}
 
-	public static void sentMessage(String message) {
-		DialogBox.message = message;
-		hasSentMessage = false;
-		while (!hasSentMessage) {
-			update();
-			// MyCanvas.repaint();
+	private void sentMessage(String message) {
+		for (String string : message.split("(@@@t)+")) {
+			if (!string.equals("")) {
+				lines.add(string);
+			}
+		}
+		while (lines.size() > 0) {
+			sentLine(lines.get(0));
+			lines.remove(0);
+			if (lines.size() > 0) {
+				toNewLine();
+			}
+		}
+	}
+	
+	public void sentLine(String line) {
+		this.line = line.trim();
+		hasSentLine = false;
+		while (!hasSentLine) {
+			sentWord();
 			Clock.tick();
 		}
 	}
 
-	public static void clear() {
+	public void clear() {
 		messageOnScreen[0] = "";
 		messageOnScreen[1] = "";
 		currentLine = 0;
-		endLineWidth = 0;
-		textDelay = 5;
 	}
 
-	public static Font getFont() {
+	public Font getFont() {
 		return font;
 	}
 
-	public static void setFont(Font font) {
-		DialogBox.font = font;
+	public void setFont(Font font) {
+		this.font = font;
 	}
 
-	public static int getTextDelay() {
+	public int getTextDelay() {
 		return textDelay;
 	}
 
-	public static void setTextDelay(int textDelay) {
-		DialogBox.textDelay = textDelay;
+	public void setTextDelay(int textDelay) {
+		this.textDelay = textDelay;
 	}
 
-	public static String[] getMessageOnScreen() {
+	public String[] getMessageOnScreen() {
 		return messageOnScreen;
 	}
 
-	public static int getyShift() {
+	public int getyShift() {
 		return yShift;
 	}
 
-	public static boolean hasSentMessage() {
-		return hasSentMessage;
+	public boolean hasSentMessage() {
+		return hasSentDialog;
 	}
 
-	public static int getEndLineWidth() {
+	public int getEndLineWidth() {
 		return endLineWidth;
 	}
 
-	public static int getCurrentLine() {
+	public int getCurrentLine() {
 		return currentLine;
+	}
+	
+	public boolean isShowSign() {
+		return showSign;
 	}
 
 }

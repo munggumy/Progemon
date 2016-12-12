@@ -3,6 +3,7 @@ package graphic;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javafx.scene.canvas.Canvas;
+import javafx.scene.paint.Color;
 
 public class GameScreen extends Canvas {
 

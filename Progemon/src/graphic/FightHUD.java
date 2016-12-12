@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import logic_fight.character.pokemon.Pokemon;
 import logic_fight.terrain.FightMap;
+import utility.Clock;
 import utility.InputUtility;
 
 public class FightHUD implements IRenderable {
@@ -12,6 +13,24 @@ public class FightHUD implements IRenderable {
 	private static int skillMenuInterval = 15;
 	private static Pokemon currentPokemon;
 	private static boolean visible = true, showSkillMenu = false;
+	private static PsuedoAnimation<FightHUD> skillMenuInit = new PsuedoAnimation<FightHUD>(15, 0) {
+		
+		@Override
+		public void update() {
+			// TODO Auto-generated method stub
+			if (delayCounter == frameDelay) {
+				currentFrame++;
+				skillMenuInterval = currentFrame;
+				if (currentFrame == amountOfFrame) {
+					stop();
+				}
+				delayCounter = 0;
+			}
+			else {
+				delayCounter++;
+			}
+		}
+	};
 
 	public FightHUD() {
 		for (int i = 0; i < 4; i++) {
@@ -126,6 +145,14 @@ public class FightHUD implements IRenderable {
 	}
 
 	public static void setShowSkillMenu(boolean showSkillMenu) {
+		if (showSkillMenu && !FightHUD.showSkillMenu) {
+			skillMenuInterval = 0;
+			FightHUD.showSkillMenu = showSkillMenu;
+			skillMenuInit.play();
+			while (skillMenuInit.isPlaying()) {
+				Clock.tick();
+			}
+		}
 		FightHUD.showSkillMenu = showSkillMenu;
 	}
 
