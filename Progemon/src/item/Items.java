@@ -7,6 +7,7 @@ import java.util.Map;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import logic_fight.character.pokemon.NonVolatileStatus;
+import logic_fight.character.pokemon.Pokemon;
 
 public class Items {
 
@@ -101,7 +102,7 @@ public class Items {
 
 			Item rareCandy = new Item("Rare Candy");
 			rareCandy.setOnPokemonUse(pokemon -> {
-				if (pokemon.getLevel() < 100) {
+				if (pokemon.getLevel() < Pokemon.MAX_LEVEL) {
 					pokemon.addExpAndTryLevelUp(pokemon.getNextExpRequired() - pokemon.getCurrentExp());
 				}
 			});
@@ -109,19 +110,28 @@ public class Items {
 			yPos = IMAGE_OFFSET_Y + 2 * IMAGE_SIZE_Y;
 			rareCandy.setIcon(new WritableImage(spriteSheet.getPixelReader(), xPos, yPos, IMAGE_SIZE_X, IMAGE_SIZE_Y));
 			items.put("rare_candy", rareCandy);
-			
+
 			Item pokeball = new Pokeball(PokeballType.POKEBALL);
-			xPos = IMAGE_OFFSET_X + 0 * IMAGE_SIZE_X;
-			yPos = IMAGE_OFFSET_Y + 3 * IMAGE_SIZE_Y;
+			pokeball.setName("Pokeball");
+			xPos = IMAGE_OFFSET_X + 3 * IMAGE_SIZE_X;
+			yPos = IMAGE_OFFSET_Y + 0 * IMAGE_SIZE_Y;
 			pokeball.setIcon(new WritableImage(spriteSheet.getPixelReader(), xPos, yPos, IMAGE_SIZE_X, IMAGE_SIZE_Y));
 			items.put("pokeball", pokeball);
-			
+
 			Item greatball = new Pokeball(PokeballType.GREAT_BALL);
-			xPos = IMAGE_OFFSET_X + 0 * IMAGE_SIZE_X;
-			yPos = IMAGE_OFFSET_Y + 1 * IMAGE_SIZE_Y;
+			greatball.setName("Great Ball");
+			xPos = IMAGE_OFFSET_X + 2 * IMAGE_SIZE_X;
+			yPos = IMAGE_OFFSET_Y + 0 * IMAGE_SIZE_Y;
 			greatball.setIcon(new WritableImage(spriteSheet.getPixelReader(), xPos, yPos, IMAGE_SIZE_X, IMAGE_SIZE_Y));
 			items.put("great_ball", greatball);
-			
+
+			Item ultraball = new Pokeball(PokeballType.ULTRA_BALL);
+			ultraball.setName("Ultra Ball");
+			xPos = IMAGE_OFFSET_X + 1 * IMAGE_SIZE_X;
+			yPos = IMAGE_OFFSET_Y + 0 * IMAGE_SIZE_Y;
+			ultraball.setIcon(new WritableImage(spriteSheet.getPixelReader(), xPos, yPos, IMAGE_SIZE_X, IMAGE_SIZE_Y));
+			items.put("ultra_ball", ultraball);
+
 		} catch (Exception ex) {
 			System.err.println("Exception in Items.loadItems()");
 			ex.printStackTrace();

@@ -17,4 +17,20 @@ public enum WorldDirection {
 	public final int getY() {
 		return y;
 	}
+	
+	public static WorldDirection getDirection(int x, int y) {
+		if (x == 0 && y == 1) {
+			return SOUTH;
+		}
+		if (x == -1 && y == 0) {
+			return WEST;
+		}
+		if (x == 0 && y == -1) {
+			return NORTH;
+		}
+		if (x == 1 && y == 0) {
+			return EAST;
+		}
+		return null;
+	}
 }

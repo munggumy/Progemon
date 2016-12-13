@@ -6,8 +6,8 @@
 3,-,-,-,-,1,0,FALSE,TRUE,FALSE,TRUE,0
 4,-,-,-,-,1,0,FALSE,TRUE,FALSE,TRUE,0
 5,-,-,-,-,1,0,FALSE,TRUE,FALSE,TRUE,0
-6,playforward/playerpause/delay/playerunpause,hideplayer/playback/changemap,showplayer/playback,-,4,5,FALSE,FALSE,FALSE,TRUE,-1
-7,playforward/playerpause/delay/playerunpause,hideplayer/playback/changemap,showplayer/playback,-,4,5,FALSE,FALSE,FALSE,TRUE,-1
+6,playforward/playerpause/delay/playerunpause,hideplayer/playback/changemap,playerpause/playback/pause/playtransitionout/showplayer/playerunpause/delay/unpause,-,4,5,FALSE,FALSE,FALSE,TRUE,-1
+7,playforward/playerpause/delay/playerunpause,hideplayer/playback/changemap,playerpause/playback/pause/playtransitionout/showplayer/playerunpause/delay/unpause,-,4,5,FALSE,FALSE,FALSE,TRUE,-1
 8,-,-,-,showdialog/sentmessage/hidedialog,1,0,FALSE,TRUE,FALSE,TRUE,0
 9,-,-,-,-,1,0,FALSE,TRUE,FALSE,TRUE,-32
 10,-,-,-,-,4,20,TRUE,TRUE,TRUE,TRUE,-32
@@ -40,3 +40,4 @@
 37,-,-,-,-,1,0,FALSE,TRUE,FALSE,TRUE,0
 100,-,-,-,-,5,3,FALSE,TRUE,FALSE,FALSE,1
 101,fixeddirectionleap,playerwalk,-,-,1,0,FALSE,TRUE,FALSE,FALSE,0
+102,playerpause/playtransitionin/changemap/hideplayer/playerwalk,-,-,-,1,0,FALSE,TRUE,FALSE,FALSE,0

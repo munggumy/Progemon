@@ -23,6 +23,7 @@ import logic_fight.character.pokemon.NonVolatileStatus;
 import logic_fight.player.HumanPlayer;
 import logic_fight.terrain.FightMap;
 import logic_fight.terrain.FightTerrain;
+import logic_world.player.Character;
 import logic_world.player.PlayerCharacter;
 import logic_world.terrain.UnknownTileSetException;
 import logic_world.terrain.WorldDirection;
@@ -30,6 +31,7 @@ import logic_world.terrain.WorldMap;
 import logic_world.terrain.WorldMapException;
 import logic_world.terrain.WorldObject;
 import manager.WorldManager;
+import utility.GlobalPhase;
 
 public class DrawingUtility {
 
@@ -38,7 +40,7 @@ public class DrawingUtility {
 	private static final double BLOCKS_VISIBLE_NORTH = 5.5;
 	private static final int BLOCKS_VISIBLE_WEST = 7;
 
-	private static final int QUEUE_BOX_HEIGHT = 204;
+	private static final int QUEUE_BOX_HEIGHT = 202;
 	private static final int QUEUE_BOX_WIDTH = 68;
 	private static final Color QUEUE_BOX_TEXT_COLOR = Color.BLACK;
 	private static final int ITEM_ICON_X = 10;
@@ -243,8 +245,10 @@ public class DrawingUtility {
 		gc.save();
 		gc.beginPath();
 		gc.rect(0, DialogBox.instance.getY() + 10, GameScreen.WIDTH, 64);
-		gc.setFill(Color.NAVY.darker());
-		gc.fillRect(0, 288, 480, 96);
+		if (GlobalPhase.getCurrentPhase() == GlobalPhase.FIGHT) {
+			gc.setFill(Color.NAVY.darker());
+			gc.fillRect(0, 288, 480, 96);
+		}
 		gc.drawImage(DialogBox.instance.getDialogBoxImage(), DialogBox.instance.getX(), DialogBox.instance.getY());
 
 		gc.clip();
@@ -304,29 +308,53 @@ public class DrawingUtility {
 	
 	public static void drawItemBox(ItemBox itembox){
 		gc.drawImage(itembox.getItemButtonImage(), 0, 248);
+		gc.drawImage(itembox.getRunButtonImage(), 50, 248);
 		if (itembox.isVisible()) {
 			gc.drawImage(itembox.getTabImage(), ItemBox.X, ItemBox.Y);
-			if (itembox.getCurrentTab() == 1) {
-				Item item;
-				for (int i = 0; i < 4; i++) {
-					if (i == 0) {
-						item = Items.getItem("potion");
+			
+			gc.save();
+			gc.beginPath();
+			gc.rect(5, 90, 90, 109);
+			gc.clip();
+			gc.closePath();
+			int i = 0;
+			int labelOffset = itembox.getLabelOffset();
+			int startLabel = Math.floorDiv(labelOffset, 27);
+			if (itembox.getCurrentTab() == 0) {
+				for (Item item : itembox.getBag().getPokeballs().keySet()) {
+					if (i >= startLabel && i <= startLabel + 4) {
+						gc.drawImage(itemLabel, 5, 90 + (i * 27) - labelOffset);
+						gc.drawImage(item.getIcon(), 6, 90 + (i * 27) + 2 - labelOffset);
+						gc.setFont(itembox.getFont());
+						gc.setFill(Color.BLACK);
+						gc.fillText(item.getName(), 32, 90 + (i * 27) + 17 - labelOffset);
+						gc.fillText("x" + itembox.getBag().getItems().get(item), 75, 90 + (i * 27) + 17 - labelOffset);
 					}
-					else if (i == 1) {
-						item = Items.getItem("soda_pop");
-					}
-					else if (i == 2) {
-						item = Items.getItem("antidote");
-					}
-					else{
-						item = Items.getItem("rare_candy");
-					}
-					gc.drawImage(itemLabel, 5, 90 + (i * 27));
-					gc.drawImage(item.getIcon(), 6, 90 + (i * 27) + 2);
-					gc.setFont(itembox.getFont());
-					gc.setFill(Color.BLACK);
-					gc.fillText(item.getName(), 32, 90 + (i * 27) + 17);
+					i++;
 				}
+			}
+			else{
+				for (Item item : itembox.getBag().getNonPokeballs().keySet()) {
+					if (i >= startLabel && i <= startLabel + 4) {
+						gc.drawImage(itemLabel, 5, 90 + (i * 27) - labelOffset);
+						gc.drawImage(item.getIcon(), 6, 90 + (i * 27) + 2 - labelOffset);
+						gc.setFont(itembox.getFont());
+						gc.setFill(Color.BLACK);
+						gc.fillText(item.getName(), 32, 90 + (i * 27) + 17 - labelOffset);
+						gc.fillText("x" + itembox.getBag().getItems().get(item), 78, 90 + (i * 27) + 17 - labelOffset);
+					}
+					i++;
+				}
+			}
+			gc.restore();
+			if (itembox.isShowScrollBar()) {
+				gc.save();
+				gc.setGlobalAlpha(0.5);
+				gc.setFill(Color.DARKGOLDENROD.darker());
+				gc.fillRect(90, 90, 5, 109);
+				gc.restore();
+				gc.setFill(Color.GOLD);
+				gc.fillRect(90, 90 + itembox.getScrollBarY(), 5, itembox.getScrollBarSize());
 			}
 		}
 	}
@@ -438,6 +466,35 @@ public class DrawingUtility {
 		gc.drawImage(player.getCurrentImage(), 224, 164, 32, 44);
 		// gc.drawImage(WorldObject.objectImagesSet.get("008").get(0), 200,
 		// 200);
+	}
+	
+	public static void drawCharacter(Character character) {
+		try {
+			int objectImageHeight = 44;
+			int objectImageWidth = 32;
+			int blockX = character.getBlockX();
+			int blockY = character.getBlockY();
+			double xOffset = playerX - (32 * BLOCKS_VISIBLE_WEST);
+			double yOffset = playerY - (32 * BLOCKS_VISIBLE_NORTH);
+			int startBlockX = (int) Math.floor(xOffset / 32);
+			int endBlockX = (int) Math.floor((playerX + (32 * BLOCKS_VISIBLE_EAST) - 1) / 32);
+			int startBlockY = (int) Math.floor(yOffset / 32);
+			int endBlockY = (int) Math.floor((playerY + (32 * BLOCKS_VISIBLE_SOUTH) - 1) / 32);
+			if (blockX > endBlockX || blockY < startBlockY) {
+				return;
+			} else if (blockX * 32 + objectImageWidth > xOffset
+					|| (blockY + 1) * 32 - objectImageHeight < yOffset + 384) {
+				if (character.isJumping()) {
+					gc.drawImage(character.getCurrentImage(), character.getX() - xOffset,
+							character.getY() + 32 - objectImageHeight - yOffset + character.getyOffset(), objectImageWidth, objectImageHeight);
+					return;
+				}
+				gc.drawImage(character.getCurrentImage(), character.getX() - xOffset,
+						character.getY() + 32 - objectImageHeight - yOffset, objectImageWidth, objectImageHeight);
+			}
+		} catch (Exception e) {
+			System.err.print("DU.");
+		}
 	}
 
 	public static void drawWorldObject(WorldObject worldObject) {
