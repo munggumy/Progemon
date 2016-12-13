@@ -1,0 +1,47 @@
+package graphic;
+
+public class ItemBox implements IRenderable{
+	
+	public static final ItemBox instance = new ItemBox();
+	
+	private boolean visible;
+
+	@Override
+	public void draw() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getDepth() {
+		// TODO Auto-generated method stub
+		return Integer.MAX_VALUE;
+	}
+
+	@Override
+	public boolean isVisible() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setVisible(boolean visible) {
+		// TODO Auto-generated method stub
+		this.visible = visible;
+	}
+
+	@Override
+	public void show() {
+		// TODO Auto-generated method stub
+		IRenderableHolder.addFightObject(this);
+		visible = true;
+	}
+
+	@Override
+	public void hide() {
+		// TODO Auto-generated method stub
+		visible = false;
+		IRenderableHolder.removeFightObject(this);
+	}
+
+}
