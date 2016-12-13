@@ -25,13 +25,14 @@ import utility.AnimationUtility;
 import utility.Clock;
 import utility.FileUtility;
 import utility.GlobalPhase;
+import utility.InputUtility;
 import utility.Pokedex;
 import utility.RandomUtility;
 import utility.StringUtility;
 
 public class GUIFightGameManager {
 
-	public static GUIFightGameManager currentFightManager;
+	public static GUIFightGameManager instance;
 
 	private List<Player> players;
 	private List<Player> currentPlayers;
@@ -43,10 +44,16 @@ public class GUIFightGameManager {
 
 	private boolean isWild;
 
+	public enum mouseRegion {
+		DIALOG, QUEUE, ITEM, FIGHTMAP, SKILL;
+	}
+
+	private mouseRegion currentMouseRegion;
+
 	/** set of players including the wild player if isWild */
 	public GUIFightGameManager(Set<Player> players, boolean isWild) {
-		
-		currentFightManager = this;
+
+		instance = this;
 		this.isWild = isWild;
 
 		// if (isWild) {
@@ -67,9 +74,15 @@ public class GUIFightGameManager {
 			System.out.print(player.getPokemons().stream().map(Pokemon::getName).collect(Collectors.joining(", ")));
 			System.out.println("]");
 		});
-		
-		players.stream().forEach(p -> p.setCurrentFightManager(this));
-		players.stream().flatMap(py -> py.getPokemons().stream()).forEach(Pokemon::resetNextTurnTime);
+
+		players.stream().forEach(player -> {
+			player.setCurrentFightManager(this);
+			player.setRun(false);
+		});
+		players.stream().flatMap(py -> py.getPokemons().stream()).forEach(pokemon -> {
+			pokemon.resetNextTurnTime();
+			pokemon.enterFight();
+		});
 		fightMap = new FightMap(FileUtility.loadFightMap());
 		spawnPokemons();
 		fightMap.sortPokemons();
@@ -109,6 +122,9 @@ public class GUIFightGameManager {
 			currentPlayer = currentPokemon.getOwner();
 			currentPhase = FightPhase.initialPhase;
 			currentPlayer.runTurn(currentPokemon); // gives control to player
+			if (currentPlayer.isRun()) {
+				break;
+			}
 			currentPokemon.calculateNextTurnTime();
 
 			clearDeadPokemons();
@@ -129,11 +145,17 @@ public class GUIFightGameManager {
 	}
 
 	private void endFight() {
-		MusicUtility.playMusic("victory_wild", false);
-		System.out.println("The fight has ended.");
-		System.out.println("The winner is " + winnerPlayer.getName());
-		DialogBox.instance.sentDialog("The winner is " + winnerPlayer.getName());
+		if (!currentPlayer.isRun()) {
 
+			MusicUtility.playMusic("victory_wild", false);
+			System.out.println("The fight has ended.");
+			System.out.println("The winner is " + winnerPlayer.getName());
+			DialogBox.instance.sentDialog("The winner is " + winnerPlayer.getName());
+
+		} else {
+			currentPlayer.setRun(false);
+			DialogBox.instance.sentDialog("Run away successfully");
+		}
 		while (true) {
 			if (DialogBox.instance.hasSentMessage()) {
 				break;
@@ -205,7 +227,7 @@ public class GUIFightGameManager {
 	}
 
 	public boolean canCapturePokemon() {
-		if (currentPlayers.stream().filter(p -> p != currentPlayer).flatMap(p -> p.getPokemons().stream())
+		if (isWild && currentPlayers.stream().filter(p -> p != currentPlayer).flatMap(p -> p.getPokemons().stream())
 				.count() == 1) {
 			return true;
 		} else {
@@ -255,9 +277,26 @@ public class GUIFightGameManager {
 	}
 
 	public void checkInput() {
-		fightMap.checkInput();
-		FightHUD.checkInput();
+		if (InputUtility.getMouseY() >= 288) {
+			currentMouseRegion = mouseRegion.DIALOG;
+		} else if (InputUtility.getMouseX() >= 390 && InputUtility.getMouseY() < 240) {
+			currentMouseRegion = mouseRegion.QUEUE;
+		} else if (InputUtility.getMouseX() < 100 && InputUtility.getMouseY() >= 248) {
+			currentMouseRegion = mouseRegion.ITEM;
+		} else if (ItemBox.instance.isVisible() && InputUtility.getMouseX() < 100 && InputUtility.getMouseY() >= 48) {
+			currentMouseRegion = mouseRegion.ITEM;
+		} else if (FightHUD.isShowSkillMenu() && FightHUD.underMouse()) {
+			currentMouseRegion = mouseRegion.SKILL;
+		} else {
+			currentMouseRegion = mouseRegion.FIGHTMAP;
+		}
 		ItemBox.instance.checkInput();
+		FightHUD.checkInput();
+		fightMap.checkInput();
+	}
+
+	public mouseRegion getCurrentMouseRegion() {
+		return currentMouseRegion;
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import audio.SFXUtility;
+import graphic.DialogBox;
 import graphic.FightHUD;
 import item.Bag;
 import item.Item;
@@ -30,7 +31,7 @@ public abstract class Player {
 	private Color color;
 	private ArrayList<Pokemon> pokemons;
 	private boolean godlike;
-	private Bag bag;
+	private Bag bag = new Bag();
 
 	protected Optional<Pokemon> nextAttackedPokemon;
 	protected Optional<ActiveSkill> nextAttackSkill;
@@ -38,6 +39,7 @@ public abstract class Player {
 	protected Item itemToUse;
 	protected Pokemon itemTargetPokemon;
 	protected Optional<Path> nextPath;
+	protected boolean isRun;
 
 	private int moveCounter = 1;
 	private int moveDelay = 5, moveDelayCounter = 0;
@@ -167,8 +169,12 @@ public abstract class Player {
 						phaseIsFinished = true;
 						break;
 					case inputItemPhase:
-						itemToUse = Items.getItem("potion");
 						phaseIsFinished = inputUseItem(pokemon);
+						if (itemToUse instanceof Pokeball) {
+							phaseIsFinished = false;
+							itemToUse = null;
+							throw new AbnormalPhaseOrderException(FightPhase.preCapturePhase);
+						}
 						break;
 					case inputItemPokemonPhase:
 						phaseIsFinished = inputUseItemPokemon(pokemon);
@@ -179,6 +185,10 @@ public abstract class Player {
 						break;
 					case postItemPhase:
 						pokemon.getCurrentFightMap().unshadowAllBlocks();
+						phaseIsFinished = true;
+						break;
+					case runPhase:
+						setRun(true);
 						phaseIsFinished = true;
 						break;
 					default:
@@ -371,4 +381,11 @@ public abstract class Player {
 		this.bag = bag;
 	}
 
+	public void setRun(boolean isRun) {
+		this.isRun = isRun;
+	}
+
+	public boolean isRun() {
+		return isRun;
+	}
 }

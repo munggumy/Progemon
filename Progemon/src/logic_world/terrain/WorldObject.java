@@ -18,6 +18,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import logic_world.player.PlayerCharacter;
 import manager.WorldManager;
+import utility.AnimationUtility;
 import utility.Clock;
 import utility.exception.FileWrongFormatException;
 
@@ -248,11 +249,6 @@ public class WorldObject extends Animation implements Cloneable {
 	public static void loadMapObjects(String datapath, WorldMap owner, int offsetX, int offsetY, int minX, int minY,
 			int maxX, int maxY) {
 		String delimiter = "\\s*,\\s*";
-		/*
-		 * if (true) { System.err.println(
-		 * "kuykuykuykuykukuykuykuykuykuykuykuykuykuykuyykuykkuykuykuykuykuykuykuykuykuykuyuykuykuykuy"
-		 * ); }
-		 */
 		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(datapath)))) {
 			Pattern pattern = Pattern.compile(String.join(delimiter, "(?<objectCode>\\d+)", "(?<blockX>\\d+)",
 					"(?<blockY>\\d+)(?<functionParam>(", "\"?\\d\\[.+\\]\"?)+)?"));
@@ -406,6 +402,16 @@ public class WorldObject extends Animation implements Cloneable {
 			target.play();
 			return;
 		});
+		
+		allObjectFunctions.put("pause", target -> {
+			target.pause();
+			return;
+		});
+		
+		allObjectFunctions.put("unpause", target -> {
+			target.unpause();
+			return;
+		});
 
 		allObjectFunctions.put("playback", target -> {
 			target.show();
@@ -447,6 +453,24 @@ public class WorldObject extends Animation implements Cloneable {
 		allObjectFunctions.put("spawn", target -> {
 			SpawningUtility.trySpawnPokemon(WorldManager.getWorldMap());
 
+		});
+		
+		allObjectFunctions.put("playtransitionin", target -> {
+			AnimationUtility.getLoadScreen00().show();
+			AnimationUtility.getLoadScreen00().play();
+			while (AnimationUtility.getLoadScreen00().isPlaying()) {
+				Clock.tick();
+			}
+		});
+		
+		allObjectFunctions.put("playtransitionout", target -> {
+			AnimationUtility.getLoadScreen00().setPlayback(true);
+			AnimationUtility.getLoadScreen00().play();
+			while (AnimationUtility.getLoadScreen00().isPlaying()) {
+				Clock.tick();
+			}
+			AnimationUtility.getLoadScreen00().setPlayback(false);
+			AnimationUtility.getLoadScreen00().hide();
 		});
 
 		allObjectFunctions.put("changemap", target -> {

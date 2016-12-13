@@ -14,14 +14,19 @@ public class Bag {
 			if (this.items.containsKey(i)) {
 				this.items.put(i, this.items.get(i) + 1);
 			} else {
-				this.items.put(i, 1);
+				this.items.put(i, new Integer(1));
 			}
 		}
+		sortByAlphabet();
 	}
 
 	public Item getAndRemove(Item item) {
 		if (items.containsKey(item) && items.get(item) > 0) {
 			items.put(item, items.get(item) - 1);
+			if (items.get(item) <= 0) {
+				items.remove(item);
+			}
+			sortByAlphabet();
 			return item;
 		} else {
 			throw new IllegalArgumentException("Cannot find item=" + item.getName() + "in bag.");

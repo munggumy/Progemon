@@ -16,6 +16,7 @@ import logic_fight.character.pokemon.Pokemon;
 import logic_fight.player.HPAIPlayer;
 import logic_fight.player.HumanPlayer;
 import logic_fight.player.Player;
+import logic_world.player.PlayerCharacter;
 import logic_world.terrain.WorldMap;
 import logic_world.terrain.WorldObject;
 import manager.GUIFightGameManager;
@@ -98,7 +99,8 @@ public class Main2 extends Application {
 			Player p1 = new HPAIPlayer("AI 1", charlizard, Color.RED);
 			p1.addPokemon(caterpie);
 			p1.addPokemon(pidgey2);
-			Player p2 = new HumanPlayer("Kris", pidgeotto, Color.BLUE);
+			
+			Player p2 = PlayerCharacter.instance.getMe();
 			p2.addPokemon(blastoise);
 			p2.addPokemon(pidgey1);
 
