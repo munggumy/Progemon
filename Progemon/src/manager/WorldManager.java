@@ -262,5 +262,19 @@ public class WorldManager {
 	public static PlayerCharacter getPlayer() {
 		return player;
 	}
+	
+	public static PlayerCharacter getCharacterAt(int blockX, int blockY) {
+		if (player.getY() == blockY * 32) {
+			if (player.isWalking() && player.getX() >= (blockX - 1) * 32 && player.getX() <= (blockX + 1) * 32) {
+				return player;
+			}
+		}
+		else if (player.getX() == blockX * 32) {
+			if (player.isWalking() && player.getY() >= (blockY - 1) * 32 && player.getY() <= (blockY + 1) * 32) {
+				return player;
+			}
+		}
+		return null;
+	}
 
 }
