@@ -16,6 +16,9 @@ import utility.RandomUtility;
 
 public class SpawningUtility {
 	public static void trySpawnPokemon(WorldMap map) {
+		if(WorldManager.getPlayer().hasRepel()){
+			return;
+		}
 		Player wildAI = new HPAIPlayer("Joe", Color.RED);
 		for (SpawningPokemonEntry entry : map.getSortedPokemonSpawningChance()) {
 			if (RandomUtility.randomPercent(100) <= entry.getRate() / 187.5) {

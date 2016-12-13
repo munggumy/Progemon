@@ -321,6 +321,10 @@ public abstract class Player {
 		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public final ArrayList<Pokemon> getPokemons() {
 		return pokemons;
 	}
@@ -337,6 +341,10 @@ public abstract class Player {
 
 	public final Color getColor() {
 		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
 	}
 
 	public final boolean isGodlike() {
@@ -357,6 +365,10 @@ public abstract class Player {
 
 	public final Bag getBag() {
 		return bag;
+	}
+
+	public void setBag(Bag bag) {
+		this.bag = bag;
 	}
 
 }

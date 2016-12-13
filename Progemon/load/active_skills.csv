@@ -4,9 +4,9 @@ Bite,60,Dark,constant,,attack_bite,flinch(30%)
 Body Slam,85,Normal,constant,,,paralysis(30%)
 Bubble,50,Water,ball,,,op.speed(-1/10%)
 Bubblebeam,65,Water,ball,,,op.speed(-1/10%)
-Bug Bite,60,,constant,,,
+Bug Bite,60,Bug,constant,,,
 Confusion,50,Psychic,ball,,,confusion(10%)
-Cut,50,,constant,,,
+Cut,50,Normal,constant,,,
 Ember,60,Fire,line,,,burn(10%)
 Fire Blast,120,Fire,ball,,,burn(10%)
 Flamethrower,95,Fire,line,,attack_flamethrower,burn(10%)
@@ -22,13 +22,15 @@ Pursuit,40,Dark,constant,,,
 Razor Leaf,55,Grass,ball,,,
 Razor Wind,80,Normal,ball,,,
 Scratch,40,Normal,constant,,,
-Slash,70,,constant,,attack_slash,
-Surf,60,,constant,,attack_surf,
-Tackle,35,,constant,,,
-Take Down,90,,constant,,,
+Slam,80,Normal,,,,
+Slash,70,Normal,constant,,attack_slash,
+Surf,60,Water,constant,,attack_surf,
+Tackle,35,Normal,constant,,,
+Take Down,90,Normal,constant,,,
 Thunderbolt,90,Electric,line,,attack_thunderbolt,
 Thunder Shock,40,Electric,constant,,,
 Twineedle,50,Bug,ball,,,poison(20%)
+Twister,40,Dragon,,,,
 Vine Whip,35,Grass,line,,,
 Water Gun,40,Water,ball,,,
-Wing Attack,70,,ball,,,
+Wing Attack,70,Flying,ball,,,

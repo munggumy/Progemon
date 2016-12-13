@@ -164,4 +164,5 @@ public class HumanPlayer extends Player {
 		});
 		return itemTargetPokemon != null;
 	}
+	
 }

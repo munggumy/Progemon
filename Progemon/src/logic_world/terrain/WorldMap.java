@@ -157,7 +157,7 @@ public class WorldMap implements IRenderable {
 	public static void loadTileset() throws WorldMapException {
 		try {
 			Image img = new Image(new File(DEFAULT_TILE_SET_PATH).toURI().toString());
-			for (int i = 0; i < 40; i++) {
+			for (int i = 0; i < 50; i++) {
 				tilesetList.add(DrawingUtility.resize(
 						new WritableImage(img.getPixelReader(), (i % 10) * 16, Math.floorDiv(i, 10) * 16, 16, 16), 2));
 			}

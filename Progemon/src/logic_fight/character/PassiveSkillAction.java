@@ -10,5 +10,9 @@ public interface PassiveSkillAction {
 		return targets -> targets.forEach(pokemon -> pokemon.changeHP(amount));
 	}
 
+	public static PassiveSkillAction damage(int amount) {
+		return targets -> targets.forEach(pokemon -> pokemon.changeHP(-amount));
+	}
+
 	public void apply(List<Pokemon> targets);
 }
