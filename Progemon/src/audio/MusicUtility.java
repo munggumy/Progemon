@@ -13,10 +13,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
@@ -32,7 +28,6 @@ public final class MusicUtility {
 	private static ExecutorService musicExecutor = Executors.newFixedThreadPool(1);
 	private static Map<String, BGMusic> musicMap = new HashMap<String, BGMusic>();
 	private static MediaPlayer player;
-	private static URL emptyAudioURL;
 
 	/**
 	 * Constructor to create a simple thread pool.
@@ -47,7 +42,6 @@ public final class MusicUtility {
 				return new Thread(r, "MusicUtility Thread");
 			}
 		});
-		emptyAudioURL = ClassLoader.getSystemResource(MUSIC_DIRECTORY + "/empty.mp3");
 		loadMusicMap(MUSIC_MAP_LOCATION);
 		System.out.println("Music successfully loaded.");
 	}
@@ -73,8 +67,8 @@ public final class MusicUtility {
 		musicMap.put(id, music);
 	}
 
-	public static void loadMusicMap(String url) {
-		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(url)))) {
+	public static void loadMusicMap(String mapFileURL) throws AudioException {
+		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(mapFileURL)))) {
 			String delimiter = "\\s*,\\s*";
 			String fileNameRegex = "[\\d\\w\\s!.()_]+";
 			Pattern pattern = Pattern.compile(String.join(delimiter, "(?<musicCode>[\\w_]+)",
@@ -96,19 +90,12 @@ public final class MusicUtility {
 				}
 			}
 		} catch (FileNotFoundException ex) {
-			System.err.println("Music Map file not found.");
-			ex.printStackTrace();
+			throw new AudioException("Music Map file not found.", ex);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			throw new AudioException("Exception while loading music map.", ex);
 		}
 	}
 
-	/**
-	 * Lookup a name resource to play sound based on the id.
-	 *
-	 * @param id
-	 *            identifier for a sound to be played.
-	 */
 	public static void playMusic(final String id, boolean useFadeOut) {
 		Thread playMusic = new Thread(() -> {
 			try {
@@ -138,6 +125,7 @@ public final class MusicUtility {
 			}
 		});
 
+		//TODO checkLoop stops?
 		Thread checkLoop = new Thread(() -> {
 			try {
 				while (true) {
@@ -145,7 +133,7 @@ public final class MusicUtility {
 						continue;
 					} else {
 						if (player.getCurrentTime().greaterThanOrEqualTo(Duration.millis(61485))) {
-							player.seek(Duration.millis(8000));
+							player.seek(Duration.millis(8000));// TODO
 						}
 					}
 					Thread.sleep(10);
@@ -211,17 +199,15 @@ public final class MusicUtility {
 	}
 
 	public static void setPlayerRate(double rate) {
-		player.setRate(rate);
+		player.setRate(rate); //TODO setPlayerRate
 	}
 
 	public static void setVolume(double volume) {
 		player.setVolume(volume);
 	}
 
-	/**
-	 * Stop all threads and media players.
-	 */
 	public static void shutdown() {
+		stopMusic();
 		musicExecutor.shutdown();
 	}
 

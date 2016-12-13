@@ -38,7 +38,7 @@ import utility.Clock;
 import utility.RandomUtility;
 import utility.StringUtility;
 
-public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
+public class Pokemon extends AbstractPokemon implements IRenderable {
 
 	// Constants and Variables
 
@@ -137,7 +137,7 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 		nextTurnTime = 0;
 		calculateNextTurnTime();
 		resetHP();
-		setImageFileLocation();
+		setDefaultImageFileLocation();
 		loadImage();
 	}
 
@@ -327,13 +327,6 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 	public static Comparator<Pokemon> bySpeed = (p1, p2) -> Double.compare(p1.nextTurnTime, p2.nextTurnTime);
 	public static Comparator<Pokemon> byID = (p1, p2) -> p1.id - p2.id;
 	public static Comparator<Pokemon> byHP = (p1, p2) -> Double.compare(p1.currentHP, p2.currentHP);
-
-	// Clone
-
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return (Pokemon) super.clone();
-	}
 
 	/**
 	 * Generate <code>paths</code> from <code>range</code> and
@@ -757,7 +750,7 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 	}
 
 	public final void addExpAndTryLevelUp(double change) {
-		currentExp += change;
+		currentExp += change; //TODO
 		tryLevelUp();
 	}
 
@@ -793,6 +786,9 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 	}
 
 	public final FightMap getCurrentFightMap() {
+		if(currentFightMap == null){
+			System.err.println("WARNING : Current FightMap is not set for " + getName());
+		}
 		return currentFightMap;
 	}
 
@@ -808,12 +804,8 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 		this.imageFileName = imageFileName;
 	}
 
-	public void setImageFileLocation() {
+	public void setDefaultImageFileLocation() {
 		setImageFileLocation(DEFAULT_IMAGE_FILE_LOCATION + "/" + this.getName() + ".png");
-	}
-
-	public static final String getDefaultImageFileLocation() {
-		return DEFAULT_IMAGE_FILE_LOCATION;
 	}
 
 	public final NonVolatileStatus getStatus() {

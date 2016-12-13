@@ -17,16 +17,17 @@ import utility.StringUtility;
 public class ActiveSkill extends Animation implements IRenderable {
 	private static final double DEFAULT_POWER = 50;
 
-	private double power;
-	private String name;
 	private static ArrayList<ActiveSkill> allActiveSkills = new ArrayList<ActiveSkill>();
+	private static Image nullIcon;
+
+	private String name;
+	private double power;
 	private FightTerrain attackTerrain, targetTerrain;
 	private SkillEffect skillEffect;
 	private Element element;
 	private AreaType areaType;
 	private GraphicType graphicType;
 	private Image icon;
-	private static Image nullIcon;
 	private String sfxName;
 
 	static {

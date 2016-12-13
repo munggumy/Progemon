@@ -1,26 +1,16 @@
 package logic_world.player;
 
-import java.io.File;
-
-import audio.SFXUtility;
-import graphic.Animation;
 import graphic.DialogBox;
-import graphic.DrawingUtility;
-import graphic.PseudoAnimation;
 import item.Bag;
 import item.Items;
-import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import logic_fight.character.pokemon.Pokemon;
 import logic_fight.player.HumanPlayer;
 import logic_world.terrain.WorldDirection;
 import logic_world.terrain.WorldMapException;
-import logic_world.terrain.WorldObject;
 import manager.WorldManager;
 import utility.InputUtility;
-import utility.Pokedex;
 
 public class PlayerCharacter extends Character {
 

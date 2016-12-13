@@ -2,9 +2,6 @@ package graphic;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import audio.SFXUtility;
 import javafx.scene.image.Image;
@@ -15,32 +12,26 @@ import utility.Clock;
 import utility.InputUtility;
 
 public class DialogBox implements IRenderable {
-	
+
 	public static final DialogBox instance = new DialogBox();
-
+	public static final KeyCode advancingKey = KeyCode.Z;
 	public static final Color FONT_COLOR = Color.BLACK;
-
 	protected static final String DIALOG_BOX_PATH = "load\\img\\dialogbox\\Theme2.png";
-	private Image dialogBoxImage = null;
-
 	private static final int x = 2, y = 294;
-	// private static final Font DEFAULT_FONT = new Font(Font.MONOSPACED,
-	// Font.PLAIN, 15);
-	private static final Font DEFAULT_FONT = new Font("Monospaced", 20);
+
+	private Image dialogBoxImage = null;
 	private String line = "", nextWord = "";
 	private ArrayList<String> messages = new ArrayList<>(), lines = new ArrayList<>();
 	private String[] messageOnScreen = { "", "" };
-	private Font font = new Font("Monospaced", 20);
+	private Font font = new Font("Tahoma", 20);
 	private int textDelay = 5, textDelayCounter = 5, newLineDelay = 0, newLineDelayCounter = 0, currentLine = 0;
 	private int yShift = 0;
 	private boolean hasSentDialog = true, hasSentLine = true;
 	private int endLineWidth;
 	private boolean visible = false, showSign = false;
 
-	public static final KeyCode advancingKey = KeyCode.Z;
-	
+
 	public DialogBox() {
-		// TODO Auto-generated constructor stub
 		hide();
 	}
 
@@ -96,7 +87,7 @@ public class DialogBox implements IRenderable {
 				textDelayCounter++;
 			}
 		} else if (line.length() > 0) {
-			if (DrawingUtility.computeStringWidth(messageOnScreen[currentLine] + line.split(" ")[0], font) > 360) {	
+			if (DrawingUtility.computeStringWidth(messageOnScreen[currentLine] + line.split(" ")[0], font) > 360) {
 				toNewLine();
 			} else {
 				nextWord = line.split(" ")[0];
@@ -136,7 +127,7 @@ public class DialogBox implements IRenderable {
 			Clock.tick();
 		}
 	}
-	
+
 	private void waitForResponse(boolean showSign) {
 		endLineWidth = (int) DrawingUtility.computeStringWidth(messageOnScreen[currentLine], font);
 		this.showSign = showSign;
@@ -170,7 +161,7 @@ public class DialogBox implements IRenderable {
 	public int getY() {
 		return y;
 	}
-	
+
 	public void sentDialog(String dialog) {
 		hasSentDialog = false;
 		for (String string : dialog.split("(@@@n)+")) {
@@ -201,7 +192,7 @@ public class DialogBox implements IRenderable {
 			}
 		}
 	}
-	
+
 	public void sentLine(String line) {
 		this.line = line.trim();
 		hasSentLine = false;
@@ -252,7 +243,7 @@ public class DialogBox implements IRenderable {
 	public int getCurrentLine() {
 		return currentLine;
 	}
-	
+
 	public boolean isShowSign() {
 		return showSign;
 	}

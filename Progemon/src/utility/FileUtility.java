@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +13,6 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import logic_fight.character.Element;
@@ -23,10 +22,10 @@ import logic_fight.character.activeSkill.AreaType;
 import logic_fight.character.activeSkill.GraphicType;
 import logic_fight.character.activeSkill.SkillEffect;
 import logic_fight.character.pokemon.LevelingRate;
-import logic_fight.character.pokemon.Pokemon;
-import logic_fight.character.pokemon.PokemonTemplate;
 import logic_fight.character.pokemon.NonVolatileStatus;
+import logic_fight.character.pokemon.Pokemon;
 import logic_fight.character.pokemon.Pokemon.MoveType;
+import logic_fight.character.pokemon.PokemonTemplate;
 import logic_fight.terrain.FightTerrain;
 import utility.exception.FileWrongFormatException;
 
@@ -34,9 +33,18 @@ public class FileUtility {
 
 	private static final String DEFAULT_PATH = "load";
 	private static final String DEFAULT_LOAD_POKEMON = DEFAULT_PATH + "/pokemon_list.csv";
+	// private static final String DEFAULT_LOAD_POKEMON =
+	// ClassLoader.getSystemResource("\\pokemon_list.csv").toString();
+
 	private static final String DEFAULT_LOAD_FIGHT_MAP = DEFAULT_PATH + "/fight_map.txt";
+	// private static final String DEFAULT_LOAD_FIGHT_MAP =
+	// ClassLoader.getSystemResource("\\fight_map.txt").toString();
 	private static final String DEFAULT_ACTIVE_SKILLS = DEFAULT_PATH + "/active_skills.csv";
+	// private static final String DEFAULT_ACTIVE_SKILLS =
+	// ClassLoader.getSystemResource("\\active_skills.csv").toString();
 	private static final String DEFAULT_SW_TABLE = DEFAULT_PATH + "/strengthWeaknessTable.csv";
+	// private static URL DEFAULT_SW_TABLE =
+	// ClassLoader.getSystemResource("strengthWeaknessTable.csv");
 
 	@Deprecated
 	public static void loadAllDefaults() {
@@ -51,6 +59,7 @@ public class FileUtility {
 	 * @throws IOException
 	 */
 	public static void loadPokedex(String filePath) {
+		System.out.println("pokedex filePath=" + filePath);
 		String primaryDelimiter = "\\s*,\\s*", secondaryDelimiter = "/";
 		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(filePath)))) {
 			Pattern pattern = Pattern.compile(String.join(primaryDelimiter, "(?<id>\\d+)", "(?<name>\\w+)",
@@ -121,46 +130,6 @@ public class FileUtility {
 				.forEachOrdered(as -> np.addDefaultActiveSkill(ActiveSkill.getActiveSkill(as.trim())));
 		Pokedex.addPokemonToPokedex(name, np);
 	}
-
-	// private static void loadPokemonByName(String[] args, String[]
-	// activeSkills, String[] elements) {
-	// ArrayList<String> temp = new ArrayList<String>();
-	// temp.add(Integer.toString(Pokedex.getPokemonID(args[0])));
-	// temp.addAll(Arrays.asList(Arrays.copyOfRange(args, 1, args.length)));
-	// String[] args_to_loadPokemonByID = new String[7];
-	// temp.toArray(args_to_loadPokemonByID);
-	// loadPokemonByID(args_to_loadPokemonByID, activeSkills, elements);
-	// }
-
-	/**
-	 * Usage : index name
-	 * 
-	 * @throws IOException
-	 */
-	// public static void loadPokedex(String filePath) {
-	// try (Scanner scanner = new Scanner(new BufferedReader(new
-	// FileReader(filePath)))) {
-	// Pattern pattern = Pattern.compile("(\\d+),([\\w\\s]+)");
-	// Matcher matcher;
-	// int temp_id;
-	// String temp_name;
-	// while (scanner.hasNextLine()) {
-	// String line = scanner.nextLine();
-	// matcher = pattern.matcher(line);
-	// if (matcher.find()) {
-	// temp_id = Integer.parseInt(matcher.group(1));
-	// temp_name = matcher.group(2);
-	// Pokedex.addPokemonToPokedex(temp_id, temp_name);
-	// }
-	// }
-	// } catch (FileNotFoundException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	//
-	// public static void loadPokedex() {
-	// loadPokedex(DEFAULT_LOAD_POKEDEX);
-	// }
 
 	// Load Fight Map
 	/** Fightmap fm = new Fightmap(loadFightMap()); */
@@ -292,8 +261,6 @@ public class FileUtility {
 	}
 
 	public static void loadStrengthWeaknessTable(String filePath) {
-		final int NUM_ELEMENTS = Element.values().length;
-		// Element.SWFactor = new SW[NUM_ELEMENTS][NUM_ELEMENTS];
 		try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(filePath)))) {
 			for (Element attacker : Element.values()) {
 				String[] line = scanner.nextLine().split("\\s*,\\s*");
