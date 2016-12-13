@@ -1,0 +1,17 @@
+package graphic;
+
+public class ScreenEffect extends Animation {
+
+	@Override
+	public void draw() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getDepth() {
+		// TODO Auto-generated method stub
+		return Integer.MAX_VALUE;
+	}
+
+}
