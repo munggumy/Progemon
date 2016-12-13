@@ -44,11 +44,11 @@ public class WorldObject extends Animation implements Cloneable {
 			WorldMap owner) {
 		try {
 			WorldObject worldObject;
-			
+
 			worldObject = (WorldObject) allWorldObjects.get(objectCode).clone();
 			worldObject.blockX = blockX;
 			worldObject.blockY = blockY;
-			
+
 			// if (objectCode.equals("008")) {
 			// System.err.println("01245678913215621321");
 			// System.out.println("x = " + blockX);
@@ -71,16 +71,14 @@ public class WorldObject extends Animation implements Cloneable {
 				worldObject.visible = false;
 			} else {
 				worldObject.visible = true;
-				if (owner != null) {					
+				if (owner != null) {
 					owner.addVisibleWorldObject(worldObject);
 				}
-			}
-			if (worldObject.objectCode.equals("008")) {
-				System.out.println("yay");
 			}
 			if (owner != null) {
 				owner.addWorldObjects(worldObject);
 			}
+
 			return worldObject;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -96,6 +94,7 @@ public class WorldObject extends Animation implements Cloneable {
 		addOnEnter("-");
 		addOnStep("-");
 		addOnExit("-");
+		addOnInteract("-");
 	}
 
 	public WorldObject(String objectCode, String onEnter, String onStep, String onExit, String onInteract,
@@ -105,6 +104,7 @@ public class WorldObject extends Animation implements Cloneable {
 		addOnEnter(onEnter);
 		addOnStep(onStep);
 		addOnExit(onExit);
+		addOnInteract(onInteract);
 	}
 
 	public WorldObject(String[] args) {
@@ -306,8 +306,8 @@ public class WorldObject extends Animation implements Cloneable {
 					}
 					createWorldObject(objectCode, blockX, blockY, functionsStr, owner);
 				} else {
-					System.err.println("WARNING : Unmatched Pattern In WorldObject.java : line=" + line + "\npattern=" + pattern
-							+ "\nfile=" + datapath);
+					System.err.println("WARNING : Unmatched Pattern In WorldObject.java : line=" + line + "\npattern="
+							+ pattern + "\nfile=" + datapath);
 				}
 			}
 		} catch (Exception e) {
@@ -420,6 +420,7 @@ public class WorldObject extends Animation implements Cloneable {
 		});
 
 		allObjectFunctions.put("delay", target -> {
+
 			String parameter = target.functionParameter.get(target.actionType).get(target.parameterCounter);
 			int delay = Integer.parseInt(parameter);
 			while (delay > 0) {
@@ -536,6 +537,10 @@ public class WorldObject extends Animation implements Cloneable {
 			// TODO: handle finally clause
 			parameterCounter++;
 		}
+	}
+
+	public String getObjectCode() {
+		return objectCode;
 	}
 
 }

@@ -16,16 +16,19 @@ import java.util.regex.Pattern;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
 public final class MusicUtility {
 
+	private static final int FADE_RESOLUTION = 1000;
 	private static final Duration DEFAULT_FADE_DURATION = Duration.millis(1000);
 	private static final double DEFAULT_VOLUME = 0.7;
 	private static final String MUSIC_MAP_LOCATION = "load/music_map.txt";
 	private static final String MUSIC_DIRECTORY = "music";
+
 	private static ExecutorService musicExecutor = Executors.newFixedThreadPool(1);
 	private static Map<String, BGMusic> musicMap = new HashMap<String, BGMusic>();
 	private static MediaPlayer player;
@@ -109,7 +112,11 @@ public final class MusicUtility {
 	public static void playMusic(final String id, boolean useFadeOut) {
 		Thread playMusic = new Thread(() -> {
 			try {
+
 				if (player != null) {
+					if (player.getMedia().equals(musicMap.get(id).getMusic())) {
+						return;
+					}
 					if (useFadeOut) {
 						fadeOut().join();
 					}
@@ -162,13 +169,15 @@ public final class MusicUtility {
 	public static Thread fadeOut() {
 		Thread t = new Thread(() -> {
 			if (player != null) {
-				Timeline timeline = new Timeline(
-						new KeyFrame(DEFAULT_FADE_DURATION, new KeyValue(player.volumeProperty(), 0)));
-				timeline.play();
+				double currentVolume = player.getVolume();
+				double decrement = currentVolume / FADE_RESOLUTION;
 				try {
-					Thread.sleep((long) DEFAULT_FADE_DURATION.toMillis());
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+					while (currentVolume > 0) {
+						Thread.sleep((long) DEFAULT_FADE_DURATION.toMillis() / FADE_RESOLUTION);
+						player.setVolume((currentVolume -= decrement));
+					}
+				} catch (InterruptedException ex) {
+					ex.printStackTrace();
 				}
 			}
 			System.out.println("Finished Fade Out, player=" + player);
@@ -180,13 +189,15 @@ public final class MusicUtility {
 	public static Thread fadeIn() {
 		Thread t = new Thread(() -> {
 			if (player != null) {
-				Timeline timeline = new Timeline(
-						new KeyFrame(DEFAULT_FADE_DURATION, new KeyValue(player.volumeProperty(), DEFAULT_VOLUME)));
-				timeline.play();
+				double currentVolume = player.getVolume();
+				double increment = currentVolume / FADE_RESOLUTION;
 				try {
-					Thread.sleep((long) DEFAULT_FADE_DURATION.toMillis());
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+					while (currentVolume < DEFAULT_VOLUME) {
+						Thread.sleep((long) DEFAULT_FADE_DURATION.toMillis() / FADE_RESOLUTION);
+						player.setVolume((currentVolume += increment));
+					}
+				} catch (InterruptedException ex) {
+					ex.printStackTrace();
 				}
 			}
 			System.out.println("Finished Fade In, player=" + player);

@@ -2,11 +2,12 @@ package manager;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import audio.MusicUtility;
 import audio.SFXUtility;
 import graphic.IRenderableHolder;
+import item.Item;
+import item.Items;
 import javafx.scene.input.KeyCode;
 import logic_world.player.PlayerCharacter;
 import logic_world.terrain.WorldDirection;
@@ -29,34 +30,22 @@ public class WorldManager {
 	public WorldManager() {
 		try {
 			GlobalPhase.setCurrentPhase(GlobalPhase.WORLD);
-
-			// try {
-			// WorldObject.loadObjectFunctions();
-			// WorldObject.loadWorldObjects();
-			// WorldObject.loadObjectImages();
-			// WorldMap.loadTileset();
-			// } catch (WorldMapException e) {
-			// e.printStackTrace();
-			// }
-
 			new Clock();
-			System.out.println("reach-1S");
 			player = PlayerCharacter.instance;
+			if (player.getNumberOfPokemons() <= 0) {
+				throw new IllegalStateException("PlayerCharacter has no pokemons!");
+			}
 			player.show();
 
-			// player.show();
-
-			System.out.println("reach-1B");
 			/*
 			 * WorldObject.loadMapObjects(
 			 * "load\\worldmap\\littleroot\\littleroot_object.txt"); worldMap =
 			 * new WorldMap("load\\worldmap\\littleroot\\littleroot_map.txt");
 			 */
 
-			WorldMap map = loadWorld("route_101");
-			System.out.println("reach-1Q");
+			WorldMap map = loadWorld("oldale");
 			System.out.println(map.getName() + ", size=" + map.getWorldObjects().size());
-			useWorld(map, 18, 19);
+			useWorld(map, 10, 10);
 		} catch (WorldMapException ex) {
 			ex.printStackTrace();
 		} catch (Exception ex) {
@@ -73,9 +62,6 @@ public class WorldManager {
 		 */
 		while (true) {
 			try {
-				// if(IRenderableHolder.getObjectsOnScreen().contains(player)){
-				// System.out.println("player depth =" + player.getDepth());
-				// }
 				if (InputUtility.getKeyPressed(KeyCode.DOWN)) {
 					processPlayer(WorldDirection.SOUTH);
 				} else if (InputUtility.getKeyPressed(KeyCode.LEFT)) {
@@ -86,6 +72,15 @@ public class WorldManager {
 					processPlayer(WorldDirection.EAST);
 				} else if (!player.isStucking() && !player.isWalking()) {
 					player.setMoving(false);
+				}
+				if (InputUtility.getKeyTriggered(KeyCode.Z)) {
+					currentWorldMap.getObjectAt((int) player.getBlockX() + player.getDirection().getX(),
+							(int) player.getBlockY() + player.getDirection().getY()).interacted();
+				}
+				if (InputUtility.getKeyTriggered(KeyCode.R)) {
+					Item repel = Items.getItem("super_repel");
+					repel.getOnTrainerUse().use(player);
+					System.out.println(repel.getName() + " used");
 				}
 			} catch (WorldMapException ex) {
 				ex.printStackTrace();
