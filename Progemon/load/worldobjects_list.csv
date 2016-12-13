@@ -11,8 +11,7 @@
 8,-,-,-,showdialog/sentmessage/hidedialog,1,0,FALSE,TRUE,FALSE,TRUE,0
 9,-,-,-,-,1,0,FALSE,TRUE,FALSE,TRUE,-32
 10,-,-,-,-,4,20,TRUE,TRUE,TRUE,TRUE,-32
-<<<<<<< HEAD
-11,loadmap,usemap,-,-,1,0,FALSE,TRUE,FALSE,TRUE,0
+11,loadmap,usemap,-,-,1,0,FALSE,TRUE,FALSE,FALSE,0
 12,-,-,-,-,1,0,FALSE,TRUE,FALSE,TRUE,-32
 13,-,-,-,-,1,0,FALSE,TRUE,FALSE,TRUE,-32
 14,-,-,-,-,1,0,FALSE,TRUE,FALSE,TRUE,-1
@@ -39,8 +38,5 @@
 35,-,-,-,-,1,0,FALSE,TRUE,FALSE,TRUE,0
 36,-,-,-,-,4,5,FALSE,FALSE,FALSE,TRUE,-1
 37,-,-,-,-,1,0,FALSE,TRUE,FALSE,TRUE,0
-=======
-11,loadmap,usemap,-,-,1,0,FALSE,TRUE,FALSE,FALSE,0
 100,-,-,-,-,5,3,FALSE,TRUE,FALSE,FALSE,1
 101,fixeddirectionleap,playerwalk,-,-,1,0,FALSE,TRUE,FALSE,FALSE,0
->>>>>>> 75cb63c6855926ebcdf6c47472c52dd3f721e9d6
