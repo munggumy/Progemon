@@ -12,6 +12,7 @@ import audio.SFXUtility;
 import graphic.DialogBox;
 import graphic.FightHUD;
 import graphic.IRenderableHolder;
+import graphic.ItemBox;
 import graphic.QueueBox;
 import javafx.scene.paint.Color;
 import logic_fight.FightPhase;
@@ -82,6 +83,7 @@ public class GUIFightGameManager {
 		IRenderableHolder.addFightObject(fightMap);
 		IRenderableHolder.addFightObject(new DialogBox());
 		IRenderableHolder.addFightObject(new QueueBox(this));
+		IRenderableHolder.addFightObject(ItemBox.instance);
 		new FightHUD();
 		System.out.println("Added DialogBox and QueueBox");
 
@@ -255,6 +257,7 @@ public class GUIFightGameManager {
 	public void checkInput() {
 		fightMap.checkInput();
 		FightHUD.checkInput();
+		ItemBox.instance.checkInput();
 	}
 
 }

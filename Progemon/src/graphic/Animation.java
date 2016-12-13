@@ -14,17 +14,17 @@ public abstract class Animation implements IRenderable {
 	protected Image animationImage;
 	protected List<Image> animationImages = new ArrayList<>();
 	protected int amountOfFrame, frameDelay, currentFrame, delayCounter;
-	protected boolean visible = true, playing = false, pause = false, loop = false, autostop = true, playback = false;
+	protected boolean visible = true, playing = false, pause = false, loop = false, autostop = true, playback = false, hideOnStop = false;
 
 	public Animation() {
 		frameDelay = 1;
 	}
 
-	public Animation(Image image, int frameNumber) {
+	public Animation(Image image, int frameNumber, int frameDelay) {
 		Objects.requireNonNull(image);
 		this.animationImage = image;
 		this.amountOfFrame = frameNumber;
-		frameDelay = 1;
+		this.frameDelay = frameDelay;
 	}
 
 	public Animation(int frameNumber, int frameDelay, boolean loop, boolean autostop) {
@@ -108,6 +108,9 @@ public abstract class Animation implements IRenderable {
 		delayCounter = 0;
 		currentFrame = 0;
 		AnimationHolder.removePlayingAnimations(this);
+		if (hideOnStop) {
+			hide();
+		}
 	}
 
 	public Image getCurrentImage() {
@@ -196,6 +199,14 @@ public abstract class Animation implements IRenderable {
 	public void show() {
 		IRenderableHolder.addWorldObject(this);
 		visible = true;
+	}
+	
+	public void setAnimationImages(List<Image> animationImages) {
+		this.animationImages = animationImages;
+	}
+	
+	public void setHideOnStop(boolean hideOnStop) {
+		this.hideOnStop = hideOnStop;
 	}
 
 }

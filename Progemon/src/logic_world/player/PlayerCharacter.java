@@ -5,6 +5,7 @@ import java.io.File;
 import audio.SFXUtility;
 import graphic.Animation;
 import graphic.DrawingUtility;
+import graphic.PseudoAnimation;
 import item.Bag;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
@@ -12,6 +13,7 @@ import javafx.scene.paint.Color;
 import logic_fight.character.pokemon.Pokemon;
 import logic_fight.player.HumanPlayer;
 import logic_world.terrain.WorldDirection;
+import logic_world.terrain.WorldObject;
 import manager.WorldManager;
 import utility.Pokedex;
 
@@ -22,20 +24,46 @@ public class PlayerCharacter extends Animation {
 	private static final String DEFAULT_IMG_PATH = "load\\img\\player\\Boy.png";
 	private static final int FAST_DELAY = 2, MEDIAM_DELAY = 5, SLOW_DELAY = 8, VERYSLOW_DELAY = 11;
 
-	private float x, y;
+	private double x, y;
 	private int blockX, blockY;
 	private WorldDirection direction;
+	private double yOffset = 0;
 	private int frameLimit = 2;
 	private int legState = 0;
 	private int repelTime = 0;
-	private boolean moving = false, walking = false, turning = false, stucking = false;
+	private boolean moving = false, walking = false, turning = false, stucking = false, jumping = false;
+	private WorldObject jumpAnimation;
+	private PseudoAnimation<PlayerCharacter> jump = new PseudoAnimation<PlayerCharacter>(12, 1) {
+		
+		@Override
+		public void update() {
+			// TODO Auto-generated method stub
+			if (delayCounter == frameDelay) {
+				currentFrame++;
+				yOffset = -(6.0 - Math.abs((6.0 - currentFrame))) * 32 / 6.0;
+				if (currentFrame == amountOfFrame) {
+					jumpAnimation.setBlockX(blockX);
+					jumpAnimation.setBlockY(blockY);
+					jumpAnimation.show();
+					jumpAnimation.play();
+					stop();
+				}
+				delayCounter = 0;
+			}
+			else {
+				delayCounter++;
+			}
+		}
+	};
 
 	private HumanPlayer me = new HumanPlayer("Mhee", Color.BROWN);
 	private Bag bag = me.getBag();
 
 	public PlayerCharacter() {
-		super(DrawingUtility.resize(new Image(new File(DEFAULT_IMG_PATH).toURI().toString()), 2), 2);
-		setFrameDelay(3);
+		super(DrawingUtility.resize(new Image(new File(DEFAULT_IMG_PATH).toURI().toString()), 2), 2, 3);
+		
+		jumpAnimation = WorldObject.createWorldObject("100", 0, 0, null, null);
+		jumpAnimation.setHideOnStop(true);
 		direction = WorldDirection.SOUTH;
 	}
 
@@ -60,7 +88,9 @@ public class PlayerCharacter extends Animation {
 		walking = true;
 		moving = true;
 		WorldManager.getWorldMap().getObjectAt(x, y).entered();
-		WorldManager.getWorldMap().getObjectAt(blockX, blockY).exit();
+		if (walking) {
+			WorldManager.getWorldMap().getObjectAt(blockX, blockY).exit();
+		}
 	}
 
 	public void turn(WorldDirection newDirection) {
@@ -74,6 +104,12 @@ public class PlayerCharacter extends Animation {
 		play();
 		stucking = true;
 		moving = true;
+	}
+	
+	public void jump() {
+		System.err.println("jump");
+		jumping = true;
+		jump.play();
 	}
 
 	@Override
@@ -271,6 +307,14 @@ public class PlayerCharacter extends Animation {
 			return;
 		}
 		this.repelTime = repelTime;
+	}
+	
+	public boolean isJumping() {
+		return jumping;
+	}
+	
+	public double getyOffset() {
+		return yOffset;
 	}
 
 	public boolean hasRepel() {

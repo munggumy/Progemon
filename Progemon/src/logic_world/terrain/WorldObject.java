@@ -16,6 +16,7 @@ import graphic.DialogBox;
 import graphic.DrawingUtility;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import logic_world.player.PlayerCharacter;
 import manager.WorldManager;
 import utility.Clock;
 import utility.exception.FileWrongFormatException;
@@ -43,10 +44,11 @@ public class WorldObject extends Animation implements Cloneable {
 			WorldMap owner) {
 		try {
 			WorldObject worldObject;
-
+			
 			worldObject = (WorldObject) allWorldObjects.get(objectCode).clone();
 			worldObject.blockX = blockX;
 			worldObject.blockY = blockY;
+			
 			// if (objectCode.equals("008")) {
 			// System.err.println("01245678913215621321");
 			// System.out.println("x = " + blockX);
@@ -56,7 +58,7 @@ public class WorldObject extends Animation implements Cloneable {
 			for (int i = 0; i < 4; i++) {
 				worldObject.functionParameter.add(new ArrayList<>());
 			}
-			if (!parameters.isEmpty()) {
+			if (parameters != null && !parameters.isEmpty()) {
 				for (String string : parameters) {
 					worldObject.functionParameter.get(Integer.parseInt(string.substring(0, 1)))
 							.add(string.substring(string.indexOf("[") + 1, string.indexOf("]")));
@@ -69,9 +71,13 @@ public class WorldObject extends Animation implements Cloneable {
 				worldObject.visible = false;
 			} else {
 				worldObject.visible = true;
-				owner.addVisibleWorldObject(worldObject);
+				if (owner != null) {					
+					owner.addVisibleWorldObject(worldObject);
+				}
 			}
-			owner.addWorldObjects(worldObject);
+			if (owner != null) {
+				owner.addWorldObjects(worldObject);
+			}
 			return worldObject;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -465,6 +471,10 @@ public class WorldObject extends Animation implements Cloneable {
 			WorldManager.getPlayer().walk();
 			// PlayerCharacter.instance.walk();
 		});
+		
+		allObjectFunctions.put("playerjump", object -> {
+			WorldManager.getPlayer().jump();
+		});
 
 		allObjectFunctions.put("loadmap", target -> {
 			String[] parameters = target.functionParameter.get(target.actionType).get(target.parameterCounter)
@@ -502,6 +512,22 @@ public class WorldObject extends Animation implements Cloneable {
 
 		allObjectFunctions.put("hidedialog", object -> {
 			DialogBox.instance.hide();
+		});
+		
+		allObjectFunctions.put("fixeddirectionleap", object -> {
+			String[] parameters = object.processParameters();
+			PlayerCharacter player = WorldManager.getCharacterAt(object.blockX, object.blockY);
+			if (player == null) {
+				return;
+			}
+			else if (player.getDirection().getX() == Integer.parseInt(parameters[0])
+				&& player.getDirection().getY() == Integer.parseInt(parameters[1])) {
+				player.jump();
+			}
+			else{
+				player.pause();
+				player.stuck();
+			}
 		});
 
 	}

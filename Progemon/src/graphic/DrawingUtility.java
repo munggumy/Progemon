@@ -6,6 +6,9 @@ import java.util.List;
 
 import com.sun.javafx.tk.Toolkit;
 
+import item.Bag;
+import item.Item;
+import item.Items;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
@@ -58,9 +61,9 @@ public class DrawingUtility {
 
 	private static Image queueBoxImage;
 	private static Image sign;
-	private static Image itemIcon;
 	private static Image pkmnBar;
 	private static Image background;
+	private static Image itemLabel;
 	private static GraphicsContext gc;
 
 	private static double playerX, playerY;
@@ -77,12 +80,12 @@ public class DrawingUtility {
 			queueBoxImage = resize(new Image(qfile.toURI().toString()), 2);
 			File signfile = new File("load\\img\\dialogbox\\Theme1_sign.gif");
 			sign = new Image(signfile.toURI().toString());
-			File itemfile = new File("load\\img\\HUD\\itemicon.png");
-			itemIcon = resize(new Image(itemfile.toURI().toString()), 2);
 			File pkmnfile = new File("load\\img\\HUD\\pokemonbar.png");
 			pkmnBar = new Image(pkmnfile.toURI().toString());
 			File backgroundfile = new File("load\\img\\background\\meadow.png");
 			background = new Image(backgroundfile.toURI().toString());
+			File itemlabelfile = new File("load\\img\\HUD\\itemlabel.png");
+			itemLabel = new Image(itemlabelfile.toURI().toString());
 			System.out.println("Drawing Utility Loaded Successfully.");
 		} catch (IllegalArgumentException ex) {
 			System.err.println("DrawingUtitity cannot load static files");
@@ -108,8 +111,6 @@ public class DrawingUtility {
 		// for (int i = 0; i < fightMap.getPokemonsOnMap().size(); i++) {
 		// fightMap.getPokemonsOnMap().get(i).draw();
 		// }
-		gc.drawImage(itemIcon, ITEM_ICON_X, ITEM_ICON_Y);
-
 		fightMap.getPokemonsOnMap().forEach(p -> drawPokemonBar(p));
 	}
 
@@ -242,6 +243,8 @@ public class DrawingUtility {
 		gc.save();
 		gc.beginPath();
 		gc.rect(0, DialogBox.instance.getY() + 10, GameScreen.WIDTH, 64);
+		gc.setFill(Color.NAVY.darker());
+		gc.fillRect(0, 288, 480, 96);
 		gc.drawImage(DialogBox.instance.getDialogBoxImage(), DialogBox.instance.getX(), DialogBox.instance.getY());
 
 		gc.clip();
@@ -297,6 +300,35 @@ public class DrawingUtility {
 		}
 		gc.restore();
 
+	}
+	
+	public static void drawItemBox(ItemBox itembox){
+		gc.drawImage(itembox.getItemButtonImage(), 0, 248);
+		if (itembox.isVisible()) {
+			gc.drawImage(itembox.getTabImage(), ItemBox.X, ItemBox.Y);
+			if (itembox.getCurrentTab() == 1) {
+				Item item;
+				for (int i = 0; i < 4; i++) {
+					if (i == 0) {
+						item = Items.getItem("potion");
+					}
+					else if (i == 1) {
+						item = Items.getItem("soda_pop");
+					}
+					else if (i == 2) {
+						item = Items.getItem("antidote");
+					}
+					else{
+						item = Items.getItem("rare_candy");
+					}
+					gc.drawImage(itemLabel, 5, 90 + (i * 27));
+					gc.drawImage(item.getIcon(), 6, 90 + (i * 27) + 2);
+					gc.setFont(itembox.getFont());
+					gc.setFill(Color.BLACK);
+					gc.fillText(item.getName(), 32, 90 + (i * 27) + 17);
+				}
+			}
+		}
 	}
 
 	public static void drawActiveSkill(ActiveSkill skill) {
@@ -399,6 +431,10 @@ public class DrawingUtility {
 
 	public static void drawPlayer(PlayerCharacter player) {
 		// x = blocksize * 7, y = blocksize * 5.5 - (6/16 * blocksize)
+		if (player.isJumping()) {
+			gc.drawImage(player.getCurrentImage(), 224, 164 + player.getyOffset(), 32, 44);
+			return;
+		}
 		gc.drawImage(player.getCurrentImage(), 224, 164, 32, 44);
 		// gc.drawImage(WorldObject.objectImagesSet.get("008").get(0), 200,
 		// 200);
