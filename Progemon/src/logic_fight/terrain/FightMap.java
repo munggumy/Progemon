@@ -17,6 +17,7 @@ import logic_fight.filters.Filter;
 import logic_fight.filters.MoveFilter;
 import logic_fight.player.HumanPlayer;
 import manager.GUIFightGameManager;
+import manager.GUIFightGameManager.mouseRegion;
 import utility.InputUtility;
 
 public class FightMap implements IRenderable {
@@ -32,7 +33,7 @@ public class FightMap implements IRenderable {
 	private ArrayList<Pokemon> pokemonsOnMap = new ArrayList<Pokemon>();
 	private ArrayList<Pokemon> playerPokemonsOnMap = new ArrayList<Pokemon>(3);
 	private ArrayList<Pokemon> enemyPokemonsOnMap = new ArrayList<Pokemon>(3);
-	private boolean visible = true;
+	private boolean visible = true, drag = false;
 
 	public static enum Direction {
 		UP(0, -1), LEFT(-1, 0), DOWN(0, 1), RIGHT(1, 0);
@@ -246,18 +247,28 @@ public class FightMap implements IRenderable {
 	}
 
 	public void checkInput() {
-		int blockSize = getBlockSize();
-		setOrigin(InputUtility.getDragX() + originX, InputUtility.getDragY() + originY);
-		setZoomLevel(zoomLevel + InputUtility.getScrollUp() - InputUtility.getScrollDown());
-		double x = InputUtility.getMouseX() - originX, y = InputUtility.getMouseY() - originY;
-		if (0 <= x && x < sizeX * blockSize && 0 <= y && y < sizeY * blockSize) {
-			cursorX = (int) Math.floor(x / blockSize);
-			cursorY = (int) Math.floor(y / blockSize);
-			getFightTerrainAt(cursorX, cursorY).setCursor(true);
-		} else {
-			cursorX = -1;
-			cursorY = -1;
+		if (!InputUtility.isMouseLeftPress()) {
+			drag = false;
 		}
+		if (drag) {
+			setOrigin(InputUtility.getDragX() + originX, InputUtility.getDragY() + originY);
+		}
+		if (GUIFightGameManager.instance.getCurrentMouseRegion() == mouseRegion.FIGHTMAP) {
+			int blockSize = getBlockSize();
+			setZoomLevel(zoomLevel + InputUtility.getScrollUp() - InputUtility.getScrollDown());
+			double x = InputUtility.getMouseX() - originX, y = InputUtility.getMouseY() - originY;
+			if (InputUtility.isMouseLeftClick()) {
+				drag = true;
+			}
+			if (0 <= x && x < sizeX * blockSize && 0 <= y && y < sizeY * blockSize) {
+				cursorX = (int) Math.floor(x / blockSize);
+				cursorY = (int) Math.floor(y / blockSize);
+				getFightTerrainAt(cursorX, cursorY).setCursor(true);
+				return;
+			}
+		}
+		cursorX = -1;
+		cursorY = -1;
 	}
 
 	public static int getOriginX() {

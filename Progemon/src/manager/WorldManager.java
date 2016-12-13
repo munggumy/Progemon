@@ -1,5 +1,6 @@
 package manager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,6 +10,8 @@ import graphic.IRenderableHolder;
 import item.Item;
 import item.Items;
 import javafx.scene.input.KeyCode;
+import logic_world.player.Character;
+import logic_world.player.NPCCharacter;
 import logic_world.player.PlayerCharacter;
 import logic_world.terrain.WorldDirection;
 import logic_world.terrain.WorldMap;
@@ -61,56 +64,30 @@ public class WorldManager {
 		 * player.turn(2); player.walk(); player.walk(); player.walk();
 		 */
 		while (true) {
-			try {
-				if (InputUtility.getKeyPressed(KeyCode.DOWN)) {
-					processPlayer(WorldDirection.SOUTH);
-				} else if (InputUtility.getKeyPressed(KeyCode.LEFT)) {
-					processPlayer(WorldDirection.WEST);
-				} else if (InputUtility.getKeyPressed(KeyCode.UP)) {
-					processPlayer(WorldDirection.NORTH);
-				} else if (InputUtility.getKeyPressed(KeyCode.RIGHT)) {
-					processPlayer(WorldDirection.EAST);
-				} else if (!player.isStucking() && !player.isWalking()) {
-					player.setMoving(false);
+			player.checkMove();
+			for (NPCCharacter character : currentWorldMap.getWorldCharacters()) {
+				character.checkMove();
+			}
+			if (InputUtility.getKeyTriggered(KeyCode.Z)) {
+				currentWorldMap.getObjectAt((int) player.getBlockX() + player.getDirection().getX(),
+						(int) player.getBlockY() + player.getDirection().getY()).interacted();
+				for (NPCCharacter character : currentWorldMap.getWorldCharacters()) {
+					if (player.getBlockX() + player.getDirection().getX() == character.getBlockX()
+						&& player.getBlockY() + player.getDirection().getY() == character.getBlockY()) {
+						character.interacted();
+					}
 				}
-				if (InputUtility.getKeyTriggered(KeyCode.Z)) {
-					currentWorldMap.getObjectAt((int) player.getBlockX() + player.getDirection().getX(),
-							(int) player.getBlockY() + player.getDirection().getY()).interacted();
-				}
-				if (InputUtility.getKeyTriggered(KeyCode.R)) {
-					Item repel = Items.getItem("super_repel");
-					repel.getOnTrainerUse().use(player);
-					System.out.println(repel.getName() + " used");
-				}
-			} catch (WorldMapException ex) {
-				ex.printStackTrace();
+			}
+			if (InputUtility.getKeyTriggered(KeyCode.R)) {
+				Item repel = Items.getItem("super_repel");
+				repel.getOnTrainerUse().use(player);
+				System.out.println(repel.getName() + " used");
 			}
 			Clock.tick();
 		}
 	}
 
-	private static void processPlayer(WorldDirection wd) throws WorldMapException {
-		if (player.getDirection() == wd) {
-			if (!player.isPlaying()) {
-				if (currentWorldMap.getTerrainAt(player.getBlockX(), player.getBlockY(), wd) <= 0) {
-					player.stuck();
-				} else {
-					player.walk();
-				}
-			}
-		} else if (player.isMoving() && !player.isWalking()) {
-			if (currentWorldMap.getTerrainAt(player.getBlockX(), player.getBlockY(), wd) <= 0) {
-				player.setDirection(wd);
-				player.stuck();
-			} else {
-				player.setDirection(wd);
-				player.walk();
-			}
-		} else if (!player.isPlaying()) {
-			player.turn(wd);
-		}
-
-	}
+	
 	//
 	// public static void addWorldObjects(WorldObject worldObject) {
 	// worldObjects.add(worldObject);
