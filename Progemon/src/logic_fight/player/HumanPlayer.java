@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import graphic.FightHUD;
+import graphic.ItemBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import logic_fight.FightPhase;
@@ -14,6 +15,7 @@ import logic_fight.character.activeSkill.ActiveSkill;
 import logic_fight.character.pokemon.Pokemon;
 import logic_fight.terrain.FightMap;
 import logic_fight.terrain.FightTerrain;
+import logic_world.player.PlayerCharacter;
 import utility.InputUtility;
 import utility.exception.AbnormalPhaseOrderException;
 
@@ -40,8 +42,10 @@ public class HumanPlayer extends Player {
 		KeyCode itemKey = KeyCode.I;
 		if (InputUtility.getKeyTriggered(captureKey) && getCurrentFightManager().canCapturePokemon()) {
 			throw new AbnormalPhaseOrderException(FightPhase.preCapturePhase);
-		} else if (InputUtility.getKeyTriggered(itemKey)) {
+		} else if (ItemBox.instance.isVisible()) {
 			throw new AbnormalPhaseOrderException(FightPhase.preItemPhase);
+		} else if (ItemBox.instance.getRunAndSetFalse()) {
+			throw new AbnormalPhaseOrderException(FightPhase.runPhase);
 		}
 
 		if (!InputUtility.isMouseLeftClick()) {
@@ -142,15 +146,18 @@ public class HumanPlayer extends Player {
 
 	@Override
 	protected boolean inputUseItem(Pokemon pokemon) throws AbnormalPhaseOrderException {
-		return super.inputUseItem(pokemon);
+		if (!ItemBox.instance.isVisible()) {
+			throw new AbnormalPhaseOrderException(FightPhase.preMovePhase);
+		}
+		if (ItemBox.instance.getItemBoxInput() != null) {
+			itemToUse = PlayerCharacter.instance.getBag().getAndRemove(ItemBox.instance.getItemBoxInput());
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	protected boolean inputUseItemPokemon(Pokemon pokemon) throws AbnormalPhaseOrderException {
-		KeyCode goBackKey = KeyCode.I;
-		if (InputUtility.getKeyTriggered(goBackKey)) {
-			throw new AbnormalPhaseOrderException(FightPhase.preMovePhase);
-		}
 		if (!InputUtility.isMouseLeftClick()) {
 			return false;
 		}
@@ -164,5 +171,5 @@ public class HumanPlayer extends Player {
 		});
 		return itemTargetPokemon != null;
 	}
-	
+
 }

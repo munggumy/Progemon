@@ -5,6 +5,8 @@ import java.util.List;
 
 import logic_fight.character.pokemon.Pokemon;
 import logic_fight.terrain.FightMap;
+import manager.GUIFightGameManager;
+import manager.GUIFightGameManager.mouseRegion;
 import utility.Clock;
 import utility.InputUtility;
 
@@ -42,6 +44,9 @@ public class FightHUD implements IRenderable {
 		for (int i = 0; i < Pokemon.MAX_ACTIVE_SKILLS; i++) {
 			skillMenuSelect.set(i, false);
 		}
+		if (GUIFightGameManager.instance.getCurrentMouseRegion() != mouseRegion.SKILL) {
+			return;
+		}
 		if (currentPokemon == null) {
 			return;
 		}
@@ -49,18 +54,7 @@ public class FightHUD implements IRenderable {
 		int x = (int) (InputUtility.getMouseX() - FightMap.getOriginX()
 				- (currentPokemon.getCurrentFightTerrain().getX() + 0.5) * blockSize);
 		int y = (int) (InputUtility.getMouseY() - FightMap.getOriginY() - (
-
 		currentPokemon.getCurrentFightTerrain().getY() + 0.5) * blockSize);
-		if (x < skillMenuInterval && x >= -skillMenuInterval) {
-			return;
-		}
-		if (y < skillMenuInterval && y >= -skillMenuInterval) {
-			return;
-		}
-		if (x < -48 - skillMenuInterval || x >= 48 + skillMenuInterval || y < -48 - skillMenuInterval
-				|| y >= 48 + skillMenuInterval) {
-			return;
-		}
 		if (x < 0 && y < 0) {
 			if (InputUtility.isMouseLeftPress()) {
 				skillMenuSelect.set(0, true);
@@ -151,6 +145,25 @@ public class FightHUD implements IRenderable {
 
 	public static Pokemon getCurrentPokemon() {
 		return currentPokemon;
+	}
+	
+	public static boolean underMouse() {
+		int blockSize = FightMap.getBlockSize();
+		int x = (int) (InputUtility.getMouseX() - FightMap.getOriginX()
+				- (currentPokemon.getCurrentFightTerrain().getX() + 0.5) * blockSize);
+		int y = (int) (InputUtility.getMouseY() - FightMap.getOriginY() - (
+		currentPokemon.getCurrentFightTerrain().getY() + 0.5) * blockSize);
+		if (x < skillMenuInterval && x >= -skillMenuInterval) {
+			return false;
+		}
+		if (y < skillMenuInterval && y >= -skillMenuInterval) {
+			return false;
+		}
+		if (x < -48 - skillMenuInterval || x >= 48 + skillMenuInterval || y < -48 - skillMenuInterval
+				|| y >= 48 + skillMenuInterval) {
+			return false;
+		}
+		return true;
 	}
 
 }

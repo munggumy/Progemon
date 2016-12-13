@@ -19,6 +19,8 @@ import graphic.IRenderable;
 import graphic.IRenderableHolder;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import logic_world.player.Character;
+import logic_world.player.NPCCharacter;
 
 public class WorldMap implements IRenderable {
 
@@ -33,6 +35,7 @@ public class WorldMap implements IRenderable {
 	private boolean visible = true;
 
 	private List<WorldObject> worldObjects = new ArrayList<>();
+	private List<NPCCharacter> worldCharacters = new ArrayList<>();
 	private List<IRenderable> visibleWorldObjects = new ArrayList<>();
 
 	private List<SpawningPokemonEntry> pokemonSpawningChance = new ArrayList<>();
@@ -52,6 +55,14 @@ public class WorldMap implements IRenderable {
 		loadProperties(propertiesFilePath);
 		String worldMapFilePath = "load\\worldmap\\" + mapName + "\\" + mapName + "_map.csv";
 		loadWorldMap(worldMapFilePath);
+		if (mapName.equals("littleroot_house1")) {
+			NPCCharacter mom = new NPCCharacter("load\\img\\player\\npc1.png", 3, 6, WorldDirection.EAST);
+			visibleWorldObjects.add(mom);
+			worldCharacters.add(mom);
+		}
+		else{
+			worldCharacters.clear();
+		}
 
 		space.hide();
 		space.addOnEnter("-");
@@ -93,6 +104,16 @@ public class WorldMap implements IRenderable {
 	public int getTerrainAt(int x, int y) throws WorldMapException {
 		try {
 			return map[y][x];
+		} catch (NullPointerException ex) {
+			throw new WorldMapException("Map not loaded ", ex);
+		} catch (IndexOutOfBoundsException ex) {
+			throw new WorldMapException("Cannot find Terrain at [x=" + x + ", y=" + y + "]", ex);
+		}
+	}
+	
+	public void setTerrainAt(int x, int y, int value) throws WorldMapException {
+		try {
+			map[y][x] = value;
 		} catch (NullPointerException ex) {
 			throw new WorldMapException("Map not loaded ", ex);
 		} catch (IndexOutOfBoundsException ex) {
@@ -260,6 +281,10 @@ public class WorldMap implements IRenderable {
 	public final List<SpawningPokemonEntry> getSortedPokemonSpawningChance() {
 		Collections.sort(pokemonSpawningChance);
 		return pokemonSpawningChance;
+	}
+	
+	public List<NPCCharacter> getWorldCharacters() {
+		return worldCharacters;
 	}
 
 }

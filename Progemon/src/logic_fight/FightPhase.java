@@ -4,7 +4,7 @@ import utility.exception.UnknownPhaseException;
 
 /** State in Finite State Machine */
 public enum FightPhase {
-	initialPhase, preMovePhase, inputMovePhase, movePhase, postMovePhase, preAttackPhase, inputAttackPhase, attackPhase, postAttackPhase, endPhase, preCapturePhase, inputCapturePhase, capturePhase, postCapturePhase, preItemPhase, inputItemPhase, inputItemPokemonPhase, useItemPhase, postItemPhase;
+	initialPhase, preMovePhase, inputMovePhase, movePhase, postMovePhase, preAttackPhase, inputAttackPhase, attackPhase, postAttackPhase, endPhase, preCapturePhase, inputCapturePhase, capturePhase, postCapturePhase, preItemPhase, inputItemPhase, inputItemPokemonPhase, useItemPhase, postItemPhase, runPhase;
 	public FightPhase nextPhase() {
 		switch (this) {
 		case initialPhase:
@@ -44,6 +44,8 @@ public enum FightPhase {
 		case useItemPhase:
 			return postItemPhase;
 		case postItemPhase:
+			return endPhase;
+		case runPhase:
 			return endPhase;
 		default:
 			throw new UnknownPhaseException("(Phase.java:64) : Unknown Phase=" + this);

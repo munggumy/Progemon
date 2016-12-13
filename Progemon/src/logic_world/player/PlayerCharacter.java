@@ -1,300 +1,92 @@
 package logic_world.player;
 
-import java.io.File;
-
-import audio.SFXUtility;
-import graphic.Animation;
-import graphic.DrawingUtility;
-import graphic.PseudoAnimation;
+import graphic.DialogBox;
 import item.Bag;
-import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
+import item.Items;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import logic_fight.character.pokemon.Pokemon;
 import logic_fight.player.HumanPlayer;
 import logic_world.terrain.WorldDirection;
-import logic_world.terrain.WorldObject;
+import logic_world.terrain.WorldMapException;
 import manager.WorldManager;
+import utility.InputUtility;
 
-public class PlayerCharacter extends Animation {
+public class PlayerCharacter extends Character {
 
 	public static final PlayerCharacter instance = new PlayerCharacter();
 
 	private static final String DEFAULT_IMG_PATH = "load\\img\\player\\Boy.png";
-	private static final int FAST_DELAY = 2, MEDIAM_DELAY = 5, SLOW_DELAY = 8, VERYSLOW_DELAY = 11;
 
-	private double x, y;
-	private int blockX, blockY;
-	private WorldDirection direction;
-	private double yOffset = 0;
-	private int frameLimit = 2;
-	private int legState = 0;
 	private int repelTime = 0;
-	private boolean moving = false, walking = false, turning = false, stucking = false, jumping = false;
-	private WorldObject jumpAnimation;
-	private PseudoAnimation<PlayerCharacter> jump = new PseudoAnimation<PlayerCharacter>(12, 1) {
-
-		@Override
-		public void update() {
-			// TODO Auto-generated method stub
-			if (delayCounter == frameDelay) {
-				currentFrame++;
-				yOffset = -(6.0 - Math.abs((6.0 - currentFrame))) * 32 / 6.0;
-				if (currentFrame == amountOfFrame) {
-					jumpAnimation.setBlockX(blockX);
-					jumpAnimation.setBlockY(blockY);
-					jumpAnimation.show();
-					jumpAnimation.play();
-					stop();
-				}
-				delayCounter = 0;
-			} else {
-				delayCounter++;
-			}
-		}
-	};
 
 	private HumanPlayer me = new HumanPlayer("Mhee", Color.BROWN);
 	private Bag bag = me.getBag();
 
 	public PlayerCharacter() {
-		super(DrawingUtility.resize(new Image(new File(DEFAULT_IMG_PATH).toURI().toString()), 2), 2, 3);
-
-		jumpAnimation = WorldObject.createWorldObject("100", 0, 0, null, null);
-		jumpAnimation.setHideOnStop(true);
-		direction = WorldDirection.SOUTH;
+		super(DEFAULT_IMG_PATH, 2, 3);
+		bag.addAll(Items.getItem("potion"), Items.getItem("potion"), Items.getItem("potion"), Items.getItem("soda_pop"),
+				Items.getItem("rare_candy"), Items.getItem("antidote"), Items.getItem("lemonade"),
+				Items.getItem("pokeball"), Items.getItem("pokeball"), Items.getItem("great_ball"));
 	}
 
 	@Override
-	public void play() {
-		frameDelay = FAST_DELAY;
-		frameLimit = 2;
-		walking = false;
-		stucking = false;
-		super.play();
-	}
-
-	public void walk() {
-		int x = blockX + (direction.ordinal() - 2) * (direction.ordinal() % 2);
-		int y = blockY + (direction.ordinal() - 1) * (direction.ordinal() % 2 - 1);
-		System.out.println("Player walk --> x : " + x + ", y : " + y);
-		if (repelTime == 1) {
-			System.out.println("Repel effects wore off.");
-		}
-		repelTime = repelTime == 0 ? 0 : repelTime - 1;
-		play();
-		walking = true;
-		moving = true;
-		WorldManager.getWorldMap().getObjectAt(x, y).entered();
-		if (walking) {
-			WorldManager.getWorldMap().getObjectAt(blockX, blockY).exit();
+	public void checkMove() {
+		// TODO Auto-generated method stub
+		try {
+			if (InputUtility.getKeyPressed(KeyCode.DOWN)) {
+				processMove(WorldDirection.SOUTH);
+			} else if (InputUtility.getKeyPressed(KeyCode.LEFT)) {
+				processMove(WorldDirection.WEST);
+			} else if (InputUtility.getKeyPressed(KeyCode.UP)) {
+				processMove(WorldDirection.NORTH);
+			} else if (InputUtility.getKeyPressed(KeyCode.RIGHT)) {
+				processMove(WorldDirection.EAST);
+			} else if (!stucking && !walking) {
+				moving = false;
+			}
+		} catch (WorldMapException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
-	public void turn(WorldDirection newDirection) {
-		play();
-		turning = true;
-		direction = newDirection;
-	}
-
-	public void stuck() {
-		SFXUtility.playSound("walk_obstructed");
-		play();
-		stucking = true;
-		moving = true;
-	}
-
-	public void jump() {
-		System.err.println("jump");
-		jumping = true;
-		jump.play();
-	}
-
-	@Override
-	public void update() {
-		if (!playing) {
-			return;
-		}
-		if (walking) {
-			walkUpdate();
-		} else if (turning) {
-			turnUpdate();
-		} else if (stucking) {
-			stuckUpdate();
-		}
-	}
-
-	public void walkUpdate() {
-		switch (direction) {
-		case SOUTH:
-			y += 32f / (VERYSLOW_DELAY + 1);
-			break;
-		case WEST:
-			x -= 32f / (VERYSLOW_DELAY + 1);
-			break;
-		case NORTH:
-			y -= 32f / (VERYSLOW_DELAY + 1);
-			break;
-		case EAST:
-			x += 32f / (VERYSLOW_DELAY + 1);
-			break;
-		}
-		if (frameDelay > delayCounter) {
-			delayCounter++;
-			return;
-		} else if (frameLimit != 0) {
-			currentFrame++;
-			frameLimit--;
-			currentFrame %= amountOfFrame;
-			if (frameDelay == FAST_DELAY) {
-				frameDelay = MEDIAM_DELAY;
+	private void processMove(WorldDirection wd) throws WorldMapException {
+		if (direction == wd) {
+			if (!playing) {
+				if (WorldManager.getWorldMap().getTerrainAt(blockX, blockY, wd) <= 0) {
+					stuck();
+				} else {
+					walk();
+				}
+			}
+		} else if (moving && !walking) {
+			if (WorldManager.getWorldMap().getTerrainAt(blockX, blockY, wd) <= 0) {
+				direction = wd;
+				stuck();
 			} else {
-				frameDelay = FAST_DELAY;
+				direction = wd;
+				walk();
 			}
-		} else {
-			frameLimit = 2;
-			legState++;
-			legState %= 2;
-			switch (direction) {
-			case SOUTH:
-				blockY += 1;
-				break;
-			case WEST:
-				blockX -= 1;
-				break;
-			case NORTH:
-				blockY -= 1;
-				break;
-			case EAST:
-				blockX += 1;
-				break;
-			}
-			x = blockX * 32;
-			y = blockY * 32;
-			walking = false;
-			pause();
-			WorldManager.getWorldMap().getObjectAt(blockX, blockY).step();
+		} else if (!playing) {
+			turn(wd);
 		}
-		delayCounter = 0;
-	}
 
-	public void stuckUpdate() {
-		if (frameDelay > delayCounter) {
-			delayCounter++;
-			return;
-		} else if (frameLimit != 0) {
-			currentFrame++;
-			currentFrame %= amountOfFrame;
-			frameLimit--;
-			if (frameDelay == FAST_DELAY) {
-				frameDelay = VERYSLOW_DELAY;
-			} else if (frameDelay == VERYSLOW_DELAY) {
-				frameDelay = SLOW_DELAY;
-			}
-		} else {
-			frameLimit = 2;
-			legState++;
-			legState %= 2;
-			stucking = false;
-			pause();
-		}
-		delayCounter = 0;
-	}
-
-	public void turnUpdate() {
-		if (FAST_DELAY > delayCounter) {
-			delayCounter++;
-			return;
-		} else if (frameLimit != 0) {
-			currentFrame++;
-			currentFrame %= amountOfFrame;
-			frameLimit--;
-		} else {
-			frameLimit = 2;
-			legState++;
-			legState %= 2;
-			turning = false;
-			pause();
-			WorldManager.getWorldMap().getObjectAt(blockX, blockY).step();
-		}
-		delayCounter = 0;
-	}
-
-	@Override
-	public Image getCurrentImage() {
-		WritableImage wimg = new WritableImage(animationImage.getPixelReader(), (legState * 2 + currentFrame) * 32,
-				direction.ordinal() * 44, 32, 44);
-		return wimg;
-	}
-
-	public double getX() {
-		return x;
-	}
-
-	public double getY() {
-		return y;
-	}
-
-	public void setX(float x) {
-		this.x = x;
-	}
-
-	public void setY(float y) {
-		this.y = y;
-	}
-
-	public int getBlockX() {
-		return blockX;
-	}
-
-	public int getBlockY() {
-		return blockY;
-	}
-
-	public void setBlockX(int blockX) {
-		this.blockX = blockX;
-	}
-
-	public void setBlockY(int blockY) {
-		this.blockY = blockY;
-	}
-
-	public WorldDirection getDirection() {
-		return direction;
-	}
-
-	public void setDirection(WorldDirection direction) {
-		this.direction = direction;
-	}
-
-	public boolean isMoving() {
-		return moving;
-	}
-
-	public void setMoving(boolean moving) {
-		this.moving = moving;
-	}
-
-	public boolean isWalking() {
-		return walking;
-	}
-
-	public boolean isStucking() {
-		return stucking;
-	}
-
-	@Override
-	public int getDepth() {
-		return (int) y;
-	}
-
-	@Override
-	public void draw() {
-		DrawingUtility.drawPlayer(this);
 	}
 
 	public final HumanPlayer getMe() {
 		return me;
+	}
+
+	@Override
+	public void walk() {
+		super.walk();
+		if (repelTime == 1) {
+			DialogBox.instance.show();
+			DialogBox.instance.sentDialog("Repel Effects Wore out");
+			DialogBox.instance.hide();
+		}
+		repelTime = repelTime > 0 ? repelTime - 1 : 0;
 	}
 
 	public void setRepelTime(int repelTime) {
@@ -305,14 +97,6 @@ public class PlayerCharacter extends Animation {
 			return;
 		}
 		this.repelTime = repelTime;
-	}
-
-	public boolean isJumping() {
-		return jumping;
-	}
-
-	public double getyOffset() {
-		return yOffset;
 	}
 
 	public boolean hasRepel() {
@@ -348,5 +132,9 @@ public class PlayerCharacter extends Animation {
 	public void setBag(Bag bag) {
 		me.setBag(bag);
 		bag = me.getBag();
+	}
+
+	public Bag getBag() {
+		return bag;
 	}
 }

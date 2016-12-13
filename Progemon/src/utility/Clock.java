@@ -58,7 +58,7 @@ public class Clock {
 				animation.update();
 			}
 			if (GlobalPhase.getCurrentPhase() == GlobalPhase.FIGHT) {
-				GUIFightGameManager.currentFightManager.checkInput();
+				GUIFightGameManager.instance.checkInput();
 			}
 		}
 
