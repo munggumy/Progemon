@@ -62,4 +62,14 @@ public class Item {
 		this.icon = icon;
 	}
 
+	public void use(Object object) {
+		if (object instanceof Pokemon) {
+			onPokemonUse.use((Pokemon) object);
+		} else if (object instanceof PlayerCharacter) {
+			onTrainerUse.use((PlayerCharacter) object);
+		} else {
+			System.err.println(object + " cannot use item " + name);
+		}
+	}
+
 }
