@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.sun.javafx.tk.Toolkit;
 
-import item.Bag;
 import item.Item;
 import item.Items;
 import javafx.scene.canvas.GraphicsContext;
@@ -18,14 +17,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import logic_fight.character.activeSkill.ActiveSkill;
-import logic_fight.character.pokemon.Pokemon;
 import logic_fight.character.pokemon.NonVolatileStatus;
+import logic_fight.character.pokemon.Pokemon;
 import logic_fight.player.HumanPlayer;
 import logic_fight.terrain.FightMap;
 import logic_fight.terrain.FightTerrain;
 import logic_world.player.Character;
 import logic_world.player.PlayerCharacter;
-import logic_world.terrain.UnknownTileSetException;
 import logic_world.terrain.WorldDirection;
 import logic_world.terrain.WorldMap;
 import logic_world.terrain.WorldMapException;
@@ -43,8 +41,8 @@ public class DrawingUtility {
 	private static final int QUEUE_BOX_HEIGHT = 202;
 	private static final int QUEUE_BOX_WIDTH = 68;
 	private static final Color QUEUE_BOX_TEXT_COLOR = Color.BLACK;
-	private static final int ITEM_ICON_X = 10;
-	private static final int ITEM_ICON_Y = 246;
+	// private static final int ITEM_ICON_X = 10;
+	// private static final int ITEM_ICON_Y = 246;
 	private static final Color FIGHT_MAP_FRAME_COLOR = Color.BLACK;
 	private static final Color EMPTY_EXP_BAR_HUD_COLOR = Color.BLACK;
 	private static final Color EMPTY_HP_BAR_HUD_COLOR = Color.BLACK;
@@ -305,13 +303,12 @@ public class DrawingUtility {
 		gc.restore();
 
 	}
-	
-	public static void drawItemBox(ItemBox itembox){
+
+	public static void drawItemBox(ItemBox itembox) {
 		gc.drawImage(itembox.getItemButtonImage(), 0, 248);
 		gc.drawImage(itembox.getRunButtonImage(), 50, 248);
 		if (itembox.isVisible()) {
 			gc.drawImage(itembox.getTabImage(), ItemBox.X, ItemBox.Y);
-			
 			gc.save();
 			gc.beginPath();
 			gc.rect(5, 90, 90, 109);
@@ -332,8 +329,7 @@ public class DrawingUtility {
 					}
 					i++;
 				}
-			}
-			else{
+			} else {
 				for (Item item : itembox.getBag().getNonPokeballs().keySet()) {
 					if (i >= startLabel && i <= startLabel + 4) {
 						gc.drawImage(itemLabel, 5, 90 + (i * 27) - labelOffset);
@@ -342,6 +338,7 @@ public class DrawingUtility {
 						gc.setFill(Color.BLACK);
 						gc.fillText(item.getName(), 32, 90 + (i * 27) + 17 - labelOffset);
 						gc.fillText("x" + itembox.getBag().getItems().get(item), 78, 90 + (i * 27) + 17 - labelOffset);
+
 					}
 					i++;
 				}
@@ -467,7 +464,7 @@ public class DrawingUtility {
 		// gc.drawImage(WorldObject.objectImagesSet.get("008").get(0), 200,
 		// 200);
 	}
-	
+
 	public static void drawCharacter(Character character) {
 		try {
 			int objectImageHeight = 44;
@@ -486,7 +483,8 @@ public class DrawingUtility {
 					|| (blockY + 1) * 32 - objectImageHeight < yOffset + 384) {
 				if (character.isJumping()) {
 					gc.drawImage(character.getCurrentImage(), character.getX() - xOffset,
-							character.getY() + 32 - objectImageHeight - yOffset + character.getyOffset(), objectImageWidth, objectImageHeight);
+							character.getY() + 32 - objectImageHeight - yOffset + character.getyOffset(),
+							objectImageWidth, objectImageHeight);
 					return;
 				}
 				gc.drawImage(character.getCurrentImage(), character.getX() - xOffset,
@@ -533,8 +531,8 @@ public class DrawingUtility {
 		}
 	}
 
-	public static double computeStringHeight(String ÐÓ»Ð, Font font) {
-		if (ÐÓ»Ð.length() == 0 || gc == null) {
+	public static double computeStringHeight(String text, Font font) {
+		if (text.length() == 0 || gc == null) {
 			return 0;
 		} else {
 			return Toolkit.getToolkit().getFontLoader().getFontMetrics(font).getLineHeight();
@@ -577,15 +575,16 @@ public class DrawingUtility {
 		return wimg;
 	}
 
-	public static Image resize(Image img, int i) {
-		int height = (int) img.getHeight() * i;
-		int width = (int) img.getWidth() * i;
+	public static Image resize(Image img, int scaleFactor) {
+		int height = (int) img.getHeight() * scaleFactor;
+		int width = (int) img.getWidth() * scaleFactor;
 		PixelReader pixelReader = img.getPixelReader();
 		WritableImage wimg = new WritableImage(width, height);
 		PixelWriter pixelWriter = wimg.getPixelWriter();
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				pixelWriter.setColor(x, y, pixelReader.getColor((int) Math.floor(x / i), (int) Math.floor(y / i)));
+				pixelWriter.setColor(x, y,
+						pixelReader.getColor((int) Math.floor(x / scaleFactor), (int) Math.floor(y / scaleFactor)));
 			}
 		}
 		return wimg;

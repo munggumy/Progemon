@@ -11,20 +11,19 @@ public class QueueBox implements IRenderable {
 
 	public static final int ORIGIN_X = 396, ORIGIN_Y = 18, WIDTH = 68, HEIGHT = 40;
 	public static final int BOX_X = 390, BOX_Y = 0;
-
 	protected static final String QUEUE_BOX_PATH = "load\\img\\HUD\\queuebox.png";
+	private static final int REMOVE_TIME = 34, REMOVE_RATE = 2;
+	private static final int MOVE_TIME = 20, MOVE_RATE = 2;
+
+	private static GUIFightGameManager currentFightManager;
 
 	private static ArrayList<Pokemon> pokemonsOnQueue = new ArrayList<Pokemon>();
 	private static List<Pokemon> pokemonsOnMap;
 	private static int[][] delta = new int[10][2];
-	private static final int REMOVE_TIME = 34, REMOVE_RATE = 2;
-	private static final int MOVE_TIME = 20, MOVE_RATE = 2;
 	private static int removeTimeCounter = 0, moveTimeCounter = 0;
 	private static boolean remove = false, move = false, insert = false;
 	private static boolean isQueue = true;
 	private static boolean visible = true;
-
-	private static GUIFightGameManager currentFightManager;
 
 	public QueueBox(GUIFightGameManager currentFightManager) {
 		QueueBox.currentFightManager = currentFightManager;
@@ -163,32 +162,8 @@ public class QueueBox implements IRenderable {
 		pokemonsOnQueue.clear();
 	}
 
-	public static int getBOX_X() {
-		return BOX_X;
-	}
-
-	public static int getBOX_Y() {
-		return BOX_Y;
-	}
-
 	public static ArrayList<Pokemon> getPokemonsOnQueue() {
 		return pokemonsOnQueue;
-	}
-
-	public static int getOriginX() {
-		return ORIGIN_X;
-	}
-
-	public static int getOriginY() {
-		return ORIGIN_Y;
-	}
-
-	public static int getWidth() {
-		return WIDTH;
-	}
-
-	public static int getHeight() {
-		return HEIGHT;
 	}
 
 	public static int[][] getDelta() {

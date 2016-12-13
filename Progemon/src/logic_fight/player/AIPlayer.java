@@ -30,7 +30,7 @@ public class AIPlayer extends Player {
 			return true;
 		} else {
 			thinkDelayCounter++;
-			return false;
+			return false;	
 		}
 	}
 

@@ -306,7 +306,7 @@ public abstract class Player {
 			}
 
 		} else {
-			System.out.print(".");
+			System.out.print(".");	
 			captureDelayCounter++;
 			return false;
 		}
