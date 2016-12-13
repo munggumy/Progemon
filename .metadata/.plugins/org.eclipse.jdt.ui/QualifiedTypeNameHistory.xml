@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="logic.terrain.WorldObject"/>
-<fullyQualifiedTypeName name="logic.character.PlayerCharacter"/>
-<fullyQualifiedTypeName name="java.lang.String"/>
-<fullyQualifiedTypeName name="graphic.Animation"/>
-<fullyQualifiedTypeName name="graphic.ScreenEffect"/>
 <fullyQualifiedTypeName name="java.util.concurrent.CopyOnWriteArrayList"/>
 <fullyQualifiedTypeName name="utility.AnimationUtility"/>
 <fullyQualifiedTypeName name="javafx.scene.canvas.Canvas"/>
@@ -12,7 +7,6 @@
 <fullyQualifiedTypeName name="javafx.scene.Scene"/>
 <fullyQualifiedTypeName name="javafx.scene.SnapshotParameters"/>
 <fullyQualifiedTypeName name="logic_fight.player.HumanPlayer"/>
-<fullyQualifiedTypeName name="javafx.scene.text.Font"/>
 <fullyQualifiedTypeName name="com.sun.javafx.tk.Toolkit"/>
 <fullyQualifiedTypeName name="java.awt.Toolkit"/>
 <fullyQualifiedTypeName name="javafx.scene.input.KeyCharacterCombination"/>
@@ -29,8 +23,6 @@
 <fullyQualifiedTypeName name="javafx.event.EventHandler"/>
 <fullyQualifiedTypeName name="javafx.scene.input.ScrollEvent"/>
 <fullyQualifiedTypeName name="java.awt.Cursor"/>
-<fullyQualifiedTypeName name="java.io.File"/>
-<fullyQualifiedTypeName name="javafx.scene.image.Image"/>
 <fullyQualifiedTypeName name="logic_fight.character.activeSkill.ActiveSkill"/>
 <fullyQualifiedTypeName name="utility.GlobalPhase"/>
 <fullyQualifiedTypeName name="manager.GUIFightGameManager"/>
@@ -38,26 +30,34 @@
 <fullyQualifiedTypeName name="graphic.FullScreen"/>
 <fullyQualifiedTypeName name="java.lang.reflect.Array"/>
 <fullyQualifiedTypeName name="logic_fight.character.pokemon.Pokemon"/>
-<fullyQualifiedTypeName name="graphic.IRenderable"/>
 <fullyQualifiedTypeName name="java.lang.Boolean"/>
 <fullyQualifiedTypeName name="graphic.FightHUD"/>
 <fullyQualifiedTypeName name="graphic.PsuedoAnimation"/>
 <fullyQualifiedTypeName name="utility.Clock"/>
-<fullyQualifiedTypeName name="graphic.IRenderableHolder"/>
 <fullyQualifiedTypeName name="logic_world.player.PlayerCharacter"/>
-<fullyQualifiedTypeName name="java.lang.Integer"/>
 <fullyQualifiedTypeName name="java.awt.Dialog"/>
-<fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="java.util.Arrays"/>
 <fullyQualifiedTypeName name="java.util.regex.Pattern"/>
 <fullyQualifiedTypeName name="java.util.regex.Matcher"/>
 <fullyQualifiedTypeName name="graphic.DialogBox"/>
-<fullyQualifiedTypeName name="utility.InputUtility"/>
-<fullyQualifiedTypeName name="javafx.scene.paint.Color"/>
-<fullyQualifiedTypeName name="graphic.DrawingUtility"/>
 <fullyQualifiedTypeName name="manager.WorldManager"/>
 <fullyQualifiedTypeName name="logic_world.terrain.WorldMap"/>
 <fullyQualifiedTypeName name="logic_fight.terrain.FightMap"/>
 <fullyQualifiedTypeName name="java.lang.Math"/>
 <fullyQualifiedTypeName name="java.lang.Thread"/>
+<fullyQualifiedTypeName name="graphic.IRenderable"/>
+<fullyQualifiedTypeName name="java.lang.Integer"/>
+<fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="javafx.scene.image.Image"/>
+<fullyQualifiedTypeName name="javafx.scene.paint.Color"/>
+<fullyQualifiedTypeName name="graphic.IRenderableHolder"/>
+<fullyQualifiedTypeName name="java.awt.event.ItemEvent"/>
+<fullyQualifiedTypeName name="graphic.DrawingUtility"/>
+<fullyQualifiedTypeName name="graphic.ItemBox"/>
+<fullyQualifiedTypeName name="utility.InputUtility"/>
+<fullyQualifiedTypeName name="item.Bag"/>
+<fullyQualifiedTypeName name="item.Item"/>
+<fullyQualifiedTypeName name="item.Items"/>
+<fullyQualifiedTypeName name="javafx.scene.text.Font"/>
 </qualifiedTypeNameHistroy>

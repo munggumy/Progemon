@@ -12,3 +12,5 @@
 9,-,-,-,-,1,0,FALSE,TRUE,FALSE,TRUE,-32
 10,-,-,-,-,4,20,TRUE,TRUE,TRUE,TRUE,-32
 11,loadmap,usemap,-,-,1,0,FALSE,TRUE,FALSE,FALSE,0
+100,-,-,-,-,5,3,FALSE,TRUE,FALSE,FALSE,1
+101,fixeddirectionleap,playerwalk,-,-,1,0,FALSE,TRUE,FALSE,FALSE,0
