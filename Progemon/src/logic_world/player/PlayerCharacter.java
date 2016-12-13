@@ -36,15 +36,6 @@ public class PlayerCharacter extends Animation {
 	public PlayerCharacter() {
 		super(DrawingUtility.resize(new Image(new File(DEFAULT_IMG_PATH).toURI().toString()), 2), 2);
 		setFrameDelay(3);
-
-		Pokemon charlizard = Pokedex.getPokemon("Charlizard");
-		charlizard.setLevel(40);
-
-		Pokemon caterpie = Pokedex.getPokemon("Caterpie");
-		caterpie.setLevel(5);
-
-		me.addPokemon(charlizard);
-		me.addPokemon(caterpie);
 		direction = WorldDirection.SOUTH;
 	}
 
@@ -61,6 +52,9 @@ public class PlayerCharacter extends Animation {
 		int x = blockX + (direction.ordinal() - 2) * (direction.ordinal() % 2);
 		int y = blockY + (direction.ordinal() - 1) * (direction.ordinal() % 2 - 1);
 		System.out.println("Player walk --> x : " + x + ", y : " + y);
+		if (repelTime == 1) {
+			System.out.println("Repel effects wore off.");
+		}
 		repelTime = repelTime == 0 ? 0 : repelTime - 1;
 		play();
 		walking = true;
@@ -279,4 +273,38 @@ public class PlayerCharacter extends Animation {
 		this.repelTime = repelTime;
 	}
 
+	public boolean hasRepel() {
+		return repelTime > 0;
+	}
+
+	public void addPokemon(Pokemon pokemon) {
+		me.addPokemon(pokemon);
+	}
+
+	public void addAllPokemons(Pokemon... pokemons) {
+		for (Pokemon pokemon : pokemons) {
+			me.addPokemon(pokemon);
+		}
+	}
+
+	public void removePokemon(Pokemon pokemon) {
+		me.removePokemon(pokemon);
+	}
+
+	public int getNumberOfPokemons() {
+		return me.getPokemons().size();
+	}
+
+	public void setName(String name) {
+		me.setName(name);
+	}
+
+	public void setColor(Color color) {
+		me.setColor(color);
+	}
+
+	public void setBag(Bag bag) {
+		me.setBag(bag);
+		bag = me.getBag();
+	}
 }

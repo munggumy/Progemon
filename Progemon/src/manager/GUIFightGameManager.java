@@ -66,8 +66,9 @@ public class GUIFightGameManager {
 			System.out.print(player.getPokemons().stream().map(Pokemon::getName).collect(Collectors.joining(", ")));
 			System.out.println("]");
 		});
-
+		
 		players.stream().forEach(p -> p.setCurrentFightManager(this));
+		players.stream().flatMap(py -> py.getPokemons().stream()).forEach(Pokemon::resetNextTurnTime);
 		fightMap = new FightMap(FileUtility.loadFightMap());
 		spawnPokemons();
 		fightMap.sortPokemons();

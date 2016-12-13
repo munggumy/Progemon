@@ -256,7 +256,7 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 
 		System.out.println("selected=" + selectedSkill.getName());
 		String sfxName = selectedSkill.getSfxName();
-		if (!sfxName.isEmpty()) {
+		if (sfxName == null || !sfxName.isEmpty()) {
 			SFXUtility.playSound(sfxName);
 		}
 
@@ -683,6 +683,10 @@ public class Pokemon extends AbstractPokemon implements Cloneable, IRenderable {
 
 	public void changeNextTurnTime(double change) {
 		this.nextTurnTime += change;
+	}
+
+	public void resetNextTurnTime() {
+		this.nextTurnTime = 0;
 	}
 
 	public final double getNextTurnTime() {

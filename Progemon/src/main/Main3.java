@@ -4,6 +4,7 @@ import audio.MusicUtility;
 import audio.SFXUtility;
 import graphic.DrawingUtility;
 import graphic.GameStage;
+import item.Bag;
 import item.Items;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -28,11 +29,14 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import logic_fight.character.pokemon.Pokemon;
+import logic_world.player.PlayerCharacter;
 import logic_world.terrain.WorldMap;
 import logic_world.terrain.WorldObject;
 import manager.WorldManager;
 import utility.AnimationUtility;
 import utility.FileUtility;
+import utility.Pokedex;
 import utility.ThreadUtility;
 
 public class Main3 extends Application {
@@ -172,8 +176,23 @@ public class Main3 extends Application {
 		 * new GUIFightGameManager(players); })).start();
 		 */
 
-		Task<Void> main = new Task<Void>() {
+		Pokemon charlizard = Pokedex.getPokemon("Charlizard");
+		charlizard.setLevel(40);
 
+		Pokemon caterpie = Pokedex.getPokemon("Caterpie");
+		caterpie.setLevel(5);
+
+		PlayerCharacter.instance.addPokemon(charlizard);
+		PlayerCharacter.instance.addPokemon(caterpie);
+
+		Bag bag = new Bag();
+		bag.addAll(Items.getItem("potion"), Items.getItem("potion"), Items.getItem("potion"), Items.getItem("soda_pop"),
+				Items.getItem("pokeball"), Items.getItem("pokeball"), Items.getItem("pokeball"),
+				Items.getItem("pokeball"), Items.getItem("great_ball"));
+
+		PlayerCharacter.instance.setBag(bag);
+		
+		Task<Void> main = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
 				new WorldManager();

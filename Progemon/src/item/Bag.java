@@ -3,6 +3,8 @@ package item;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Bag {
 	private Map<Item, Integer> items = new LinkedHashMap<Item, Integer>();
@@ -29,7 +31,7 @@ public class Bag {
 	public void sortByAlphabet() {
 		Map<Item, Integer> temp = new HashMap<Item, Integer>(items);
 		items.clear();
-		
+
 		temp.entrySet().stream().sorted(Map.Entry.<Item, Integer>comparingByKey((i1, i2) -> {
 			return i1.getName().compareTo(i2.getName());
 		})).forEachOrdered(entry -> items.put(entry.getKey(), entry.getValue()));
@@ -37,6 +39,16 @@ public class Bag {
 
 	public Map<Item, Integer> getItems() {
 		return items;
+	}
+
+	public Map<Item, Integer> getPokeballs() {
+		return items.entrySet().stream().filter(en -> en.getKey() instanceof Pokeball)
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+	}
+
+	public Map<Item, Integer> getNonPokeballs() {
+		return items.entrySet().stream().filter(en -> !(en.getKey() instanceof Pokeball))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
 }

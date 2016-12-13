@@ -65,7 +65,7 @@ public class PassiveSkill implements Comparable<PassiveSkill> {
 	public final int getDuration() {
 		return duration;
 	}
-	
+
 	public final int getPower() {
 		return power;
 	}
@@ -92,6 +92,15 @@ public class PassiveSkill implements Comparable<PassiveSkill> {
 
 	public final void setPower(int power) {
 		this.power = power;
+	}
+
+	// templates
+
+	public static PassiveSkill burn = new PassiveSkill("Burn", FightPhase.initialPhase, 20);
+	static {
+		burn.setActivateOnce(false);
+		burn.setAlwaysActivate(true);
+		burn.setOnActivate(PassiveSkillAction.damage(burn.power));
 	}
 
 }

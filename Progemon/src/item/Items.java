@@ -18,14 +18,16 @@ public class Items {
 	private static Map<String, Item> items = new HashMap<>();
 
 	public static Item getItem(String itemName) {
-		try {
-			if (items == null) {
-				throw new NullPointerException("items not loaded");
-			}
-			return items.get(itemName);
-		} catch (Exception e) {
+		if (items == null) {
+			throw new NullPointerException("items not loaded");
+		}
+		Item item = items.get(itemName);
+		if (item != null) {
+			return item;
+		} else {
 			throw new IllegalArgumentException("item \"" + itemName + "\" not found");
 		}
+
 	}
 
 	public static void loadItems() {
@@ -107,6 +109,19 @@ public class Items {
 			yPos = IMAGE_OFFSET_Y + 2 * IMAGE_SIZE_Y;
 			rareCandy.setIcon(new WritableImage(spriteSheet.getPixelReader(), xPos, yPos, IMAGE_SIZE_X, IMAGE_SIZE_Y));
 			items.put("rare_candy", rareCandy);
+			
+			Item pokeball = new Pokeball(PokeballType.POKEBALL);
+			xPos = IMAGE_OFFSET_X + 0 * IMAGE_SIZE_X;
+			yPos = IMAGE_OFFSET_Y + 3 * IMAGE_SIZE_Y;
+			pokeball.setIcon(new WritableImage(spriteSheet.getPixelReader(), xPos, yPos, IMAGE_SIZE_X, IMAGE_SIZE_Y));
+			items.put("pokeball", pokeball);
+			
+			Item greatball = new Pokeball(PokeballType.GREAT_BALL);
+			xPos = IMAGE_OFFSET_X + 0 * IMAGE_SIZE_X;
+			yPos = IMAGE_OFFSET_Y + 1 * IMAGE_SIZE_Y;
+			greatball.setIcon(new WritableImage(spriteSheet.getPixelReader(), xPos, yPos, IMAGE_SIZE_X, IMAGE_SIZE_Y));
+			items.put("great_ball", greatball);
+			
 		} catch (Exception ex) {
 			System.err.println("Exception in Items.loadItems()");
 			ex.printStackTrace();
