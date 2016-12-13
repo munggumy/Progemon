@@ -34,7 +34,7 @@ public class PlayerCharacter extends Animation {
 	private boolean moving = false, walking = false, turning = false, stucking = false, jumping = false;
 	private WorldObject jumpAnimation;
 	private PseudoAnimation<PlayerCharacter> jump = new PseudoAnimation<PlayerCharacter>(12, 1) {
-		
+
 		@Override
 		public void update() {
 			// TODO Auto-generated method stub
@@ -49,8 +49,7 @@ public class PlayerCharacter extends Animation {
 					stop();
 				}
 				delayCounter = 0;
-			}
-			else {
+			} else {
 				delayCounter++;
 			}
 		}
@@ -61,7 +60,7 @@ public class PlayerCharacter extends Animation {
 
 	public PlayerCharacter() {
 		super(DrawingUtility.resize(new Image(new File(DEFAULT_IMG_PATH).toURI().toString()), 2), 2, 3);
-		
+
 		jumpAnimation = WorldObject.createWorldObject("100", 0, 0, null, null);
 		jumpAnimation.setHideOnStop(true);
 		direction = WorldDirection.SOUTH;
@@ -105,7 +104,7 @@ public class PlayerCharacter extends Animation {
 		stucking = true;
 		moving = true;
 	}
-	
+
 	public void jump() {
 		System.err.println("jump");
 		jumping = true;
@@ -308,11 +307,11 @@ public class PlayerCharacter extends Animation {
 		}
 		this.repelTime = repelTime;
 	}
-	
+
 	public boolean isJumping() {
 		return jumping;
 	}
-	
+
 	public double getyOffset() {
 		return yOffset;
 	}

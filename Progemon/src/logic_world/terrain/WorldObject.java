@@ -44,11 +44,11 @@ public class WorldObject extends Animation implements Cloneable {
 			WorldMap owner) {
 		try {
 			WorldObject worldObject;
-			
+
 			worldObject = (WorldObject) allWorldObjects.get(objectCode).clone();
 			worldObject.blockX = blockX;
 			worldObject.blockY = blockY;
-			
+
 			// if (objectCode.equals("008")) {
 			// System.err.println("01245678913215621321");
 			// System.out.println("x = " + blockX);
@@ -71,13 +71,14 @@ public class WorldObject extends Animation implements Cloneable {
 				worldObject.visible = false;
 			} else {
 				worldObject.visible = true;
-				if (owner != null) {					
+				if (owner != null) {
 					owner.addVisibleWorldObject(worldObject);
 				}
 			}
 			if (owner != null) {
 				owner.addWorldObjects(worldObject);
 			}
+
 			return worldObject;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -503,9 +504,6 @@ public class WorldObject extends Animation implements Cloneable {
 		});
 
 		allObjectFunctions.put("sentmessage", object -> {
-			System.out.println("sentmessage");
-			System.out.println("WorldObj (463) : x = " + object.getBlockX());
-			System.out.println("WorldObj (464) : y = " + object.getBlockY());
 			String[] parameters = object.processParameters();
 			DialogBox.instance.sentDialog(parameters[0]);
 		});
