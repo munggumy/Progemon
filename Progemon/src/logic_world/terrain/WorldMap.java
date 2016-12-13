@@ -22,6 +22,8 @@ import javafx.scene.image.WritableImage;
 
 public class WorldMap implements IRenderable {
 
+	private static final int NUMBER_TILE_PER_LINE = 10;
+	private static final int NUMBER_TILE_LINES = 7;
 	private static final String DEFAULT_MUSIC = "littleroot";
 	private static final String DEFAULT_TILE_SET_PATH = "load\\img\\world\\tileset.png";
 	private static List<Image> tilesetList = new ArrayList<Image>();
@@ -157,7 +159,7 @@ public class WorldMap implements IRenderable {
 	public static void loadTileset() throws WorldMapException {
 		try {
 			Image img = new Image(new File(DEFAULT_TILE_SET_PATH).toURI().toString());
-			for (int i = 0; i < 50; i++) {
+			for (int i = 0; i < NUMBER_TILE_PER_LINE * NUMBER_TILE_LINES; i++) {
 				tilesetList.add(DrawingUtility.resize(
 						new WritableImage(img.getPixelReader(), (i % 10) * 16, Math.floorDiv(i, 10) * 16, 16, 16), 2));
 			}

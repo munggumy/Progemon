@@ -29,7 +29,7 @@ public abstract class Player {
 	private String name;
 	private Color color;
 	private ArrayList<Pokemon> pokemons;
-	private boolean godlike;
+	private boolean godlike;				
 	private Bag bag;
 
 	protected Optional<Pokemon> nextAttackedPokemon;
@@ -49,7 +49,7 @@ public abstract class Player {
 
 	// Constructor
 
-	protected Player(String name) {
+	protected Player(St	ring name) {
 		this.name = name;
 		color = Color.BLACK; // default
 		pokemons = new ArrayList<Pokemon>();
@@ -296,7 +296,7 @@ public abstract class Player {
 			}
 
 		} else {
-			System.out.print(".");
+			System.out.print(".");	
 			captureDelayCounter++;
 			return false;
 		}

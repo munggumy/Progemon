@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.sun.javafx.tk.Toolkit;
 
-import item.Bag;
 import item.Item;
 import item.Items;
 import javafx.scene.canvas.GraphicsContext;
@@ -18,13 +17,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import logic_fight.character.activeSkill.ActiveSkill;
-import logic_fight.character.pokemon.Pokemon;
 import logic_fight.character.pokemon.NonVolatileStatus;
+import logic_fight.character.pokemon.Pokemon;
 import logic_fight.player.HumanPlayer;
 import logic_fight.terrain.FightMap;
 import logic_fight.terrain.FightTerrain;
 import logic_world.player.PlayerCharacter;
-import logic_world.terrain.UnknownTileSetException;
 import logic_world.terrain.WorldDirection;
 import logic_world.terrain.WorldMap;
 import logic_world.terrain.WorldMapException;
@@ -41,8 +39,8 @@ public class DrawingUtility {
 	private static final int QUEUE_BOX_HEIGHT = 204;
 	private static final int QUEUE_BOX_WIDTH = 68;
 	private static final Color QUEUE_BOX_TEXT_COLOR = Color.BLACK;
-	private static final int ITEM_ICON_X = 10;
-	private static final int ITEM_ICON_Y = 246;
+	// private static final int ITEM_ICON_X = 10;
+	// private static final int ITEM_ICON_Y = 246;
 	private static final Color FIGHT_MAP_FRAME_COLOR = Color.BLACK;
 	private static final Color EMPTY_EXP_BAR_HUD_COLOR = Color.BLACK;
 	private static final Color EMPTY_HP_BAR_HUD_COLOR = Color.BLACK;
@@ -301,8 +299,8 @@ public class DrawingUtility {
 		gc.restore();
 
 	}
-	
-	public static void drawItemBox(ItemBox itembox){
+
+	public static void drawItemBox(ItemBox itembox) {
 		gc.drawImage(itembox.getItemButtonImage(), 0, 248);
 		if (itembox.isVisible()) {
 			gc.drawImage(itembox.getTabImage(), ItemBox.X, ItemBox.Y);
@@ -311,14 +309,11 @@ public class DrawingUtility {
 				for (int i = 0; i < 4; i++) {
 					if (i == 0) {
 						item = Items.getItem("potion");
-					}
-					else if (i == 1) {
+					} else if (i == 1) {
 						item = Items.getItem("soda_pop");
-					}
-					else if (i == 2) {
+					} else if (i == 2) {
 						item = Items.getItem("antidote");
-					}
-					else{
+					} else {
 						item = Items.getItem("rare_candy");
 					}
 					gc.drawImage(itemLabel, 5, 90 + (i * 27));
@@ -476,8 +471,8 @@ public class DrawingUtility {
 		}
 	}
 
-	public static double computeStringHeight(String ÐÓ»Ð, Font font) {
-		if (ÐÓ»Ð.length() == 0 || gc == null) {
+	public static double computeStringHeight(String text, Font font) {
+		if (text.length() == 0 || gc == null) {
 			return 0;
 		} else {
 			return Toolkit.getToolkit().getFontLoader().getFontMetrics(font).getLineHeight();
@@ -520,15 +515,16 @@ public class DrawingUtility {
 		return wimg;
 	}
 
-	public static Image resize(Image img, int i) {
-		int height = (int) img.getHeight() * i;
-		int width = (int) img.getWidth() * i;
+	public static Image resize(Image img, int scaleFactor) {
+		int height = (int) img.getHeight() * scaleFactor;
+		int width = (int) img.getWidth() * scaleFactor;
 		PixelReader pixelReader = img.getPixelReader();
 		WritableImage wimg = new WritableImage(width, height);
 		PixelWriter pixelWriter = wimg.getPixelWriter();
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				pixelWriter.setColor(x, y, pixelReader.getColor((int) Math.floor(x / i), (int) Math.floor(y / i)));
+				pixelWriter.setColor(x, y,
+						pixelReader.getColor((int) Math.floor(x / scaleFactor), (int) Math.floor(y / scaleFactor)));
 			}
 		}
 		return wimg;

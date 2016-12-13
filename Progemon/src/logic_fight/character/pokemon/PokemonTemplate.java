@@ -15,10 +15,6 @@ public class PokemonTemplate extends AbstractPokemon {
 	private int baseAttack, baseDefense, baseSpeed, baseHP;
 	private List<ActiveSkill> defaultActiveSkills = new ArrayList<>();
 
-	public PokemonTemplate() {
-
-	}
-
 	public final int getBaseAttack() {
 		return baseAttack;
 	}

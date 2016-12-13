@@ -30,6 +30,6 @@ public class MoveFilter extends OverlapFilter {
 		default:
 			return true;
 		}
-	}
+	}	
 
 }

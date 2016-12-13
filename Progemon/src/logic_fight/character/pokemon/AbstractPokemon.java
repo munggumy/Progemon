@@ -7,8 +7,8 @@ import logic_fight.character.pokemon.Pokemon.MoveType;
 /** Abstract class for Pokemon and PokemonTemplate */
 public abstract class AbstractPokemon {
 
-	public static int MIN_CATCH_RATE = 0;
-	public static int MAX_CATCH_RATE = 255;
+	public static final int MIN_CATCH_RATE = 0;
+	public static final int MAX_CATCH_RATE = 255;
 
 	protected String name;
 	protected MoveType moveType;
@@ -17,7 +17,7 @@ public abstract class AbstractPokemon {
 	protected LevelingRate levelingRate;
 	protected int expYield;
 	protected int catchRate;
-
+	
 	protected String imageFileName;
 	protected Image image, icon;
 

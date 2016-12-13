@@ -1,7 +1,10 @@
 package logic_fight.character;
 
-import logic_fight.FightPhase;
+import java.util.List;
 
+import logic_fight.FightPhase;
+import logic_fight.character.pokemon.Pokemon;
+//TODO PASSIVESKILL!
 public class PassiveSkill implements Comparable<PassiveSkill> {
 
 	// Private Fields
@@ -92,6 +95,10 @@ public class PassiveSkill implements Comparable<PassiveSkill> {
 
 	public final void setPower(int power) {
 		this.power = power;
+	}
+	
+	public void activate(List<Pokemon> targets){
+		onActivate.apply(targets);
 	}
 
 	// templates

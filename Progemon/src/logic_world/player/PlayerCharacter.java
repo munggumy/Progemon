@@ -15,7 +15,6 @@ import logic_fight.player.HumanPlayer;
 import logic_world.terrain.WorldDirection;
 import logic_world.terrain.WorldObject;
 import manager.WorldManager;
-import utility.Pokedex;
 
 public class PlayerCharacter extends Animation {
 

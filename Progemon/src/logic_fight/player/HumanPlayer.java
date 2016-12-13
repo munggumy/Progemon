@@ -22,7 +22,7 @@ public class HumanPlayer extends Player {
 	Set<KeyCode> attackingKeys = new HashSet<KeyCode>(
 			Arrays.asList(KeyCode.DIGIT1, KeyCode.DIGIT2, KeyCode.DIGIT3, KeyCode.DIGIT4));
 
-	public HumanPlayer(String name) {
+	public HumanPlayer(String name)	{
 		super(name);
 	}
 
@@ -53,7 +53,7 @@ public class HumanPlayer extends Player {
 			if (pokemon.getAvaliableFightTerrains().contains(destination)) {
 				super.nextPath = pokemon.findPathTo(destination);
 				return true;
-			} else {
+			} else {	
 				super.nextPath = null;
 				return false;
 			}

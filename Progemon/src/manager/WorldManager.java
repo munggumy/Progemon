@@ -28,24 +28,25 @@ public class WorldManager {
 	private static PlayerCharacter player;
 
 	public WorldManager() {
+
+	}
+
+	public void start() {
 		try {
 			GlobalPhase.setCurrentPhase(GlobalPhase.WORLD);
 			new Clock();
 			player = PlayerCharacter.instance;
 			if (player.getNumberOfPokemons() <= 0) {
 				throw new IllegalStateException("PlayerCharacter has no pokemons!");
+			} else if (player.getMe().getBag() == null) {
+				throw new IllegalStateException("PlayerCharacter has no bag!");
 			}
+
 			player.show();
 
-			/*
-			 * WorldObject.loadMapObjects(
-			 * "load\\worldmap\\littleroot\\littleroot_object.txt"); worldMap =
-			 * new WorldMap("load\\worldmap\\littleroot\\littleroot_map.txt");
-			 */
-
-			WorldMap map = loadWorld("oldale");
+			WorldMap map = loadWorld("route_103");
 			System.out.println(map.getName() + ", size=" + map.getWorldObjects().size());
-			useWorld(map, 10, 10);
+			useWorld(map, 10, 8);
 		} catch (WorldMapException ex) {
 			ex.printStackTrace();
 		} catch (Exception ex) {
@@ -54,7 +55,7 @@ public class WorldManager {
 		run();
 	}
 
-	public static void run() {
+	public void run() {
 		/*
 		 * player.turn(0); player.walk(); player.walk(); player.walk();
 		 * player.turn(3); player.walk(); player.walk(); player.walk();
@@ -111,19 +112,6 @@ public class WorldManager {
 		}
 
 	}
-	//
-	// public static void addWorldObjects(WorldObject worldObject) {
-	// worldObjects.add(worldObject);
-	// }
-
-	// public static WorldObject getObjectAt(int x, int y) {
-	// for (WorldObject worldObject : worldObjects) {
-	// if (worldObject.getBlockX() == x && worldObject.getBlockY() == y) {
-	// return worldObject;
-	// }
-	// }
-	// return space;
-	// }
 
 	public static WorldMap loadWorld(String mapName) throws WorldMapException {
 		WorldMap temp = new WorldMap(mapName);
@@ -150,8 +138,6 @@ public class WorldManager {
 	}
 
 	public static void useWorld(WorldMap centerWorldMap, int playerStartX, int playerStartY) throws WorldMapException {
-		// currentWorldMap.clearWorldObjects();
-		// nextWorldMaps.values().forEach(WorldMap::clearWorldObjects);
 		IRenderableHolder.getWritelock().lock();
 		try {
 			for (WorldDirection wd : WorldDirection.values()) {
@@ -257,14 +243,13 @@ public class WorldManager {
 	public static PlayerCharacter getPlayer() {
 		return player;
 	}
-	
+
 	public static PlayerCharacter getCharacterAt(int blockX, int blockY) {
 		if (player.getY() == blockY * 32) {
 			if (player.isWalking() && player.getX() >= (blockX - 1) * 32 && player.getX() <= (blockX + 1) * 32) {
 				return player;
 			}
-		}
-		else if (player.getX() == blockX * 32) {
+		} else if (player.getX() == blockX * 32) {
 			if (player.isWalking() && player.getY() >= (blockY - 1) * 32 && player.getY() <= (blockY + 1) * 32) {
 				return player;
 			}
