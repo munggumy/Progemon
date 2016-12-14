@@ -34,9 +34,9 @@ public class SpawningUtility {
 			players.add(PlayerCharacter.instance.getMe());
 			players.add(wildAI);
 			GUIFightGameManager fight = new GUIFightGameManager(players, true);
-			AnimationUtility.getLoadScreen01().show();
-			AnimationUtility.getLoadScreen01().play();
-			while (AnimationUtility.getLoadScreen01().isPlaying()) {
+			AnimationUtility.getLoadScreen00().show();
+			AnimationUtility.getLoadScreen00().play();
+			while (AnimationUtility.getLoadScreen00().isPlaying()) {
 				Clock.tick();
 			}
 			fight.startFight();

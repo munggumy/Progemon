@@ -3,6 +3,7 @@ package graphic;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import com.sun.javafx.tk.Toolkit;
 
@@ -169,6 +170,8 @@ public class DrawingUtility {
 	}
 
 	public static void drawPokemonBar(Pokemon pokemon) {
+		Objects.requireNonNull(pokemon);
+		Objects.requireNonNull(pokemon.getCurrentFightMap());
 		int position;
 		int originX, originY;
 		gc.setFont(Font.font("monospace", 8));
@@ -284,8 +287,8 @@ public class DrawingUtility {
 		for (int i = 0; i < pokemonsOnQueue.size(); i++) {
 			img = pokemonsOnQueue.get(i).getImage();
 			gc.setFill(pokemonsOnQueue.get(i).getOwner().getColor());
-			gc.fillRect(QueueBox.getOriginX() + QueueBox.getDelta()[i][0] + 6,
-					QueueBox.getOriginY() + QueueBox.getDelta()[i][1] + 2 + i * 40, 6, 36);
+			gc.fillRect(QueueBox.ORIGIN_X + QueueBox.getDelta()[i][0] + 6,
+					QueueBox.ORIGIN_Y + QueueBox.getDelta()[i][1] + 2 + i * 40, 6, 36);
 
 			gc.setFill(QUEUE_BOX_TEXT_COLOR);
 			gc.setFont(DialogBox.instance.getFont());
@@ -293,12 +296,11 @@ public class DrawingUtility {
 			gc.setFill(Color.BLACK);
 			gc.setFont(DialogBox.instance.getFont());
 			double messageHeight = new Text("LV.").getLayoutBounds().getHeight();
-			gc.fillText("Lv." + pokemonsOnQueue.get(i).getLevel(),
-					QueueBox.getOriginX() + QueueBox.getDelta()[i][0] + 24,
-					QueueBox.getOriginY() + QueueBox.getDelta()[i][1] + 15 + i * 40 + messageHeight);
+			gc.fillText("Lv." + pokemonsOnQueue.get(i).getLevel(), QueueBox.ORIGIN_X + QueueBox.getDelta()[i][0] + 24,
+					QueueBox.ORIGIN_Y + QueueBox.getDelta()[i][1] + 15 + i * 40 + messageHeight);
 
-			gc.drawImage(img, QueueBox.getOriginX() + QueueBox.getDelta()[i][0],
-					QueueBox.getOriginY() + QueueBox.getDelta()[i][1] + i * 40);
+			gc.drawImage(img, QueueBox.ORIGIN_X + QueueBox.getDelta()[i][0],
+					QueueBox.ORIGIN_Y + QueueBox.getDelta()[i][1] + i * 40);
 		}
 		gc.restore();
 

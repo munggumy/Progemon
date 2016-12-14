@@ -377,7 +377,7 @@ public class Pokemon extends AbstractPokemon implements IRenderable {
 	}
 
 	public Optional<Path> findPathTo(FightTerrain destination, int limit) {
-
+		
 		/** Inner Class with counter */
 		final class PathWithCounter extends Path {
 			// TODO Implement Path with Counter (as one class).
@@ -750,7 +750,7 @@ public class Pokemon extends AbstractPokemon implements IRenderable {
 	}
 
 	public final void addExpAndTryLevelUp(double change) {
-		currentExp += change; //TODO
+		currentExp += change; // TODO
 		tryLevelUp();
 	}
 
@@ -786,7 +786,7 @@ public class Pokemon extends AbstractPokemon implements IRenderable {
 	}
 
 	public final FightMap getCurrentFightMap() {
-		if(currentFightMap == null){
+		if (currentFightMap == null) {
 			System.err.println("WARNING : Current FightMap is not set for " + getName());
 		}
 		return currentFightMap;
