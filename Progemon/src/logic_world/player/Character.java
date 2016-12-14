@@ -83,6 +83,7 @@ public abstract class Character extends Animation {
 	public void walk() {
 		int x = blockX + (direction.ordinal() - 2) * (direction.ordinal() % 2);
 		int y = blockY + (direction.ordinal() - 1) * (direction.ordinal() % 2 - 1);
+		System.out.println("Character walk --> walk to : " + x + " , " + y);
 		play();
 		walking = true;
 		moving = true;
