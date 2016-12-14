@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import logic_fight.character.pokemon.Pokemon;
 import logic_fight.character.pokemon.PokemonTemplate;
-import utility.exception.DuplicatePokemonException;
 
 public class Pokedex {
 	// private static HashMap<Integer, String> pokedex = new HashMap<Integer,
@@ -41,9 +40,6 @@ public class Pokedex {
 	}
 
 	public static final void addPokemonToPokedex(String name, PokemonTemplate pokemonTemplate) {
-		if (pokedex.containsKey(name) || pokedex.containsValue(pokemonTemplate)) {
-			throw new DuplicatePokemonException("Pokedex : Duplicate Pokemon : " + name);
-		}
 		pokedex.put(StringUtility.toTitleCase(name), pokemonTemplate);
 	}
 

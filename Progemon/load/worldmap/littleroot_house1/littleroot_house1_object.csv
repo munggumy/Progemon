@@ -1,7 +1,7 @@
 ##data,format,,,,,
 ##objectcode,blockX,blockY,functionParameter(0[enter],1[interact],2[step],3[exit])
-102,9,9,0[littleroot/13/12/FALSE/none],,,
-102,10,9,0[littleroot/13/12/FALSE/none],,,
+102,9,9,0[change_place],0[littleroot/13/12/FALSE/none],,
+102,10,9,0[change_place],0[littleroot/13/12/FALSE/none],,
 #top,,,,,,
 20,7,1,,,,
 20,6,1,,,,

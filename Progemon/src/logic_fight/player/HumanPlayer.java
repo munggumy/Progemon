@@ -80,10 +80,14 @@ public class HumanPlayer extends Player {
 			Optional<Pokemon> otherPokemon = pokemon.getCurrentFightMap().getPokemonAt(destination);
 			if (otherPokemon.isPresent() && otherPokemon.get().getOwner() != pokemon.getOwner()) {
 				super.nextAttackedPokemon = otherPokemon;
-				FightHUD.setShowSkillMenu(true);
+				if (!super.nextAttackSkill.isPresent()) {
+					FightHUD.setShowSkillMenu(true);
+				}
 				return true;
 			} else if (otherPokemon.orElse(null) == pokemon) {
-				FightHUD.setShowSkillMenu(true);
+				if (!super.nextAttackSkill.isPresent()) {
+					FightHUD.setShowSkillMenu(true);
+				}
 				return false;
 			} else {
 				super.nextAttackedPokemon = Optional.empty();

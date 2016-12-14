@@ -26,7 +26,7 @@ public class SFXUtility {
 	private static ExecutorService soundPool;
 	private static Map<String, AudioClip> soundEffectsMap = new HashMap<>();
 
-	public SFXUtility(int numberOfThreads) {
+	public SFXUtility(int numberOfThreads) throws AudioException {
 		soundPool = Executors.newFixedThreadPool(numberOfThreads, new ThreadFactory() {
 			@Override
 			public Thread newThread(Runnable r) {

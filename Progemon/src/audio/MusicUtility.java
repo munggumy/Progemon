@@ -34,8 +34,9 @@ public final class MusicUtility {
 	 *
 	 * @param numberOfThreads
 	 *            - number of threads to use media players in the map.
+	 * @throws AudioException 
 	 */
-	public MusicUtility() {
+	public MusicUtility() throws AudioException {
 		musicExecutor = Executors.newFixedThreadPool(1, new ThreadFactory() {
 			@Override
 			public Thread newThread(Runnable r) {

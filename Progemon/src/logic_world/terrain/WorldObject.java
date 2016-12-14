@@ -11,6 +11,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import audio.SFXUtility;
 import graphic.Animation;
 import graphic.DialogBox;
 import graphic.DrawingUtility;
@@ -402,12 +403,12 @@ public class WorldObject extends Animation implements Cloneable {
 			target.play();
 			return;
 		});
-		
+
 		allObjectFunctions.put("pause", target -> {
 			target.pause();
 			return;
 		});
-		
+
 		allObjectFunctions.put("unpause", target -> {
 			target.unpause();
 			return;
@@ -454,7 +455,7 @@ public class WorldObject extends Animation implements Cloneable {
 			SpawningUtility.trySpawnPokemon(WorldManager.getWorldMap());
 
 		});
-		
+
 		allObjectFunctions.put("playtransitionin", target -> {
 			AnimationUtility.getLoadScreen00().show();
 			AnimationUtility.getLoadScreen00().play();
@@ -462,7 +463,7 @@ public class WorldObject extends Animation implements Cloneable {
 				Clock.tick();
 			}
 		});
-		
+
 		allObjectFunctions.put("playtransitionout", target -> {
 			AnimationUtility.getLoadScreen00().setPlayback(true);
 			AnimationUtility.getLoadScreen00().play();
@@ -477,7 +478,7 @@ public class WorldObject extends Animation implements Cloneable {
 			String[] parameters = target.functionParameter.get(target.actionType).get(target.parameterCounter)
 					.split("/");
 			target.parameterCounter++;
-			System.out.println("parameter passed [1] and [2]" + parameters[1] + " " + parameters[2]);
+
 			WorldManager.changeWorld(parameters[0], Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]),
 					Boolean.parseBoolean(parameters[3]), parameters[4]);
 		});
@@ -496,7 +497,7 @@ public class WorldObject extends Animation implements Cloneable {
 			WorldManager.getPlayer().walk();
 			// PlayerCharacter.instance.walk();
 		});
-		
+
 		allObjectFunctions.put("playerjump", object -> {
 			WorldManager.getPlayer().jump();
 		});
@@ -535,20 +536,28 @@ public class WorldObject extends Animation implements Cloneable {
 		allObjectFunctions.put("hidedialog", object -> {
 			DialogBox.instance.hide();
 		});
-		
+
 		allObjectFunctions.put("fixeddirectionleap", object -> {
 			String[] parameters = object.processParameters();
 			PlayerCharacter player = WorldManager.getCharacterAt(object.blockX, object.blockY);
 			if (player == null) {
 				return;
-			}
-			else if (player.getDirection().getX() == Integer.parseInt(parameters[0])
-				&& player.getDirection().getY() == Integer.parseInt(parameters[1])) {
+			} else if (player.getDirection().getX() == Integer.parseInt(parameters[0])
+					&& player.getDirection().getY() == Integer.parseInt(parameters[1])) {
 				player.jump();
-			}
-			else{
+			} else {
 				player.pause();
 				player.stuck();
+			}
+		});
+
+		allObjectFunctions.put("playsound", object -> {
+			System.err.println("reach");
+			String[] parameters = object.processParameters();
+			String soundEffectName = parameters[0];
+			System.err.println(soundEffectName);
+			if (soundEffectName != null && !soundEffectName.isEmpty() && !soundEffectName.equals("none")) {
+				SFXUtility.playSound(soundEffectName);
 			}
 		});
 

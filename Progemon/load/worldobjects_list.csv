@@ -38,6 +38,6 @@
 35,-,-,-,-,1,0,FALSE,TRUE,FALSE,TRUE,0
 36,-,-,-,-,4,5,FALSE,FALSE,FALSE,TRUE,-1
 37,-,-,-,-,1,0,FALSE,TRUE,FALSE,TRUE,0
-100,-,-,-,-,5,3,FALSE,TRUE,FALSE,FALSE,1
+100,-,-,-,-,3,5,FALSE,TRUE,FALSE,FALSE,3
 101,fixeddirectionleap,playerwalk,-,-,1,0,FALSE,TRUE,FALSE,FALSE,0
-102,playerpause/playtransitionin/changemap/hideplayer/playerwalk,-,-,-,1,0,FALSE,TRUE,FALSE,FALSE,0
+102,playerpause/playsound/playtransitionin/changemap/hideplayer/playerwalk,-,-,-,1,0,FALSE,TRUE,FALSE,FALSE,0
