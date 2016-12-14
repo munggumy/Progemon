@@ -45,9 +45,9 @@ public class WorldManager {
 
 			player.show();
 
-			WorldMap map = loadWorld("route_103");
+			WorldMap map = loadWorld("littleroot");
 			System.out.println(map.getName() + ", size=" + map.getWorldObjects().size());
-			useWorld(map, 10, 8);
+			useWorld(map, 12, 14);
 		} catch (WorldMapException ex) {
 			ex.printStackTrace();
 		} catch (Exception ex) {

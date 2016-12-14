@@ -1,6 +1,10 @@
 ##data,format,,,
 ##objectcode,blockX,blockY,functionParameter(0[enter]1[interact]2[step]3[exit]),
 #trees,,,,
+103,14,8,1[It's locked],
+103,5,9,1[It's locked],
+103,6,18,1[It's locked],
+103,15,18,1[It's locked],
 11,8,23,2[16/5/false/none],0[route_101]
 11,9,23,2[17/5/false/none],0[route_101]
 11,10,23,2[18/5/false/none],0[route_101]

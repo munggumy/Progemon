@@ -41,3 +41,4 @@
 100,-,-,-,-,3,5,FALSE,TRUE,FALSE,FALSE,3
 101,fixeddirectionleap,playerwalk,-,-,1,0,FALSE,TRUE,FALSE,FALSE,0
 102,playerpause/playsound/playtransitionin/changemap/hideplayer/playerwalk,-,-,-,1,0,FALSE,TRUE,FALSE,FALSE,0
+103,-,-,-,showdialog/sentmessage/hidedialog,1,0,FALSE,TRUE,FALSE,FALSE,0
