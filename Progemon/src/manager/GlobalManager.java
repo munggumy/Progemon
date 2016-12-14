@@ -145,7 +145,7 @@ public class GlobalManager {
 		Task<Void> main = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
-				worldManager.run();
+				worldManager.start();
 				return null;
 			}
 

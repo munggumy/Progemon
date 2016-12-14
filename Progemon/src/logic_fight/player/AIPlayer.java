@@ -1,10 +1,12 @@
 package logic_fight.player;
 
+import java.util.List;
 import java.util.Optional;
 
 import javafx.scene.paint.Color;
 import logic_fight.character.activeSkill.ActiveSkill;
 import logic_fight.character.pokemon.Pokemon;
+import logic_fight.filters.MoveFilter;
 import logic_fight.terrain.Path;
 import utility.RandomUtility;
 
@@ -30,13 +32,15 @@ public class AIPlayer extends Player {
 			return true;
 		} else {
 			thinkDelayCounter++;
-			return false;	
+			return false;
 		}
 	}
 
 	/** This can be overrided by other AIs */
 	protected Optional<Path> calculateNextPath(Pokemon pokemon) {
-		return Optional.ofNullable(pokemon.getPaths().get(0));
+		pokemon.findBlocksAround(pokemon.getMoveRange(), new MoveFilter());
+		List<Path> availblePath = pokemon.getPaths();
+		return Optional.ofNullable(RandomUtility.randomElement(availblePath));
 	}
 
 	@Override

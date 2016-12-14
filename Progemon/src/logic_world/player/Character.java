@@ -29,7 +29,6 @@ public abstract class Character extends Animation {
 
 		@Override
 		public void update() {
-			// TODO Auto-generated method stub
 			if (delayCounter == frameDelay) {
 				currentFrame++;
 				yOffset = -(6.0 - Math.abs((6.0 - currentFrame))) * 32 / 6.0;
@@ -39,6 +38,7 @@ public abstract class Character extends Animation {
 					jumpAnimation.setBlockY(blockY);
 					jumpAnimation.show();
 					jumpAnimation.play();
+					System.out.println("reach");
 					stop();
 				}
 				delayCounter = 0;
@@ -111,6 +111,7 @@ public abstract class Character extends Animation {
 	}
 
 	public void jump() {
+		SFXUtility.playSound("ledge_jump");
 		jumping = true;
 		jump.play();
 	}

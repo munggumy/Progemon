@@ -56,13 +56,16 @@ public class WorldManager {
 		run();
 	}
 
-	public void run() {
+	private void run() {
 		/*
 		 * player.turn(0); player.walk(); player.walk(); player.walk();
 		 * player.turn(3); player.walk(); player.walk(); player.walk();
 		 * player.turn(2); player.walk(); player.walk(); player.walk();
 		 */
 		while (true) {
+			if(player == null){
+				System.err.println("WorldManager must be call from start()");
+			}
 			player.checkMove();
 			for (NPCCharacter character : currentWorldMap.getWorldCharacters()) {
 				character.checkMove();

@@ -3,6 +3,8 @@ package logic_world.player;
 import graphic.DialogBox;
 import logic_fight.character.pokemon.Pokemon;
 import logic_world.terrain.WorldDirection;
+import utility.AnimationUtility;
+import utility.Clock;
 
 public class NPCCharacter extends Character {
 
@@ -27,9 +29,25 @@ public class NPCCharacter extends Character {
 				, PlayerCharacter.instance.blockY - blockY);
 		DialogBox.instance.show();
 		DialogBox.instance.sentDialog("Hi " + PlayerCharacter.instance.getMe().getName() + "!@@@nLet me heal your pokemons");
-		DialogBox.instance.hide();
 		PlayerCharacter.instance.getMe().getPokemons().forEach(Pokemon::resetHP);
-		System.err.println("NPCCharacter interacted --> do something");
+		AnimationUtility.getLoadScreen00().show();
+		AnimationUtility.getLoadScreen00().play();
+		while (AnimationUtility.getLoadScreen00().isPlaying()) {
+			Clock.tick();
+		}
+		System.out.println("NPCCharacter interacted --> all pokemon restore hp");
+		AnimationUtility.getLoadScreen00().setPlayback(true);
+		AnimationUtility.getLoadScreen00().play();
+		while (AnimationUtility.getLoadScreen00().isPlaying()) {
+			Clock.tick();
+		}
+		while (AnimationUtility.getLoadScreen00().isPlaying()) {
+			Clock.tick();
+		}
+		AnimationUtility.getLoadScreen00().setPlayback(false);
+		AnimationUtility.getLoadScreen00().hide();
+		DialogBox.instance.sentDialog("Goodbye");
+		DialogBox.instance.hide();
 	}
 
 }

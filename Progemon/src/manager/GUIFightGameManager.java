@@ -79,13 +79,16 @@ public class GUIFightGameManager {
 			player.setCurrentFightManager(this);
 			player.setRun(false);
 		});
-		players.stream().flatMap(py -> py.getPokemons().stream()).forEach(pokemon -> {
-			pokemon.resetNextTurnTime();
-			pokemon.enterFight();
-		});
 		fightMap = new FightMap(FileUtility.loadFightMap());
 		spawnPokemons();
 		fightMap.sortPokemons();
+		players.stream().flatMap(py -> py.getPokemons().stream()).forEach(pokemon -> {
+			pokemon.resetNextTurnTime();
+			pokemon.enterFight();
+			if(pokemon.getCurrentHP() < 1) {
+				fightMap.removePokemonFromMap(pokemon);
+			}
+		});
 
 	}
 
@@ -100,13 +103,13 @@ public class GUIFightGameManager {
 		new FightHUD();
 		System.out.println("Added DialogBox and QueueBox");
 
-		AnimationUtility.getLoadScreen01().setPlayback(true);
-		AnimationUtility.getLoadScreen01().play();
-		while (AnimationUtility.getLoadScreen01().isPlaying()) {
+		AnimationUtility.getLoadScreen00().setPlayback(true);
+		AnimationUtility.getLoadScreen00().play();
+		while (AnimationUtility.getLoadScreen00().isPlaying()) {
 			Clock.tick();
 		}
-		AnimationUtility.getLoadScreen01().setPlayback(false);
-		AnimationUtility.getLoadScreen01().hide();
+		AnimationUtility.getLoadScreen00().setPlayback(false);
+		AnimationUtility.getLoadScreen00().hide();
 
 		System.out.println("Fight Game loaded without problems.");
 		DialogBox.instance.sentDialog("Press '" + DialogBox.advancingKey.toString() + "' to start!");

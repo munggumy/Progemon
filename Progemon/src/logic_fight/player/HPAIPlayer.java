@@ -35,6 +35,7 @@ public class HPAIPlayer extends AIPlayer {
 		}
 		Optional<Path> wholePath = pokemon.findPathTo(lowestHP.getCurrentFightTerrain(), 1000);
 		if (!wholePath.isPresent()) {
+			System.out.println("reach");
 			return super.calculateNextPath(pokemon);
 		}
 		Path subPath = wholePath.get().subPath(0, Math.min(wholePath.get().size(), pokemon.getMoveRange() + 1));
