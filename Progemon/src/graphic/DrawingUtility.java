@@ -71,22 +71,24 @@ public class DrawingUtility {
 
 	public DrawingUtility() {
 		try {
-			File sfile = new File("load\\img\\terrain\\shadow20.png");
-			shadow = new Image(sfile.toURI().toString());
-			File cfile = new File("load\\img\\terrain\\cursur.png");
-			cursor = new Image(cfile.toURI().toString());
-			File hfile = new File("load\\img\\terrain\\highlight.png");
-			highlight = new Image(hfile.toURI().toString());
+			// File sfile = new File("load\\img\\terrain\\shadow20.png");
+			shadow = new Image(ClassLoader.getSystemResource("img/terrain/shadow20.png").toString());
+			// File cfile = new File("load\\img\\terrain\\cursur.png");
+			cursor = new Image(ClassLoader.getSystemResource("img/terrain/cursur.png").toString());
+			// File hfile = new File("load\\img\\terrain\\highlight.png");
+			highlight = new Image(ClassLoader.getSystemResource("img/terrain/highlight.png").toString());
 			File qfile = new File(QueueBox.QUEUE_BOX_PATH);
 			queueBoxImage = resize(new Image(qfile.toURI().toString()), 2);
 			File signfile = new File("load\\img\\dialogbox\\Theme1_sign.gif");
 			sign = new Image(signfile.toURI().toString());
-			File pkmnfile = new File("load\\img\\HUD\\pokemonbar.png");
-			pkmnBar = new Image(pkmnfile.toURI().toString());
-			File backgroundfile = new File("load\\img\\background\\meadow.png");
-			background = new Image(backgroundfile.toURI().toString());
-			File itemlabelfile = new File("load\\img\\HUD\\itemlabel.png");
-			itemLabel = new Image(itemlabelfile.toURI().toString());
+			// File pkmnfile = new File("load\\img\\HUD\\pokemonbar.png");
+			pkmnBar = new Image(ClassLoader.getSystemResource("img/HUD/pokemonbar.png").toString());
+			// File backgroundfile = new
+			// File("load\\img\\background\\meadow.png");
+			background = new Image(ClassLoader.getSystemResource("img/background/meadow.png").toString()
+					);
+			// File itemlabelfile = new File("load\\img\\HUD\\itemlabel.png");
+			itemLabel = new Image(ClassLoader.getSystemResource("img/HUD/itemlabel.png").toString());
 			System.out.println("Drawing Utility Loaded Successfully.");
 		} catch (IllegalArgumentException ex) {
 			System.err.println("DrawingUtitity cannot load static files");
@@ -170,8 +172,9 @@ public class DrawingUtility {
 	}
 
 	public static void drawPokemonBar(Pokemon pokemon) {
-		Objects.requireNonNull(pokemon);
-		Objects.requireNonNull(pokemon.getCurrentFightMap());
+		if (pokemon == null || pokemon.getCurrentFightMap() == null) {
+			return;
+		}
 		int position;
 		int originX, originY;
 		gc.setFont(Font.font("monospace", 8));
